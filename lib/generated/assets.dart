@@ -3,11 +3,13 @@ class Assets {
   Assets._();
 
   static const String assetsAdvimg = 'assets/advimg.png';
+  static const String assetsAdvisor option = 'assets/advisor option.jpg';
   static const String assetsAdvisorVector = 'assets/advisor_vector.png';
   static const String assetsBVC = 'assets/BVC.png';
   static const String assetsBottomleft = 'assets/bottomleft.png';
   static const String assetsBottomright = 'assets/bottomright.png';
   static const String assetsBusimg = 'assets/busimg.png';
+  static const String assetsBusiness option = 'assets/business option.jpg';
   static const String assetsBusinessValuation = 'assets/business_valuation.png';
   static const String assetsBusinessVector = 'assets/business_vector.png';
   static const String assetsBusinessimg = 'assets/businessimg.png';
@@ -22,6 +24,7 @@ class Assets {
   static const String assetsImg2 = 'assets/img2.png';
   static const String assetsInsta = 'assets/insta.png';
   static const String assetsInstalogo = 'assets/instalogo.png';
+  static const String assetsInvestment & franchise = 'assets/investment & franchise.jpg';
   static const String assetsInvestorVector = 'assets/investor_vector.png';
   static const String assetsInvestryxLogo = 'assets/investryx_logo.json';
   static const String assetsInvestryxLogoSplash = 'assets/investryx_logo_splash.json';
@@ -41,6 +44,8 @@ class Assets {
   static const String assetsProfile1 = 'assets/profile1.png';
   static const String assetsProfile3 = 'assets/profile3.png';
   static const String assetsProfilePicture = 'assets/profile_picture.jpg';
+  static const String assetsProfileVector = 'assets/profile_vector.png';
+  static const String assetsProfitCalculator = 'assets/profit_calculator.png';
   static const String assetsRighttop = 'assets/righttop.png';
   static const String assetsSearchIcon = 'assets/search_icon.png';
   static const String assetsSuccessfully = 'assets/successfully.png';

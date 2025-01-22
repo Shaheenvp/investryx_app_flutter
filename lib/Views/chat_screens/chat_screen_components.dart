@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:project_emergio/Views/chat_screens/voice_handler.dart';
+import 'package:project_emergio/Views/detail%20page/business%20deatil%20page.dart';
+import 'package:project_emergio/Views/detail%20page/franchise%20detail%20page.dart';
+import 'package:project_emergio/Views/detail%20page/invester%20detail%20page.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'dart:async';
 import 'package:shimmer/shimmer.dart';
 
+import '../../models/all profile model.dart';
+import '../../services/get_post_service.dart';
 import 'attachment_handler.dart';
 
 class ChatColors {
@@ -28,6 +33,8 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function(String) onPhonePress;
   final bool isActive;
   final String lastActive;
+  final String? postId;
+  final String? entityType;
 
   const ChatAppBar({
     Key? key,
@@ -39,10 +46,71 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onPhonePress,
     required this.isActive,
     required this.lastActive,
+    this.postId,
+    this.entityType,
   }) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  void _handleMenuSelect(String value, BuildContext context) async {
+    if (value == 'viewPost' && postId != null) {
+      final response = await GetPostService.getPost(id: postId!);
+
+      if (response['status'] == true) {
+        if (response['data'] != null) {
+          _navigateToDetailPage(context, response['entity_type'], response['data']);
+        }
+      }
+    }
+  }
+
+  void _navigateToDetailPage(BuildContext context, String? type, Map<String, dynamic> data) {
+    if (type == null || type.isEmpty) return;
+
+    switch (type.toLowerCase()) {
+      case "business":
+        final businessData = BusinessInvestorExplr.fromJson(data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BusinessDetailPage(
+              id: postId,
+              buisines: businessData,
+              showEditOption: false,
+            ),
+          ),
+        );
+        break;
+
+      case "franchise":
+        final franchiseData = FranchiseExplr.fromJson(data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FranchiseDetailPage(
+              id: postId,
+              franchise: franchiseData,
+              showEditOption: false,
+            ),
+          ),
+        );
+        break;
+
+      case "investor":
+        final investorData = BusinessInvestorExplr.fromJson(data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InvestorDetailPage(
+              id: postId,
+              investor: investorData,
+            ),
+          ),
+        );
+        break;
+    }
+  }
 
   String _formatLastActive(String lastActive) {
     try {
@@ -68,6 +136,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Rest of the build method remains the same
     return AppBar(
       backgroundColor: ChatColors.primary,
       elevation: 0,
@@ -143,10 +212,28 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.call, color: ChatColors.text),
           onPressed: () => phoneNumber != null ? onPhonePress(phoneNumber!) : null,
         ),
-        IconButton(
-          icon: Icon(Icons.more_vert, color: ChatColors.text),
-          onPressed: () {},
-        ),
+        if (postId != null)
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: ChatColors.text),
+            onSelected: (value) => _handleMenuSelect(value, context),
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'viewPost',
+                child: Row(
+                  children: [
+                    Icon(Icons.visibility, size: 20),
+                    SizedBox(width: 8),
+                    Text('View Post'),
+                  ],
+                ),
+              ),
+            ],
+          )
+        else
+          IconButton(
+            icon: Icon(Icons.more_vert, color: ChatColors.text),
+            onPressed: () {},
+          ),
       ],
     );
   }

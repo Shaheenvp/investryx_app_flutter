@@ -979,7 +979,7 @@ class BusinessDetailPage extends StatefulWidget {
   final String? userId;
   final bool showEditOption;
 
-  BusinessDetailPage({
+    BusinessDetailPage({
     this.buisines,
     this.imageUrl,
     this.image2,

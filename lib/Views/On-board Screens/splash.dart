@@ -70,6 +70,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:async';
 import '../../Widgets/bottom navbar_widget.dart';
+import 'on-board1.dart';
 import 'onboarding_flow.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -106,7 +107,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
       } else {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const OnboardingFlow(),
+            builder: (context) => const  OnboardingFlow(),
           ),
         );
       }

@@ -193,7 +193,7 @@ class LatestActivites {
         postTitle: json["title"] ?? "N/A",
         singleLineDescription: json['single_desc']?.toString() ?? 'NA',
         imageUrl:
-        validateUrl(json['img']) ?? 'https://via.placeholder.com/400x200',
+        validateUrl(json['img']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         user: json['user']?.toString() ?? 'N/A',
         username: json['username']?.toString() ?? 'N/A',
         description: json['description']?.toString() ?? 'NA',

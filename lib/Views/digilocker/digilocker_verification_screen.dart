@@ -53,7 +53,7 @@ class _DigiLockerVerificationScreenState
 
   // API related variables
   final String _apiToken =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczMjUyMzYyNywianRpIjoiZmIyMzJmYzItZmY0MS00NzQwLWI0ZWItOTYyMjYzNmE3OGVlIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LnNoYWhlZW5Ac3VyZXBhc3MuaW8iLCJuYmYiOjE3MzI1MjM2MjcsImV4cCI6MTczNTExNTYyNywiZW1haWwiOiJzaGFoZWVuQHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.-ZDagres4QGAZFWcldoanH6hRFdXuzIQgYhaxcZMCHo';
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNjE1ODg2NywianRpIjoiNGE4MGMxMjMtMDM3Ny00MmYyLTk1NDItMTcyNTc2OTBhY2ExIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LnNoYWhlZW5Ac3VyZXBhc3MuaW8iLCJuYmYiOjE3MzYxNTg4NjcsImV4cCI6MTczNzAyMjg2NywiZW1haWwiOiJzaGFoZWVuQHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.9SBuyX1BE8gNyM73Jo5IxY2F9TJjBguLZmEzbtQDlc0';
   String? _clientId;
   Map<String, dynamic>? _generateOtpResponse;
   Map<String, dynamic>? _verifyOtpResponse;
@@ -560,7 +560,6 @@ class _DigiLockerVerificationScreenState
     }
   }
 
-// Inside _DigiLockerVerificationScreenState class
   Future<void> performFaceMatch() async {
     if (_selfieImage == null || _profileImage == null) {
       _showErrorSnackbar('Please take a selfie first');

@@ -46,7 +46,7 @@ class SearchResult {
         title: json['title'] ?? "N/A",
         singleLineDescription: json['single_desc'] ?? 'No description provided',
         imageUrl: validateUrl(json['image1']) ??
-            'https://via.placeholder.com/400x200',
+            'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         location: json['city'] ?? 'No location provided',
         type: json["type"] ?? entityType,
         id: json['id']?.toString() ?? '',
@@ -54,7 +54,7 @@ class SearchResult {
         isLiked: json['is_liked'] ?? false,
         entityType: json["entity_type"] ?? "N/A",
         logo:
-        validateUrl(json["logo"] ?? "https://via.placeholder.com/400x200"));
+        validateUrl(json["logo"] ?? "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="));
   }
 
   static String? validateUrl(String? url) {

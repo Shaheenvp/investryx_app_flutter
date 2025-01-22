@@ -127,6 +127,8 @@ class InboxItems {
   final String time;
   final int unread_messages_first;
   final int unread_messages_second;
+  // Add post related fields
+  final PostDetails? post;
 
   InboxItems({
     required this.id,
@@ -146,6 +148,7 @@ class InboxItems {
     required this.time,
     required this.unread_messages_first,
     required this.unread_messages_second,
+    this.post,
   });
 
   factory InboxItems.fromJson(Map<String, dynamic> json) {
@@ -167,6 +170,7 @@ class InboxItems {
       time: json['updated'] ?? 'N/A',
       unread_messages_first: json['unread_messages_first'] ?? 0,
       unread_messages_second: json['unread_messages_second'] ?? 0,
+      post: json['post'] != null ? PostDetails.fromJson(json['post']) : null,
     );
   }
 
@@ -192,5 +196,31 @@ class InboxItems {
       return null;
     }
     return null;
+  }
+}
+
+class PostDetails {
+  final String id;
+  final String title;
+  final String? image1;
+  final String entityType;
+  final String name;
+
+  PostDetails({
+    required this.id,
+    required this.title,
+    this.image1,
+    required this.entityType,
+    required this.name,
+  });
+
+  factory PostDetails.fromJson(Map<String, dynamic> json) {
+    return PostDetails(
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      image1: InboxItems.validateUrl(json['image1']),
+      entityType: json['entity_type'] ?? '',
+      name: json['name'] ?? '',
+    );
   }
 }

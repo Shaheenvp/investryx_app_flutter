@@ -738,137 +738,59 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
 
   void submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // if (_businessPhotos == null ||
-      //     _businessPhotos!.length < 4 ||
-      //     _businessDocuments == null ||
-      //     _businessProof == null) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //         content: Text(
-      //             'Please select all required business files (4 photos, 1 document, and 1 proof)')),
-      //   );
-      //   return;
-      // }
-
       if (preferencesLists.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select your preferences')),
         );
+        return;
       }
 
       setState(() {
         _isSubmitting = true;
       });
-      File? imageFile1, imageFile2, imageFile3, imageFile4, docFile, proofFile;
 
-      if (_businessPhotos != null && _businessPhotos!.length >= 4) {
-        imageFile1 = File(_businessPhotos![0].path);
-        imageFile2 = File(_businessPhotos![1].path);
-        imageFile3 = File(_businessPhotos![2].path);
-        imageFile4 = File(_businessPhotos![3].path);
-      }
+      try {
+        // Initialize all parameters as null
+        File? imageFile1, imageFile2, imageFile3, imageFile4, docFile, proofFile;
 
-      if (_businessDocuments != null && _businessDocuments!.isNotEmpty) {
-        docFile = File(_businessDocuments!.first.path!);
-      }
-
-      if (_businessProof != null) {
-        proofFile = File(_businessProof!.path.toString());
-      }
-
-      final response = await InvestorAddPage.investorAddPage(
-          name: _investorNameController != null ? _investorNameController.text : "",
-          companyName: _investorNameController != null ? _companyNameController.text : "",
-          industry: _selectedIndustry,
-          description: _investorNameController != null ? _aboutCompanyController.text : "",
-          state: _selectedState,
-          city: _selectedCity,
-          url: _investorNameController != null ? _businessWebsiteController.text : "",
-          rangeStarting: _investorNameController != null ? _investmentRangefromController.text : "",
-          rangeEnding: _investorNameController != null ? _investmentRangeToController.text : "",
-          evaluatingAspects: _investorNameController != null ? _aspectsEvaluatingController.text : "",
-          locationInterested: _investorNameController != null ? _locationsIntrestedController.text : "",
-          image1: imageFile1 ?? File(''),
-          image2: imageFile2 ?? File(''),
-          image3: imageFile3 ?? File(''),
-          image4: imageFile4 ?? File(''),
-          doc1: docFile ?? File(''),
-          proof1: proofFile ?? File(''),
-          summary: _investorNameController != null ? _describeYourselfController.text : "",
-          preferences: preferencesLists);
-
-
-      setState(() {
-        _isSubmitting = false;
-      });
-      print("response $response");
-
-      if (response == true) {
-        _controller.fetchListings("investor");
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(milliseconds: 800),
-            content: Text('Failed to submit investor information'),
-          ),
-        );
-      }
-    }
-  }
-
-  void editForm() async {
-    if (widget.investor != null) {
-      if (_formKey.currentState?.validate() ?? false) {
-        // if (_businessPhotos == null  ||
-        //     _businessPhotos!.length < 4 ||
-        //     _businessDocuments == null ||
-        //     _businessProof == null) {
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(
-        //         content: Text(
-        //             'Please select all required business files (4 photos, 1 document, and 1 proof)')),
-        //   );
-        //   return;
-        // }
-
-        if (preferencesLists.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select your preferences')),
-          );
+        // Set file parameters only if files are selected
+        if (_businessPhotos != null && _businessPhotos!.isNotEmpty) {
+          if (_businessPhotos!.length >= 1) imageFile1 = File(_businessPhotos![0].path);
+          if (_businessPhotos!.length >= 2) imageFile2 = File(_businessPhotos![1].path);
+          if (_businessPhotos!.length >= 3) imageFile3 = File(_businessPhotos![2].path);
+          if (_businessPhotos!.length >= 4) imageFile4 = File(_businessPhotos![3].path);
         }
 
-        setState(() {
-          _isSubmitting = true;
-        });
+        if (_businessDocuments != null && _businessDocuments!.isNotEmpty) {
+          docFile = File(_businessDocuments![0].path!);
+        }
 
+        if (_businessProof != null && _businessProof!.path != null) {
+          proofFile = File(_businessProof!.path!);
+        }
 
-
-        final response = await InvestorAddPage.updateInvestor(
-            investorId: widget.investor!.id,
-            name: _investorNameController.text,
-            companyName: _companyNameController.text,
-            industry: _selectedIndustry,
-            description: _aboutCompanyController.text,
-            state: _selectedState,
-            city: _selectedCity,
-            url: _businessWebsiteController.text,
-            rangeStarting: _investmentRangefromController.text,
-            rangeEnding: _investmentRangeToController.text,
-            evaluatingAspects: _aspectsEvaluatingController.text,
-            locationInterested: _locationsIntrestedController.text,
-            image1:  _businessPhotos != null ? File(_businessPhotos![0].path) : null,
-            image2:  _businessPhotos != null ? File(_businessPhotos![1].path) : null,
-            image3:  _businessPhotos != null ? File(_businessPhotos![2].path) : null,
-            image4:  _businessPhotos != null ? File(_businessPhotos![3].path) : null,
-            doc1: _businessDocuments != null
-                ? File(_businessDocuments!.first.path!)
-                : null,
-            proof1:  _businessProof != null && _businessProof!.path != null
-                ? File(_businessProof!.path!)
-                : null,
-            summary: _describeYourselfController.text,
-            preferences: preferencesLists);
+        // Call the API with all parameters, including null values for missing files
+        final response = await InvestorAddPage.investorAddPage(
+          name: _investorNameController.text.trim(),
+          companyName: _companyNameController.text.trim(),
+          industry: _selectedIndustry,
+          description: _aboutCompanyController.text.trim(),
+          state: _selectedState,
+          city: _selectedCity,
+          url: _businessWebsiteController.text.trim(),
+          rangeStarting: _investmentRangefromController.text.trim(),
+          rangeEnding: _investmentRangeToController.text.trim(),
+          evaluatingAspects: _aspectsEvaluatingController.text.trim(),
+          locationInterested: _locationsIntrestedController.text.trim(),
+          summary: _describeYourselfController.text.trim(),
+          preferences: preferencesLists,
+          image1: imageFile1,
+          image2: imageFile2,
+          image3: imageFile3,
+          image4: imageFile4,
+          doc1: docFile,
+          proof1: proofFile,
+        );
 
         setState(() {
           _isSubmitting = false;
@@ -880,12 +802,110 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              duration: Duration(milliseconds: 800),
-              content: Text('All Fields Required'),
+              duration: Duration(milliseconds: 1500),
+              content: Text('Failed to submit investor information'),
             ),
           );
         }
+      } catch (e) {
+        setState(() {
+          _isSubmitting = false;
+        });
+        print('Error submitting form: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(milliseconds: 1500),
+            content: Text('Error submitting form: ${e.toString()}'),
+          ),
+        );
+      }
     }
+  }
+
+  void editForm() async {
+    if (widget.investor != null && _formKey.currentState!.validate()) {
+      if (preferencesLists.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select your preferences')),
+        );
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = true;
+      });
+
+      try {
+        // Initialize all parameters as null
+        File? imageFile1, imageFile2, imageFile3, imageFile4, docFile, proofFile;
+
+        // Set file parameters only if files are selected
+        if (_businessPhotos != null && _businessPhotos!.isNotEmpty) {
+          if (_businessPhotos!.length >= 1) imageFile1 = File(_businessPhotos![0].path);
+          if (_businessPhotos!.length >= 2) imageFile2 = File(_businessPhotos![1].path);
+          if (_businessPhotos!.length >= 3) imageFile3 = File(_businessPhotos![2].path);
+          if (_businessPhotos!.length >= 4) imageFile4 = File(_businessPhotos![3].path);
+        }
+
+        if (_businessDocuments != null && _businessDocuments!.isNotEmpty) {
+          docFile = File(_businessDocuments![0].path!);
+        }
+
+        if (_businessProof != null && _businessProof!.path != null) {
+          proofFile = File(_businessProof!.path!);
+        }
+
+        final response = await InvestorAddPage.updateInvestor(
+          investorId: widget.investor!.id,
+          name: _investorNameController.text.trim(),
+          companyName: _companyNameController.text.trim(),
+          industry: _selectedIndustry,
+          description: _aboutCompanyController.text.trim(),
+          state: _selectedState,
+          city: _selectedCity,
+          url: _businessWebsiteController.text.trim(),
+          rangeStarting: _investmentRangefromController.text.trim(),
+          rangeEnding: _investmentRangeToController.text.trim(),
+          evaluatingAspects: _aspectsEvaluatingController.text.trim(),
+          locationInterested: _locationsIntrestedController.text.trim(),
+          summary: _describeYourselfController.text.trim(),
+          preferences: preferencesLists,
+          image1: imageFile1,
+          image2: imageFile2,
+          image3: imageFile3,
+          image4: imageFile4,
+          doc1: docFile,
+          proof1: proofFile,
+        );
+
+        setState(() {
+          _isSubmitting = false;
+        });
+
+        if (response == true) {
+          _controller.fetchListings("investor");
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(milliseconds: 1500),
+              content: Text('Failed to update investor information'),
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _isSubmitting = false;
+        });
+        print('Error updating form: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(milliseconds: 1500),
+            content: Text('Error updating form: ${e.toString()}'),
+          ),
+        );
+      }
     }
-    }
+  }
+
 }

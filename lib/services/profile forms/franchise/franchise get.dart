@@ -122,7 +122,7 @@
 //
 //   factory Franchise.fromJson(Map<String, dynamic> json) {
 //     return Franchise(
-//       imageUrl: validateUrl(json['logo']) ?? 'https://via.placeholder.com/400x200',
+//       imageUrl: validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 //       brandName: json['name'] ?? 'N/A',
 //       city: json['city'] ?? 'N/A',
 //       postedTime: json['listed_on'] ?? 'N/A',
@@ -356,10 +356,10 @@ class Franchise {
   factory Franchise.fromJson(Map<String, dynamic> json) {
     return Franchise(
       imageUrl:
-      validateUrl(json['image1']) ?? 'https://via.placeholder.com/400x200',
-      image2: validateUrl(json['image2']) ?? 'https://via.placeholder.com/400x200',
-      image3: validateUrl(json['image3']) ?? 'https://via.placeholder.com/400x200',
-      image4: validateUrl(json['image4']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+      image2: validateUrl(json['image2']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+      image3: validateUrl(json['image3']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+      image4: validateUrl(json['image4']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       brandName: json['name'] ?? 'N/A',
       city: json['city'] ?? 'N/A',
       postedTime: json['listed_on'] ?? 'N/A',
@@ -387,13 +387,13 @@ class Franchise {
       companyName: json['company'],
       id: json['id']!.toString(),
       // Validating single URL for business photos
-      businessPhotos: validateUrl(json['logo']) ?? 'https://via.placeholder.com/400x200',
+      businessPhotos: validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 
       // Validating single URL for business proof
-      businessProof: validateUrl(json['proof1']) ?? 'https://via.placeholder.com/400x200',
+      businessProof: validateUrl(json['proof1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 
       // Validating single URL for business documents
-      businessDocuments: validateUrl(json['doc1']) ?? 'https://via.placeholder.com/400x200',
+      businessDocuments: validateUrl(json['doc1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
     );
   }
 

@@ -394,6 +394,9 @@
 // }
 
 
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -424,6 +427,8 @@ class _SignInPageState extends State<SignInPage> {
   bool _isLoading = false;
   bool _isGoogleLoading = false;
   bool _showLottie = false;
+  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
 
   void _showSnackBar(String message, bool isError) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -521,6 +526,21 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  Future<String> _getDeviceName() async {
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return androidInfo.model;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.name;
+      }
+      return 'Unknown Device';
+    } catch (e) {
+      print('Error getting device name: $e');
+      return 'Unknown Device';
+    }
+  }
   Widget _buildHeaderSection() {
     return Column(
       children: [
@@ -782,8 +802,13 @@ class _SignInPageState extends State<SignInPage> {
 
       final phoneNumber = phoneNumberController.text.trim();
       final password = passwordController.text.trim();
+      final deviceName = await _getDeviceName();  // Get device name
 
-      final response = await signIn(phoneNumber, password);
+      final response = await signIn(
+        phoneNumber,
+        password,
+        deviceName
+      );
 
       setState(() => _isLoading = false);
 
@@ -801,6 +826,7 @@ class _SignInPageState extends State<SignInPage> {
       }
     }
   }
+
 
   Future<void> saveCredentials(String phoneNumber, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

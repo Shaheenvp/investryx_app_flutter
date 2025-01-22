@@ -3,13 +3,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import flutter_secure_storage
 import '../api_list.dart';
 
-Future<bool> signIn(String username, String password) async {
+Future<bool> signIn(String username, String password, String device) async {
   final url = Uri.parse(ApiList.login!);
   try {
     final client = http.Client();
     final response = await client.post(
       url,
-      body: json.encode({'phone': username, 'password': password}),
+      body: json.encode({'phone': username, 'password': password, 'mobile_device': device}),
       headers: {'Content-Type': 'application/json'},
     );
 

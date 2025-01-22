@@ -219,43 +219,43 @@ class CustomFunctions {
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
-  Future<void> navigationToDashboard(String profile) async {
-    try {
-      print(profile);
-      final profileResult =
-      await SalesProfile.fetchSalesProfileData(type: profile);
-
-      if (profileResult != null) {
-        Get.to(DashboardScreen(type: profile));
-      } else if (profileResult == null) {
-        if (profile == "business") {
-          Get.to(AddBusinessProfileScreen());
-        } else if (profile == "investor") {
-          Get.to(AddInvestorProfileScreen());
-        } else if (profile == "franchise") {
-          Get.to(AddFranchiseProfileScreen());
-        } else {
-          Get.to(AddAdvisorProfileScreen());
-        }
-      } else if (profileResult != null) {
-        AlertDialogueWidget.showAlertDialog("Alert !",
-            "Your subscription has expired. Please select a plan to continue.",
-                () {
-              // Get.off(PricingScreenNew());
-            }, () {
-              Get.back();
-            });
-      } else {
-        AlertDialogueWidget.showAlertDialog("Alert !",
-            "You don't have an active subscription. Please subscribe to a plan to continue.",
-                () {
-              // Get.off(PricingScreenNew());
-            }, () {
-              Get.back();
-            });
-      }
-    } catch (e) {}
-  }
+  // Future<void> navigationToDashboard(String profile) async {
+  //   try {
+  //     print(profile);
+  //     final profileResult =
+  //     await SalesProfile.fetchSalesProfileData(type: profile);
+  //
+  //     if (profileResult != null) {
+  //       Get.to(DashboardScreen(type: profile));
+  //     } else if (profileResult == null) {
+  //       if (profile == "business") {
+  //         Get.to(AddBusinessProfileScreen());
+  //       } else if (profile == "investor") {
+  //         Get.to(AddInvestorProfileScreen());
+  //       } else if (profile == "franchise") {
+  //         Get.to(AddFranchiseProfileScreen());
+  //       } else {
+  //         Get.to(AddAdvisorProfileScreen());
+  //       }
+  //     } else if (profileResult != null) {
+  //       AlertDialogueWidget.showAlertDialog("Alert !",
+  //           "Your subscription has expired. Please select a plan to continue.",
+  //               () {
+  //             // Get.off(PricingScreenNew());
+  //           }, () {
+  //             Get.back();
+  //           });
+  //     } else {
+  //       AlertDialogueWidget.showAlertDialog("Alert !",
+  //           "You don't have an active subscription. Please subscribe to a plan to continue.",
+  //               () {
+  //             // Get.off(PricingScreenNew());
+  //           }, () {
+  //             Get.back();
+  //           });
+  //     }
+  //   } catch (e) {}
+  // }
 }
 
 class AlertDialogueWidget {

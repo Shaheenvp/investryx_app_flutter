@@ -108,11 +108,11 @@ class BusinessInvestorExplr {
     return BusinessInvestorExplr(
         id: json['id']?.toString() ?? 'N/A',
         imageUrl: validateUrl(json['image1']) ??
-            'https://via.placeholder.com/400x200',
+            'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         image2: validateUrl(json['image2']) ??
-            'https://via.placeholder.com/400x200',
+            'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         image3: validateUrl(json['image3']) ??
-            'https://via.placeholder.com/400x200',
+            'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         image4: validateUrl(json['image4']),
         name: json['name']?.toString() ?? 'N/A',
         title: json['title']?.toString() ?? 'N/A',
@@ -256,13 +256,13 @@ class FranchiseExplr {
       title: json['title']?.toString() ?? 'N/A',
       singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
       imageUrl: validateUrl(json['image1']) ??
-          'https://via.placeholder.com/400x200',
+          'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image2: validateUrl(json['image2']) ??
-          'https://via.placeholder.com/400x200',
+          'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image3: validateUrl(json['image3']) ??
-          'https://via.placeholder.com/400x200',
+          'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image4: validateUrl(json['image4']) ??
-          'https://via.placeholder.com/400x200',
+          'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       established_year: json['established_year'],
       brandName: json['name'] ?? 'N/A',
       city: json['city'] ?? 'N/A',
@@ -292,7 +292,7 @@ class FranchiseExplr {
       id: json['id']!.toString(),
       entityType: json["entity_type"] ?? "entity_type",
       logo: validateUrl(json['logo']) ??
-          'https://via.placeholder.com/400x200',);
+          'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',);
   }
 
   Map<String, dynamic> toJson() {
@@ -410,7 +410,7 @@ class AdvisorExplr {
       title: json['title']?.toString() ?? 'N/A',
       singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
       imageUrl:
-      validateUrl(json['logo']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       name: json['name'] ?? 'N/A',
       designation: json['designation'] ?? 'Expert',
       location: json['city'] ?? 'N/A',

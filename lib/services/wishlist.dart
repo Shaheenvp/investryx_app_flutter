@@ -183,7 +183,7 @@
 //   factory Wishlist.fromJson(Map<String, dynamic> json) {
 //     return Wishlist(
 //       id: json['id'].toString(),
-//       imageUrl: validateUrl(json['image1']) ?? 'https://via.placeholder.com/400x200',
+//       imageUrl: validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 //       name: json['name'] ?? 'N/A',
 //       city: json['city'] ?? 'N/A',
 //       postedTime: json['listed_on'] ?? 'N/A',
@@ -385,7 +385,7 @@ class ProductDetails {
     return ProductDetails(
       id: json['id'].toString(),
       type: json['entity_type'].toString(),
-      imageUrl: validateUrl(json['image1']) ?? 'https://via.placeholder.com/400x200',
+      imageUrl: validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       name: json['name'] ?? 'N/A',
       city: json['city'] ?? "json['locations_available'],",
       postedTime: json['listed_on'] ?? 'N/A',

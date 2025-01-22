@@ -35,7 +35,7 @@ class AdvisorFetchPage {
         List<AdvisorExplr> advisors = data.map((json) => AdvisorExplr(
           title: json['title']?.toString() ?? 'N/A',
           singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
-          imageUrl: validateUrl(json['logo']) ?? 'https://via.placeholder.com/400x200',
+          imageUrl: validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
           id: json['id']?.toString() ?? '',
           user: json['user']?.toString() ?? '',
           name: json['name'] ?? 'N/A',
@@ -243,7 +243,7 @@ class Advisor {
 
   factory Advisor.fromJson(Map<String, dynamic> json) {
     return Advisor(
-      imageUrl: validateUrl(json['logo']) ?? 'https://via.placeholder.com/400x200',
+      imageUrl: validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       name: json['name'] ?? 'N/A',
       designation: json['designation'] ?? 'N/A',
       location: json['city'] ?? 'N/A',
@@ -256,13 +256,13 @@ class Advisor {
       id: json['id']?.toString() ?? '', // Ensure id is a String
 
       // Validating single URL for business photos
-      businessPhotos: validateUrl(json['image1']) ?? 'https://via.placeholder.com/400x200',
+      businessPhotos: validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 
       // Validating single URL for business proof
-      businessProof: validateUrl(json['proof1']) ?? 'https://via.placeholder.com/400x200',
+      businessProof: validateUrl(json['proof1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 
       // Validating single URL for business documents
-      businessDocuments: validateUrl(json['doc1']) ?? 'https://via.placeholder.com/400x200',
+      businessDocuments: validateUrl(json['doc1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
     );
   }
 

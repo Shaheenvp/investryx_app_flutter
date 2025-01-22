@@ -1,325 +1,462 @@
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
-//
-// class BusinessValuationPopup extends StatefulWidget {
-//   @override
-//   _BusinessValuationPopupState createState() => _BusinessValuationPopupState();
-// }
-//
-// class _BusinessValuationPopupState extends State<BusinessValuationPopup> {
-//   String selectedCountry = 'India';
-//   String selectedIndustry = 'Information Technology';
-//   String selectedCurrency = 'USD';
-//   final TextEditingController revenueController = TextEditingController();
-//   final TextEditingController ebitdaMarginController = TextEditingController();
-//   double businessValue = 0.0;
-//
-//   void calculateValuation() {
-//     // Parse user input
-//     double annualRevenue = double.tryParse(revenueController.text.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
-//     double ebitdaMargin = double.tryParse(ebitdaMarginController.text.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
-//
-//     // Calculate EBITDA
-//     double ebitda = annualRevenue * (ebitdaMargin / 100);
-//
-//     // Apply a multiple to EBITDA to calculate business value
-//     const double multiple = 5.0; // Adjust based on industry
-//     businessValue = ebitda * multiple;
-//
-//     // Convert to selected currency
-//     if (selectedCurrency == 'INR') {
-//       businessValue = convertToINR(businessValue); // Convert to INR if needed
-//     }
-//
-//     setState(() {});
-//   }
-//
-//   // Convert USD to INR (Assume conversion rate; update dynamically if needed)
-//   double convertToINR(double valueInUSD) {
-//     const double conversionRate = 83.0; // Example conversion rate, update as needed
-//     return valueInUSD * conversionRate;
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final h = MediaQuery.of(context).size.height;
-//     final w = MediaQuery.of(context).size.width;
-//
-//     return AlertDialog(
-//       title: Padding(
-//         padding: const EdgeInsets.all(8.0),
-//         child: Text(
-//           'Business Valuation Calculator',
-//           style: TextStyle(fontWeight: FontWeight.w600, fontSize: h * 0.021),
-//         ),
-//       ),
-//       content: SingleChildScrollView(
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text('Select Country'),
-//             DropdownButton<String>(
-//               value: selectedCountry,
-//               isExpanded: true,
-//               onChanged: (String? newValue) {
-//                 setState(() {
-//                   selectedCountry = newValue!;
-//                 });
-//               },
-//               items: <String>[
-//                 'India',
-//                 'Canada',
-//                 'Pakistan',
-//                 'United States',
-//                 'Australia',
-//                 'United Kingdom',
-//                 'Germany',
-//                 'France',
-//                 'China',
-//                 'Japan'
-//               ].map<DropdownMenuItem<String>>((String value) {
-//                 return DropdownMenuItem<String>(
-//                   value: value,
-//                   child: Text(value),
-//                 );
-//               }).toList(),
-//             ),
-//             SizedBox(height: 16),
-//             Text('Select Industry'),
-//             DropdownButton<String>(
-//               value: selectedIndustry,
-//               isExpanded: true,
-//               onChanged: (String? newValue) {
-//                 setState(() {
-//                   selectedIndustry = newValue!;
-//                 });
-//               },
-//               items: <String>[
-//                 'Information Technology',
-//                 'Health Care',
-//                 'Food and Beverage',
-//                 'Manufacturing',
-//                 'Retail',
-//                 'Finance',
-//                 'Real Estate',
-//                 'Education',
-//                 'Automotive',
-//                 'Tourism'
-//               ].map<DropdownMenuItem<String>>((String value) {
-//                 return DropdownMenuItem<String>(
-//                   value: value,
-//                   child: Text(value),
-//                 );
-//               }).toList(),
-//             ),
-//             SizedBox(height: 16),
-//             Text('Select Currency'),
-//             DropdownButton<String>(
-//               value: selectedCurrency,
-//               isExpanded: true,
-//               onChanged: (String? newValue) {
-//                 setState(() {
-//                   selectedCurrency = newValue!;
-//                 });
-//               },
-//               items: <String>['USD', 'INR'].map<DropdownMenuItem<String>>((String value) {
-//                 return DropdownMenuItem<String>(
-//                   value: value,
-//                   child: Text(value),
-//                 );
-//               }).toList(),
-//             ),
-//             SizedBox(height: 16),
-//             Text('Annual Revenue'),
-//             TextField(
-//               controller: revenueController,
-//               keyboardType: TextInputType.number,
-//               decoration: InputDecoration(
-//                 hintText: 'e.g., 2000000',
-//               ),
-//             ),
-//             SizedBox(height: 16),
-//             Text('EBITDA Margin'),
-//             TextField(
-//               controller: ebitdaMarginController,
-//               keyboardType: TextInputType.number,
-//               decoration: InputDecoration(
-//                 hintText: 'e.g., 20',
-//               ),
-//             ),
-//             SizedBox(height: 16),
-//             Text(
-//               'Estimated Business Value: ${NumberFormat.currency(symbol: selectedCurrency == 'INR' ? '₹' : '\$').format(businessValue)}',
-//               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//             ),
-//           ],
-//         ),
-//       ),
-//       actions: [
-//         Center(
-//           child: SizedBox(
-//             height: h * 0.055,
-//             width: w * 0.3,
-//             child: ElevatedButton(
-//               style: ElevatedButton.styleFrom(
-//                   shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(5)),
-//                   backgroundColor: Color(0xff003C82)),
-//               onPressed: () {
-//                 calculateValuation();
-//               },
-//               child: Text(
-//                 'Calculate',
-//                 style: TextStyle(color: Colors.white),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BusinessValuationScreen extends StatefulWidget {
   const BusinessValuationScreen({super.key});
 
   @override
-  State<BusinessValuationScreen> createState() =>
-      _BusinessValuationScreenState();
+  State<BusinessValuationScreen> createState() => _BusinessValuationScreenState();
 }
 
 class _BusinessValuationScreenState extends State<BusinessValuationScreen> {
+  static const primaryYellow = Color(0xFFFFB800);
+  static const lightYellow = Color(0xFFFFF4D9);
+
+  final _scrollController = ScrollController();
+  bool _showElevation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.offset > 0 && !_showElevation) {
+      setState(() => _showElevation = true);
+    } else if (_scrollController.offset <= 0 && _showElevation) {
+      setState(() => _showElevation = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.height;
-    final w = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-        ),
-        centerTitle: true,
-
+      backgroundColor: Colors.grey[50],
+      extendBodyBehindAppBar: true,
+      appBar: _buildAppBar(),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          _buildHeroSection(),
+          _buildMainContent(),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "What Is Business Valuation",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.black),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      elevation: _showElevation ? 1 : 0,
+      backgroundColor: Colors.white.withOpacity(_showElevation ? 1 : 0),
+      centerTitle: true,
+      title: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: _showElevation ? 1 : 0,
+        child: Text(
+          'Business Valuation',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[900],
+          ),
+        ),
+      ),
+      leading: Padding(
+        padding: EdgeInsets.only(left: 12.w),
+        child: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: CircleAvatar(
+            backgroundColor: Colors.white70,
+            child: Icon(
+              Icons.arrow_back_rounded,
+              color: Colors.grey[800],
+              size: 20.w,
             ),
-            const SizedBox(height: 16),
-            Image.asset(
-              'assets/business_valuation.png', // Replace with your image path
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "At Investryx, We Define Business Valuation As A Technique Used To Capture The True Value Of The Business. Common Approaches To Business Valuation Include Discounted Cash Flow (DCF), Trading Comparables, And Transaction Comparables Method Described Below.",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              "How Much Is Your Business Worth",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTextField("Select Country"),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildTextField("Select Industry"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTextField("Annual Revenue"),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildTextField("EBITDA Margin"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Center(
-              child: SizedBox(
-                width: w * 0.4,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle Get Report action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffFFCC00),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Get Report',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String hintText) {
-    return TextField(
-        decoration: InputDecoration(
-            hintText: hintText,
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+  Widget _buildHeroSection() {
+    return SliverToBoxAdapter(
+      child: Stack(
+        children: [
+          Container(
+            height: 240.h,
+            decoration: BoxDecoration(
+              color: Colors.yellow[50],
+              image: DecorationImage(
+                image: const AssetImage('assets/business_valuation.png'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.1),
+                  BlendMode.darken,
+                ),
+              ),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+          ),
+          Container(
+            height: 240.h,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.grey[400]!,
+                ],
+                stops: const [0.7, 1.0],
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey),
+          ),
+          Positioned(
+            bottom: 20.h,
+            left: 16.w,
+            right: 16.w,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryYellow,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    'Valuation Calculator',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  'Calculate Your\nBusiness Worth',
+                  style: TextStyle(
+                    fontSize: 27.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white
+                    ,
+                    height: 1.2,
+                    // letterSpacing: -0.5,
+                  ),
+                ),
+              ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return SliverPadding(
+      padding: EdgeInsets.all(16.w),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _buildInfoCard(),
+          SizedBox(height: 20.h),
+          _buildValuationForm(),
+          SizedBox(height: 20.h),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard() {
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: lightYellow,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  Icons.insights_rounded,
+                  color: primaryYellow,
+                  size: 20.w,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                'Valuation Methods',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[900],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          _buildMethodItem(
+            'DCF Analysis',
+            'Future value calculation using discounted cash flows',
+            Icons.timeline_rounded,
+          ),
+          _buildMethodItem(
+            'Market Comparables',
+            'Compare with similar market businesses',
+            Icons.compare_arrows_rounded,
+          ),
+          _buildMethodItem(
+            'Asset Based',
+            'Total assets minus total liabilities',
+            Icons.account_balance_rounded,
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMethodItem(
+      String title,
+      String description,
+      IconData icon,
+      {bool isLast = false}
+      ) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 16.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(10.r),
             ),
-        );
-    }
+            child: Icon(
+              icon,
+              color: primaryYellow,
+              size: 16.w,
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.grey[600],
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildValuationForm() {
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: lightYellow,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  Icons.calculate_rounded,
+                  color: primaryYellow,
+                  size: 20.w,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                'Enter Details',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[900],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          _buildInputField(
+            'Country',
+            'Select your country',
+            Icons.public_rounded,
+          ),
+          SizedBox(height: 16.h),
+          _buildInputField(
+            'Industry',
+            'Select your industry',
+            Icons.category_rounded,
+          ),
+          SizedBox(height: 16.h),
+          _buildInputField(
+            'Annual Revenue',
+            'Enter annual revenue',
+            Icons.attach_money_rounded,
+          ),
+          SizedBox(height: 16.h),
+          _buildInputField(
+            'EBITDA Margin',
+            'Enter EBITDA margin',
+            Icons.trending_up_rounded,
+          ),
+          SizedBox(height: 24.h),
+          _buildCalculateButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputField(String label, String hint, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+        ),
+        SizedBox(height: 8.h),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(
+                fontSize: 13.sp,
+                color: Colors.grey[400],
+              ),
+              prefixIcon: Icon(
+                icon,
+                color: Colors.grey[400],
+                size: 20.w,
+              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 12.h,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCalculateButton() {
+    return Container(
+      width: double.infinity,
+      height: 52.h,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            primaryYellow,
+            primaryYellow.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: primaryYellow.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(12.r),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Calculate Worth',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.white,
+                  size: 18.w,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

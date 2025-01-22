@@ -112,9 +112,9 @@ class FranchiseExplr {
   factory FranchiseExplr.fromJson(Map<String, dynamic> json) {
     return FranchiseExplr(
       imageUrl:
-      validateUrl(json['image1']) ?? 'https://via.placeholder.com/400x200',
-      image2: validateUrl(json['image2']) ?? 'https://via.placeholder.com/400x200',
-      image3: validateUrl(json['image3']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+      image2: validateUrl(json['image2']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+      image3: validateUrl(json['image3']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image4: validateUrl(json['image4']),
       brandName: json['name'] ?? 'N/A',
       city: json['city'] ?? 'N/A',

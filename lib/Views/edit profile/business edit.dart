@@ -188,7 +188,7 @@
 //       // Create an updated instance of Business with all required fields
 //       // Business updatedBusiness = Business(
 //       //   id: widget.id,
-//       //   imageUrl: image1 != null ? image1!.path : widget.imageUrl ?? 'https://via.placeholder.com/400x200',
+//       //   imageUrl: image1 != null ? image1!.path : widget.imageUrl ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
 //       //   name: _nameController.text.isNotEmpty ? _nameController.text : 'N/A', // Default value if empty
 //       //   industry: _industryController.text.isNotEmpty ? _industryController.text : null,
 //       //   establish_yr: _establishYearController.text.isNotEmpty ? _establishYearController.text : null,

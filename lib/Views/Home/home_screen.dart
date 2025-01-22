@@ -19,6 +19,7 @@ import '../../Widgets/businessvaluecalculator_widget.dart';
 import '../../Widgets/chat_button_widget.dart';
 import '../../Widgets/recent activities_widget.dart';
 import '../../Widgets/recent_posts_widget.dart';
+import '../../Widgets/roi_homescreen_widget.dart';
 import '../chat_screens/inbox_list page.dart';
 import 'advisor_home_screen.dart';
 import '../featured experts screen.dart';
@@ -73,11 +74,15 @@ class InveStryxHomePage extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-              const BusinessValuationPromoCard(),
+              const BusinessToolsWidget(),
               SizedBox(
                 height: 16.h,
               ),
               SizedBox(height: 400.h, child: InvestmentChart()),
+              // RoiHomeScreenWidget(),
+              SizedBox(
+                height: 16.h,
+              ),
               SizedBox(height: 370.h, child: RecentActivitiesWidget()),
               buildFooter(),
               SizedBox(
@@ -93,16 +98,16 @@ class InveStryxHomePage extends StatelessWidget {
   Widget buildFooter() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.white,
-            Colors.grey[50]!,
-          ],
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(
+      //     begin: Alignment.topCenter,
+      //     end: Alignment.bottomCenter,
+      //     colors: [
+      //       Colors.white,
+      //       Colors.grey[50]!,
+      //     ],
+      //   ),
+      // ),
       child: Column(
         children: [
           // Decorative element

@@ -19,6 +19,8 @@ class ChatScreen extends StatefulWidget {
   final bool isActive;
   final String? imageUrl;
   final int? chatUserId;
+  final String? postId;
+  final String? entityType;
 
   const ChatScreen({
     Key? key,
@@ -29,6 +31,8 @@ class ChatScreen extends StatefulWidget {
     required this.number,
     required this.lastActive,
     required this.isActive,
+    this.postId,
+    this.entityType,
   }) : super(key: key);
 
   @override
@@ -474,6 +478,8 @@ class _ChatScreenState extends State<ChatScreen> {
           lastActive: widget.lastActive,
           onBackPress: () => Navigator.of(context).pop(),
           onPhonePress: (number) => ChatUtils.makePhoneCall(context, number),
+          postId: widget.postId, // Add this
+          entityType: widget.entityType,
         ),
         body: Stack(
           children: [

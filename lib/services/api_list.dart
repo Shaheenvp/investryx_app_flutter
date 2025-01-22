@@ -131,5 +131,6 @@ class ApiList {
   static String? recentSearch = '$baseUrl/recentsearchview';
   static String filterSearch = "$baseUrl/filter_posts";
   static String aadhaar = "$baseUrl/aadhaar";
+  static String getPost = "$baseUrl/get_post";
 
 }

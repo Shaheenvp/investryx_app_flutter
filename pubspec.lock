@@ -105,6 +105,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  barcode:
+    dependency: transitive
+    description:
+      name: barcode
+      sha256: ab180ce22c6555d77d45f0178a523669db67f95856e3378259ef2ffeb43e6003
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.8"
+  bidi:
+    dependency: transitive
+    description:
+      name: bidi
+      sha256: "9a712c7ddf708f7c41b1923aa83648a3ed44cfd75b04f72d598c45e5be287f9d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.12"
   boolean_selector:
     dependency: transitive
     description:
@@ -414,6 +430,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_file_dialog:
+    dependency: "direct main"
+    description:
+      name: flutter_file_dialog
+      sha256: "9344b8f07be6a1b6f9854b723fb0cf84a8094ba94761af1d213589d3cb087488"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -680,6 +704,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  image:
+    dependency: transitive
+    description:
+      name: image
+      sha256: f31d52537dc417fdcde36088fdf11d191026fd5e4fae742491ebd40e5a8bea7d
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.0"
   image_cropper:
     dependency: "direct main"
     description:
@@ -724,10 +756,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_for_web
-      sha256: "65d94623e15372c5c51bebbcb820848d7bcb323836e12dfdba60b5d3a8b39e50"
+      sha256: "717eb042ab08c40767684327be06a5d8dbb341fe791d514e4b92c7bbe1b7bb83"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.5"
+    version: "3.0.6"
   image_picker_ios:
     dependency: transitive
     description:
@@ -857,13 +889,13 @@ packages:
     source: hosted
     version: "1.15.0"
   mime:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: mime
-      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
+      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "2.0.0"
   octo_image:
     dependency: transitive
     description:
@@ -1008,6 +1040,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  pdf:
+    dependency: "direct main"
+    description:
+      name: pdf
+      sha256: "05df53f8791587402493ac97b9869d3824eccbc77d97855f4545cf72df3cae07"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.11.1"
   percent_indicator:
     dependency: "direct main"
     description:
@@ -1120,6 +1160,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      sha256: "5a1d2586170e172b8a8c8470bbbffd5eb0cd38a66c0d77155ea138d3af3a4445"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
   record:
     dependency: "direct main"
     description:
@@ -1188,18 +1236,18 @@ packages:
     dependency: "direct main"
     description:
       name: share_plus
-      sha256: fec12c3c39f01e4df1ec6ad92b6e85503c5ca64ffd6e28d18c9ffe53fcc4cb11
+      sha256: "6327c3f233729374d0abaafd61f6846115b2a481b4feddd8534211dc10659400"
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.3"
+    version: "10.1.3"
   share_plus_platform_interface:
     dependency: transitive
     description:
       name: share_plus_platform_interface
-      sha256: c57c0bbfec7142e3a0f55633be504b796af72e60e3c791b44d5a017b985f7a48
+      sha256: cc012a23fc2d479854e6c80150696c4a5f5bb62cb89af4de1c505cf78d0a5d0b
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.1"
+    version: "5.0.2"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1385,18 +1433,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: a755274a8786b200b7a05f7414168cd5858871db74d0f1de2e57b20a8aaeb7a4
+      sha256: "117823c9e2ffcb7fb9868c73263df88751e3bb1f3d81f617cbaf63112f530e9c"
       url: "https://pub.dev"
     source: hosted
-    version: "26.2.14"
+    version: "28.1.39"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "6e67726b85812afc7105725a23620b876ab7f6b04b8410e211330ffb8c2cdbe8"
+      sha256: "794870919ca73e29c6cb25392a097cdfe58da4d6f3f3d3eccc529ecf52f78752"
       url: "https://pub.dev"
     source: hosted
-    version: "26.2.14"
+    version: "28.1.39"
   synchronized:
     dependency: transitive
     description:

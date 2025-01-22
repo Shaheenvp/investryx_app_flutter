@@ -1033,8 +1033,8 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
     final businessData = BusinessInvestorExplr(
         id: result.id,
         imageUrl: result.imageUrl,
-        image2: result.rawData['image2']?.toString() ?? 'https://via.placeholder.com/400x200',
-        image3: result.rawData['image3']?.toString() ?? 'https://via.placeholder.com/400x200',
+        image2: result.rawData['image2']?.toString() ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+        image3: result.rawData['image3']?.toString() ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         image4: result.rawData['image4']?.toString(),
         name: result.title, // Using title as name since it's required
         title: result.title,

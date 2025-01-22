@@ -390,13 +390,13 @@ class Business {
   factory Business.fromJson(Map<String, dynamic> json) {
     return Business(
       imageUrl:
-      validateUrl(json['image1']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image2:
-      validateUrl(json['image2']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['image2']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image3:
-      validateUrl(json['image3']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['image3']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image4:
-      validateUrl(json['image4']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['image4']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       name: json['name']?.toString() ?? 'N/A',
       id: json['id']?.toString() ?? 'N/A',
       industry: json['industry']?.toString(),
@@ -423,9 +423,9 @@ class Business {
       topSelling: json['top_selling']?.toString() ?? 'N/A',
       // user: json['user']['id'].toString(),
       businessDocument:
-      validateUrl(json['doc1']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['doc1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       businessProof:
-      validateUrl(json['proof1']) ?? 'https://via.placeholder.com/400x200',
+      validateUrl(json['proof1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
     );
   }
   static String? validateUrl(String? urls) {

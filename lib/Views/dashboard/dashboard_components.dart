@@ -109,7 +109,7 @@
 //         images.addAll(advisorProfile.businessPhotos!);
 //       }
 //
-//       return images.isNotEmpty ? images : ['https://via.placeholder.com/400x200'];
+//       return images.isNotEmpty ? images : ['https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM='];
 //     } else if (widget.type.toLowerCase() == "franchise") {
 //       final franchiseProfile = widget.profile as FranchiseExplr;
 //       return [
@@ -1193,7 +1193,7 @@ class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
         images.addAll(advisorProfile.businessPhotos!);
       }
 
-      return images.isNotEmpty ? images : ['https://via.placeholder.com/400x200'];
+      return images.isNotEmpty ? images : ['https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM='];
     } else if (widget.type.toLowerCase() == "franchise") {
       final franchiseProfile = widget.profile as FranchiseExplr;
       return [
