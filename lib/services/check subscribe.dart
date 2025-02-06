@@ -72,34 +72,29 @@ class CheckSubscription {
         Uri.parse(ApiList.checkSubscribed!),
         headers: {
           'Content-Type': 'application/json',
-          'token':token
+          'token': token
         },
         body: json.encode({
-          'id':id,
+          'id': id,
           'transaction_id': transactionId,
         }),
       );
       print('Post Response: ${response.statusCode} - ${response.body}');
 
       if (response.statusCode == 200) {
-        // Assuming the API returns a success status or a boolean
         var responseBody = json.decode(response.body);
-        return responseBody['success'] ?? false;
+        // Check for 'status' instead of 'success'
+        return responseBody['status'] ?? false;
       } else {
         debugPrint('Failed to post transaction details: ${response.statusCode}');
         return false;
       }
-    } on SocketException catch (e) {
-      debugPrint('SocketException: ${e.message}');
-      return false;
-    } on http.ClientException catch (e) {
-      debugPrint('ClientException: ${e.message}');
-      return false;
     } catch (e) {
       debugPrint('Unexpected error: $e');
       return false;
     }
   }
+
 
 
   static Future<Map<String, dynamic>> checkfetchSubscription(String type) async {

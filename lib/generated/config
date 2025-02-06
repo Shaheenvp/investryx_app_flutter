@@ -1,0 +1,11 @@
+class AppConfig {
+  static const String razorpayKeyProd = String.fromEnvironment('RAZORPAY_KEY_PROD', defaultValue: '');
+  static const String razorpayKeyTest = String.fromEnvironment('RAZORPAY_KEY_TEST', defaultValue: '');
+
+  // Use this getter to determine which key to use based on environment
+  static String get razorpayKey {
+    // You can add more sophisticated environment detection here
+    const bool isProduction = bool.fromEnvironment('dart.vm.product');
+    return isProduction ? razorpayKeyProd : razorpayKeyTest;
+  }
+}

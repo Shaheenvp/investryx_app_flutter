@@ -5,8 +5,7 @@ import 'package:get/get.dart';
 import 'package:project_emergio/Views/On-board%20Screens/splash.dart';
 import 'package:project_emergio/firebase_options.dart';
 import 'Views/chat_screens/websocket integration.dart';
-import 'demo.dart';
-import 'demo2.dart';
+import 'Widgets/inapp_messgae_widget.dart';
 import 'generated/constants.dart';
 
 
@@ -30,8 +29,10 @@ void main() async {
   await WebSocketManager().connect();
 
 
+
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -43,20 +44,34 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return GetMaterialApp(
-          title: 'Investryx',
-          theme: ThemeData(
-            // textTheme: GoogleFonts.poppinsTextTheme(),
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-            scaffoldBackgroundColor: backgroundColor,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: backgroundColor,
-            ),
-          ),
-          navigatorKey: navigatorKey,
-          home: SplashScreen(),
+        return MaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorKey: NotificationService.navigatorKey,
+          builder: (context, child) {
+            return Material(
+              type: MaterialType.transparency,
+              child: Overlay(
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (context) => child ?? const SizedBox(),
+                  ),
+                ],
+              ),
+            );
+          },
+          home: GetMaterialApp(
+            title: 'Investryx',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+              scaffoldBackgroundColor: backgroundColor,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: backgroundColor,
+              ),
+            ),
+            home: SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          ),
         );
       },
     );

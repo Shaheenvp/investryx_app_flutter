@@ -988,9 +988,11 @@ import 'package:project_emergio/Widgets/custom_funtions.dart';
 import 'package:project_emergio/controller/wishlist%20controller.dart';
 import 'package:project_emergio/generated/constants.dart';
 import 'package:project_emergio/models/all%20profile%20model.dart';
+import '../../Widgets/report_widget.dart';
 import '../../services/chatUserCheck.dart';
 import '../../services/check subscribe.dart';
 import '../../services/inbox service.dart';
+import '../../services/report_post_service.dart';
 
 class FranchiseDetailPage extends StatefulWidget {
   @override
@@ -1196,6 +1198,28 @@ class _FranchiseDetailPageState extends State<FranchiseDetailPage> {
                   ),
                 ),
                 SizedBox(height: 25.h),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ReportButton(
+                    onSubmit: (String reason, String reasonType, String id) async {
+                      try {
+                        if (id.isEmpty) {
+                          throw Exception('Post ID cannot be empty');
+                        }
+
+                        await ReportPost.reportPost(
+                          reason: reason,
+                          reasonType: reasonType,
+                          postId: widget.franchise!.id.toString(),
+                        );
+                        return true;
+                      } catch (e) {
+                        throw e;
+                      }
+                    }, postId: widget.id.toString(),
+                  ),
+                ),
+
               ],
             ),
           ),

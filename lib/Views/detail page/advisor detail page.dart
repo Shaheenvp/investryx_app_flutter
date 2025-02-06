@@ -565,7 +565,9 @@ import 'package:project_emergio/services/testimonial/testimonial%20get.dart';
 import 'package:project_emergio/Views/chat_screens/chat%20screen.dart';
 import 'package:project_emergio/Views/pricing%20screen.dart';
 
+import '../../Widgets/report_widget.dart';
 import '../../services/recommended ads.dart';
+import '../../services/report_post_service.dart';
 
 class AdvisorDetailPage extends StatefulWidget {
   final AdvisorExplr? advisor;
@@ -792,6 +794,27 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage> with SingleTicker
           ),
         ),
       ),
+      actions: [
+        ReportButton(
+          onSubmit: (String reason, String reasonType, String id) async {
+            try {
+              if (id.isEmpty) {
+                throw Exception('Post ID cannot be empty');
+              }
+
+              await ReportPost.reportPost(
+                reason: reason,
+                reasonType: reasonType,
+                postId: widget.advisor!.id.toString(),
+              );
+              return true;
+            } catch (e) {
+              throw e;
+            }
+          }, postId: widget.advisor!.id.toString(),
+        ),
+
+      ],
     );
   }
 

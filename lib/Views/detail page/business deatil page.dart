@@ -930,6 +930,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -943,6 +944,9 @@ import 'package:project_emergio/models/all%20profile%20model.dart';
 import 'package:project_emergio/services/chatUserCheck.dart';
 import 'package:project_emergio/services/check%20subscribe.dart';
 import 'package:project_emergio/services/inbox%20service.dart';
+
+import '../../Widgets/report_widget.dart';
+import '../../services/report_post_service.dart';
 
 class BusinessDetailPage extends StatefulWidget {
   @override
@@ -1135,6 +1139,28 @@ class _BusinessDetailPageState extends State<BusinessDetailPage> {
                   ),
                 ),
                 SizedBox(height: 10.h),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ReportButton(
+                    onSubmit: (String reason, String reasonType, String id) async {
+                      try {
+                        if (id.isEmpty) {
+                          throw Exception('Post ID cannot be empty');
+                        }
+
+                        await ReportPost.reportPost(
+                          reason: reason,
+                          reasonType: reasonType,
+                          postId: widget.buisines!.id.toString(),
+                        );
+                        return true;
+                      } catch (e) {
+                        throw e;
+                      }
+                    }, postId: widget.id.toString(),
+                  ),
+                ),
+
               ],
             ),
           ),
@@ -1232,6 +1258,10 @@ class _BusinessDetailPageState extends State<BusinessDetailPage> {
   }
 
   Widget _buildAdditionalInfoSection() {
+    DateTime parsedDateTime = DateTime.parse(widget.buisines!.postedTime);
+    String formattedDateTime = '${DateFormat("dd-MM-yyyy").format(parsedDateTime)}';
+
+
     return Padding(
       padding: EdgeInsets.all(16.w),
       child: Column(
@@ -1244,7 +1274,7 @@ class _BusinessDetailPageState extends State<BusinessDetailPage> {
           _buildInfoRow('Facilities', '${widget.buisines!.facility}'),
           _buildInfoRow('Income Sources', '${widget.buisines!.income_source}'),
           _buildInfoRow('Reason for Sale', '${widget.buisines!.reason}'),
-          _buildInfoRow('Posted Time', '${widget.buisines!.postedTime}'),
+          _buildInfoRow('Posted Time', formattedDateTime),
           _buildInfoRow('Top Selling', '${widget.buisines!.topSelling}'),
         ],
       ),

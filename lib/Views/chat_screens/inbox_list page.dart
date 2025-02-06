@@ -4,9 +4,12 @@ import 'dart:developer';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_emergio/Views/chat_screens/websocket%20integration.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../Widgets/inapp_messgae_widget.dart';
 import '../../services/chatUserCheck.dart';
 import '../../services/inbox service.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -23,10 +26,10 @@ class _InboxListScreenState extends State<InboxListScreen>
     with SingleTickerProviderStateMixin, RouteAware {
   final ScrollController _scrollController = ScrollController();
   final StreamController<List<InboxItems>> _inboxController =
-  StreamController<List<InboxItems>>.broadcast();
+      StreamController<List<InboxItems>>.broadcast();
   final TextEditingController _searchController = TextEditingController();
-  static final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
+  static final RouteObserver<PageRoute> routeObserver =
+      RouteObserver<PageRoute>();
 
   List<InboxItems>? _inboxData;
   List<InboxItems> _filteredInboxData = [];
@@ -82,21 +85,22 @@ class _InboxListScreenState extends State<InboxListScreen>
         }
 
         _filteredInboxData = _inboxData?.where((item) {
-          final bool isFirstPerson = chatUserId ==
-              (item.first_id != null ? int.parse(item.first_id!) : null);
+              final bool isFirstPerson = chatUserId ==
+                  (item.first_id != null ? int.parse(item.first_id!) : null);
 
-          final String displayName = isFirstPerson
-              ? (item.second_name ?? '').toLowerCase()
-              : (item.first_name ?? '').toLowerCase();
+              final String displayName = isFirstPerson
+                  ? (item.second_name ?? '').toLowerCase()
+                  : (item.first_name ?? '').toLowerCase();
 
-          final String message = (item.message ?? '').toLowerCase();
-          final String postTitle = (item.post?.title ?? '').toLowerCase();
-          final String searchLower = query.toLowerCase();
+              final String message = (item.message ?? '').toLowerCase();
+              final String postTitle = (item.post?.title ?? '').toLowerCase();
+              final String searchLower = query.toLowerCase();
 
-          return displayName.contains(searchLower) ||
-              message.contains(searchLower) ||
-              postTitle.contains(searchLower);
-        }).toList() ?? [];
+              return displayName.contains(searchLower) ||
+                  message.contains(searchLower) ||
+                  postTitle.contains(searchLower);
+            }).toList() ??
+            [];
       });
     });
   }
@@ -119,8 +123,8 @@ class _InboxListScreenState extends State<InboxListScreen>
         WebSocketManager().messageStream.listen(_handleWebSocketMessage);
     _connectionSubscription =
         WebSocketManager().connectionStream.listen((connected) {
-          if (mounted) setState(() {});
-        });
+      if (mounted) setState(() {});
+    });
   }
 
   Future<void> _fetchInboxData() async {
@@ -155,6 +159,82 @@ class _InboxListScreenState extends State<InboxListScreen>
     }
   }
 
+  // void _handleWebSocketMessage(dynamic message) {
+  //   if (!mounted) return;
+  //
+  //   try {
+  //     final messageData = message is String
+  //         ? jsonDecode(message)
+  //         : message as Map<String, dynamic>;
+  //
+  //     if (messageData['type'] == 'pong') return;
+  //     if (messageData['type'] != 'room_update') return;
+  //
+  //     final roomData = messageData['room'] as Map<String, dynamic>?;
+  //     if (roomData == null) return;
+  //
+  //     final isFirstPerson =
+  //         chatUserId == int.parse(roomData['first_person'].toString());
+  //
+  //     final totalUnread = roomData['total_unread'] ?? 0;
+  //     final unreadMessages = roomData['unread_messages'] ?? 0;
+  //
+  //     final unreadFirst =
+  //     isFirstPerson ? unreadMessages : totalUnread - unreadMessages;
+  //     final unreadSecond =
+  //     isFirstPerson ? totalUnread - unreadMessages : unreadMessages;
+  //
+  //     Map<String, dynamic> formattedData = {
+  //       'id': roomData['id'],
+  //       'first_person': {
+  //         'id': roomData['first_person'],
+  //         'first_name': roomData['first_name'],
+  //         'image': roomData['first_image'],
+  //         'username': null,
+  //         'is_active': roomData['active'] ?? false,
+  //         'inactive_from': roomData['last_seen'] ?? 'N/A'
+  //       },
+  //       'second_person': {
+  //         'id': roomData['second_person'],
+  //         'first_name': roomData['second_name'],
+  //         'image': roomData['second_image'],
+  //         'username': null,
+  //         'is_active': roomData['active'] ?? false,
+  //         'inactive_from': roomData['last_seen'] ?? 'N/A'
+  //       },
+  //       'last_msg': roomData['last_msg'],
+  //       'updated': roomData['updated'],
+  //       'unread_messages_first': unreadFirst,
+  //       'unread_messages_second': unreadSecond
+  //     };
+  //
+  //     final newItem = InboxItems.fromJson(formattedData);
+  //
+  //
+  //     setState(() {
+  //       _inboxData ??= [];
+  //
+  //       final existingIndex = _inboxData!.indexWhere((item) =>
+  //       item.id == newItem.id ||
+  //           (item.first_id == newItem.first_id &&
+  //               item.second_id == newItem.second_id) ||
+  //           (item.first_id == newItem.second_id &&
+  //               item.second_id == newItem.first_id));
+  //
+  //       if (existingIndex != -1) {
+  //         _inboxData!.removeAt(existingIndex);
+  //       }
+  //
+  //       _inboxData!.insert(0, newItem);
+  //       _handleSearch(_searchController.text); // Refresh search results
+  //       _inboxController.add(_inboxData!);
+  //     });
+  //   } catch (e, stackTrace) {
+  //     log('Error in _handleWebSocketMessage: $e');
+  //     log('Stack trace: $stackTrace');
+  //   }
+  // }
+
   void _handleWebSocketMessage(dynamic message) {
     if (!mounted) return;
 
@@ -163,71 +243,175 @@ class _InboxListScreenState extends State<InboxListScreen>
           ? jsonDecode(message)
           : message as Map<String, dynamic>;
 
-      if (messageData['type'] == 'pong') return;
-      if (messageData['type'] != 'room_update') return;
+      debugPrint('🔹 Received WebSocket message: ${jsonEncode(messageData)}');
 
-      final roomData = messageData['room'] as Map<String, dynamic>?;
-      if (roomData == null) return;
+      if (messageData['type'] == 'pong') {
+        debugPrint('✅ Pong message received (ignoring)');
+        return;
+      }
 
-      final isFirstPerson =
-          chatUserId == int.parse(roomData['first_person'].toString());
+      if (messageData['type'] == 'room_update') {
+        final roomData = messageData['room'] as Map<String, dynamic>?;
 
-      final totalUnread = roomData['total_unread'] ?? 0;
-      final unreadMessages = roomData['unread_messages'] ?? 0;
-
-      final unreadFirst =
-      isFirstPerson ? unreadMessages : totalUnread - unreadMessages;
-      final unreadSecond =
-      isFirstPerson ? totalUnread - unreadMessages : unreadMessages;
-
-      Map<String, dynamic> formattedData = {
-        'id': roomData['id'],
-        'first_person': {
-          'id': roomData['first_person'],
-          'first_name': roomData['first_name'],
-          'image': roomData['first_image'],
-          'username': null,
-          'is_active': roomData['active'] ?? false,
-          'inactive_from': roomData['last_seen'] ?? 'N/A'
-        },
-        'second_person': {
-          'id': roomData['second_person'],
-          'first_name': roomData['second_name'],
-          'image': roomData['second_image'],
-          'username': null,
-          'is_active': roomData['active'] ?? false,
-          'inactive_from': roomData['last_seen'] ?? 'N/A'
-        },
-        'last_msg': roomData['last_msg'],
-        'updated': roomData['updated'],
-        'unread_messages_first': unreadFirst,
-        'unread_messages_second': unreadSecond
-      };
-
-      final newItem = InboxItems.fromJson(formattedData);
-
-      setState(() {
-        _inboxData ??= [];
-
-        final existingIndex = _inboxData!.indexWhere((item) =>
-        item.id == newItem.id ||
-            (item.first_id == newItem.first_id &&
-                item.second_id == newItem.second_id) ||
-            (item.first_id == newItem.second_id &&
-                item.second_id == newItem.first_id));
-
-        if (existingIndex != -1) {
-          _inboxData!.removeAt(existingIndex);
+        if (roomData == null) {
+          debugPrint('⚠️ Room update received, but data is null');
+          return;
         }
 
-        _inboxData!.insert(0, newItem);
-        _handleSearch(_searchController.text); // Refresh search results
-        _inboxController.add(_inboxData!);
-      });
+        debugPrint('📢 Room update received: ${roomData.toString()}');
+
+        final int? firstPersonId = roomData['first_person'] is int
+            ? roomData['first_person']
+            : int.tryParse(roomData['first_person']?.toString() ?? '');
+        final int? secondPersonId = roomData['second_person'] is int
+            ? roomData['second_person']
+            : int.tryParse(roomData['second_person']?.toString() ?? '');
+
+        if (firstPersonId == null || secondPersonId == null) {
+          debugPrint('❌ Invalid user IDs in room data!');
+          return;
+        }
+
+        final bool isFirstPerson = chatUserId != null && chatUserId == firstPersonId;
+
+        final int totalUnread = roomData['total_unread'] ?? 0;
+        final int unreadMessages = roomData['unread_messages'] ?? 0;
+        final int unreadFirst = isFirstPerson ? unreadMessages : totalUnread - unreadMessages;
+        final int unreadSecond = isFirstPerson ? totalUnread - unreadMessages : unreadMessages;
+
+        Map<String, dynamic> formattedData = {
+          'id': roomData['id'],
+          'first_person': {
+            'id': firstPersonId,
+            'first_name': roomData['first_name'],
+            'image': roomData['first_image'],
+            'is_active': roomData['active'] ?? false,
+            'inactive_from': roomData['last_seen'] ?? 'N/A'
+          },
+          'second_person': {
+            'id': secondPersonId,
+            'first_name': roomData['second_name'],
+            'image': roomData['second_image'],
+            'is_active': roomData['active'] ?? false,
+            'inactive_from': roomData['last_seen'] ?? 'N/A'
+          },
+          'last_msg': roomData['last_msg'],
+          'updated': roomData['updated'],
+          'unread_messages_first': unreadFirst,
+          'unread_messages_second': unreadSecond,
+          'total_messages': roomData['total_messages'] ?? 0,
+        };
+
+        final newItem = InboxItems.fromJson(formattedData);
+
+        setState(() {
+          _inboxData ??= [];
+
+          final existingIndex = _inboxData!.indexWhere((item) =>
+          item.id == newItem.id ||
+              (item.first_id == newItem.first_id && item.second_id == newItem.second_id) ||
+              (item.first_id == newItem.second_id && item.second_id == newItem.first_id));
+
+          if (existingIndex != -1) {
+            _inboxData!.removeAt(existingIndex);
+          }
+
+          _inboxData!.insert(0, newItem);
+
+          if (_searchController.text.isNotEmpty) {
+            _handleSearch(_searchController.text);
+          }
+
+          _inboxController.add(_inboxData!);
+
+          // 🛑 Prevent self-notifications
+          final bool isNotSender = chatUserId != null && (roomData['sender_id'].toString() != chatUserId.toString());
+
+          debugPrint('📌 isNotSender: $isNotSender');
+
+          // Prevent notifications if the user is on the chat screen already
+          final currentRoute = Get.currentRoute;
+          if (isNotSender && currentRoute != '/chat') {
+            try {
+              final senderName = isFirstPerson
+                  ? roomData['second_name']
+                  : roomData['first_name'];
+              final senderImage = isFirstPerson
+                  ? roomData['second_image']
+                  : roomData['first_image'];
+
+              NotificationService().showNotification(
+                senderName: senderName ?? 'User',
+                message: roomData['last_msg'],
+                senderImage: senderImage,
+                onTap: () {
+                  // Only navigate when the user taps the notification
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        roomId: roomData['id'].toString(),
+                        name: senderName ?? 'User',
+                        number: isFirstPerson
+                            ? roomData['second_number'] ?? ''
+                            : roomData['first_number'] ?? '',
+                        lastActive: roomData['last_seen'] ?? 'N/A',
+                        isActive: roomData['active'] ?? false,
+                        imageUrl: senderImage,
+                        chatUserId: this.chatUserId,
+                        postId: roomData['post_id'],
+                        entityType: roomData['entity_type'],
+                      ),
+                    ),
+                  );
+                },
+              );
+            } catch (e) {
+              debugPrint('⚠️ Error showing notification: $e');
+            }
+          }
+        });
+      }
     } catch (e, stackTrace) {
-      log('Error in _handleWebSocketMessage: $e');
-      log('Stack trace: $stackTrace');
+      debugPrint('❌ Error in handleWebSocketMessage: $e');
+      debugPrint('🛠 Stack trace: $stackTrace');
     }
+  }
+
+  void _handleNewMessageNotification(Map<String, dynamic> messageData) {
+    final message = messageData['message'] as Map<String, dynamic>?;
+    if (message == null) return;
+
+    // Only show notification if current user is NOT the sender
+    if (message['sender_id'].toString() != chatUserId.toString()) {
+      // Show notification only if user is not in the same chat room
+      if (Get.currentRoute != '/chat' ||
+          Get.parameters['roomId'] != message['room_id'].toString()) {
+        _showMessageNotification(
+            message['sender_name'],
+            message['content'],
+            message['sender_image'],
+            message['room_id']
+        );
+      }
+    }
+  }
+
+  void _showMessageNotification(
+    String senderName,
+    String message,
+    String? senderImage,
+    dynamic roomId,
+  ) {
+    NotificationService().showNotification(
+      senderName: senderName,
+      message: message,
+      senderImage: senderImage,
+      onTap: () {
+        // Navigate to chat room when notification is tapped
+        Get.toNamed('/chat', parameters: {'roomId': roomId.toString()});
+      },
+    );
   }
 
   @override
@@ -260,7 +444,8 @@ class _InboxListScreenState extends State<InboxListScreen>
                   return SliverFillRemaining(child: _buildEmptyState());
                 }
 
-                final displayData = _isSearching ? _filteredInboxData : snapshot.data!;
+                final displayData =
+                    _isSearching ? _filteredInboxData : snapshot.data!;
 
                 if (_isSearching && displayData.isEmpty) {
                   return SliverFillRemaining(child: _buildNoSearchResults());
@@ -268,7 +453,8 @@ class _InboxListScreenState extends State<InboxListScreen>
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (context, index) => _buildListItem(displayData[index], index),
+                    (context, index) =>
+                        _buildListItem(displayData[index], index),
                     childCount: displayData.length,
                   ),
                 );
@@ -314,20 +500,21 @@ class _InboxListScreenState extends State<InboxListScreen>
           ),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
-            icon: Icon(
-              Icons.clear,
-              color: Colors.grey[400],
-              size: 20.r,
-            ),
-            onPressed: () {
-              _searchController.clear();
-              _handleSearch('');
-              FocusScope.of(context).unfocus();
-            },
-          )
+                  icon: Icon(
+                    Icons.clear,
+                    color: Colors.grey[400],
+                    size: 20.r,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    _handleSearch('');
+                    FocusScope.of(context).unfocus();
+                  },
+                )
               : null,
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         ),
       ),
     );
@@ -388,11 +575,19 @@ class _InboxListScreenState extends State<InboxListScreen>
   }
 
   Widget _buildConversationTile(InboxItems conversation) {
-    final bool isFirstPerson = chatUserId == (conversation.first_id != null ? int.parse(conversation.first_id!) : null);
-    final String displayName = isFirstPerson ? conversation.second_name : conversation.first_name;
+    final bool isFirstPerson = chatUserId ==
+        (conversation.first_id != null
+            ? int.parse(conversation.first_id!)
+            : null);
+    final String displayName =
+        isFirstPerson ? conversation.second_name : conversation.first_name;
     final String displayImage = conversation.post?.image1 ??
-        (isFirstPerson ? conversation.second_image ?? '' : conversation.first_image ?? '');
-    final int unreadCount = isFirstPerson ? conversation.unread_messages_first : conversation.unread_messages_second;
+        (isFirstPerson
+            ? conversation.second_image ?? ''
+            : conversation.first_image ?? '');
+    final int unreadCount = isFirstPerson
+        ? conversation.unread_messages_first
+        : conversation.unread_messages_second;
     final bool hasUnread = unreadCount > 0;
 
     return Container(
@@ -411,9 +606,10 @@ class _InboxListScreenState extends State<InboxListScreen>
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.r),
         child: BackdropFilter(
-          filter: hasUnread ?
-          ColorFilter.mode(const Color(0xFFFFF8E7).withOpacity(0.95), BlendMode.srcOver) :
-          ColorFilter.mode(Colors.white, BlendMode.srcOver),
+          filter: hasUnread
+              ? ColorFilter.mode(
+                  const Color(0xFFFFF8E7).withOpacity(0.95), BlendMode.srcOver)
+              : ColorFilter.mode(Colors.white, BlendMode.srcOver),
           child: Container(
             padding: EdgeInsets.all(16.r),
             child: Row(
@@ -424,7 +620,8 @@ class _InboxListScreenState extends State<InboxListScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildHeader(displayName, conversation.time, hasUnread, unreadCount),
+                      _buildHeader(displayName, conversation.time, hasUnread,
+                          unreadCount),
                       if (conversation.post != null) ...[
                         SizedBox(height: 4.h),
                         _buildPostInfo(conversation.post!),
@@ -465,11 +662,11 @@ class _InboxListScreenState extends State<InboxListScreen>
           borderRadius: BorderRadius.circular(10.r),
           child: imageUrl.isNotEmpty
               ? Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) =>
-                _buildPlaceholderIcon(),
-          )
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildPlaceholderIcon(),
+                )
               : _buildPlaceholderIcon(),
         ),
       ),
@@ -487,7 +684,8 @@ class _InboxListScreenState extends State<InboxListScreen>
     );
   }
 
-  Widget _buildHeader(String name, String time, bool hasUnread, int unreadCount) {
+  Widget _buildHeader(
+      String name, String time, bool hasUnread, int unreadCount) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -621,7 +819,6 @@ class _InboxListScreenState extends State<InboxListScreen>
       ),
     );
   }
-
 
   Widget _buildEmptyState() {
     return Center(
@@ -817,7 +1014,9 @@ class _InboxListScreenState extends State<InboxListScreen>
 
   void _navigateToChat(InboxItems conversation) {
     final bool isFirstPerson = chatUserId ==
-        (conversation.first_id != null ? int.parse(conversation.first_id!) : null);
+        (conversation.first_id != null
+            ? int.parse(conversation.first_id!)
+            : null);
     final bool isActive = isFirstPerson
         ? conversation.second_is_active
         : conversation.first_is_active;
@@ -832,21 +1031,23 @@ class _InboxListScreenState extends State<InboxListScreen>
         transitionDuration: const Duration(milliseconds: 300),
         pageBuilder: (context, animation, secondaryAnimation) =>
             FadeScaleTransition(
-              animation: animation,
-              child: ChatScreen(
-                roomId: conversation.id,
-                name: isFirstPerson ? conversation.second_name : conversation.first_name,
-                imageUrl: isFirstPerson
-                    ? conversation.second_image ?? ''
-                    : conversation.first_image ?? '',
-                chatUserId: chatUserId,
-                number: conversation.first_phone,
-                isActive: isActive,
-                lastActive: inactiveFrom,
-                postId: conversation.post?.id,
-                entityType: conversation.post?.entityType,
-              ),
-            ),
+          animation: animation,
+          child: ChatScreen(
+            roomId: conversation.id,
+            name: isFirstPerson
+                ? conversation.second_name
+                : conversation.first_name,
+            imageUrl: isFirstPerson
+                ? conversation.second_image ?? ''
+                : conversation.first_image ?? '',
+            chatUserId: chatUserId,
+            number: conversation.first_phone,
+            isActive: isActive,
+            lastActive: inactiveFrom,
+            postId: conversation.post?.id,
+            entityType: conversation.post?.entityType,
+          ),
+        ),
       ),
     ).then((_) {
       // Optional: You can also refresh here as a backup

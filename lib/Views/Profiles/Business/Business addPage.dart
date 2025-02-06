@@ -1145,6 +1145,39 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
     setTextFields();
   }
 
+  Future<List<File?>> prepareImageFiles(List<XFile>? photos) async {
+    List<File?> imageFiles = [];
+
+    if (photos != null && photos.isNotEmpty) {
+      for (var photo in photos) {
+        try {
+          final file = File(photo.path);
+          if (await file.exists()) {
+            final fileSize = await file.length();
+            // Check if file size is reasonable (e.g., less than 10MB)
+            if (fileSize > 0 && fileSize < 10 * 1024 * 1024) {
+              imageFiles.add(file);
+              print('Added image file: ${file.path} (${fileSize} bytes)');
+            } else {
+              print('Warning: File size invalid: ${fileSize} bytes');
+            }
+          } else {
+            print('Warning: File does not exist at path: ${photo.path}');
+          }
+        } catch (e) {
+          print('Error processing image file: $e');
+        }
+      }
+    }
+
+    // Pad with nulls to ensure we have exactly 4 slots
+    while (imageFiles.length < 4) {
+      imageFiles.add(null);
+    }
+
+    return imageFiles;
+  }
+
   void setTextFields() {
     if (widget.busines != null) {
       setState(() {
@@ -1198,11 +1231,39 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
   }
 
   Future<void> _pickBusinessPhotos() async {
-    final result = await ImagePicker().pickMultiImage();
-    if (result != null) {
-      setState(() {
-        _businessPhotos = result;
-      });
+    try {
+      final result = await ImagePicker().pickMultiImage();
+      if (result != null && result.isNotEmpty) {
+        for (var image in result) {
+          // Verify the file exists and print its details
+          final file = File(image.path);
+          final fileSize = await file.length();
+          print('Image selected:');
+          print('Path: ${file.path}');
+          print('Size: ${fileSize} bytes');
+          print('Exists: ${await file.exists()}');
+        }
+
+        setState(() {
+          _businessPhotos = result;
+        });
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${result.length} images selected successfully'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error picking images: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to select images. Please try again.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -1957,131 +2018,102 @@ the number of shareholder with their ownership %'''),
 
   void submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Check if business photos are selected
-      // if (_businessPhotos == null || _businessPhotos!.length < 4) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(
-      //         content: Text('Please select 4 business photos')),
-      //   );
-      //   return;
-      // }
-
-      // // Check if business documents are selected
-      // if (_businessDocuments == null || _businessDocuments!.isEmpty) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(
-      //         content: Text('Please select business documents')),
-      //   );
-      //   return;
-      // }
+      if (_businessPhotos == null || _businessPhotos!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select at least one business photo'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
 
       setState(() => _isSubmitting = true);
 
-      // Prepare files for upload
-      File? image1, image2, image3, image4, doc1, proof1;
+      try {
+        // Process image files
+        final imageFiles = await prepareImageFiles(_businessPhotos);
 
-      if (_businessPhotos != null && _businessPhotos!.length >= 4) {
-        image1 = File(_businessPhotos![0].path);
-        image2 = File(_businessPhotos![1].path);
-        image3 = File(_businessPhotos![2].path);
-        image4 = File(_businessPhotos![3].path);
-      }
+        // Verify we have at least one valid image
+        if (!imageFiles.any((file) => file != null)) {
+          throw Exception('No valid image files were processed');
+        }
 
-      if (_businessDocuments != null && _businessDocuments!.isNotEmpty) {
-        doc1 = File(_businessDocuments!.first.path!);
-      }
+        // Process document file
+        File? documentFile;
+        if (_businessDocuments != null &&
+            _businessDocuments!.isNotEmpty &&
+            _businessDocuments!.first.path != null) {
+          final docFile = File(_businessDocuments!.first.path!);
+          if (await docFile.exists()) {
+            documentFile = docFile;
+          }
+        }
 
-      if (_businessProof != null) {
-        proof1 = File(_businessProof!.path.toString());
-      }
+        // Process proof file
+        File? proofFile;
+        if (_businessProof != null && _businessProof!.path != null) {
+          final pFile = File(_businessProof!.path!);
+          if (await pFile.exists()) {
+            proofFile = pFile;
+          }
+        }
 
-      final response = await BusinessAddPage.businessAddPage(
-        context: context,
-        name: _controllers['businessName'] != null
-            ? _controllers['businessName']!.text
-            : "",
-        singleLineDescription: _controllers['single_desc'] != null
-            ? _controllers['single_desc']!.text
-            : "",
-        industry: _selectedIndustry,
-        establish_yr: _controllers['yearEstablished'] != null
-            ? _controllers['yearEstablished']!.text
-            : "",
-        description: _controllers['description'] != null
-            ? _controllers['description']!.text
-            : "",
-        address_1: _controllers['address1'] != null
-            ? _controllers['address1']!.text
-            : "",
-        address_2: _controllers['address2'] != null
-            ? _controllers['address2']!.text
-            : "",
-        state: _selectedState,
-        pin: _controllers['pin'] != null ? _controllers['pin']!.text : "",
-        city: _selectedCity,
-        employees: _controllers['numberOfEmployees'] != null
-            ? _controllers['numberOfEmployees']!.text
-            : "",
-        entity: _selectedBusinessEntityType,
-        avg_monthly: _controllers['averageMonthlySales'] != null
-            ? _controllers['averageMonthlySales']!.text
-            : "",
-        latest_yearly: _controllers['mostReportedYearlySales'] != null
-            ? _controllers['mostReportedYearlySales']!.text
-            : "",
-        ebitda:
-        _controllers['ebitda'] != null ? _controllers['ebitda']!.text : "",
-        rate: _controllers['askingPrice'] != null
-            ? _controllers['askingPrice']!.text
-            : "",
-        type_sale: _controllers['preferredType'] != null
-            ? _controllers['preferredType']!.text
-            : "",
-        url: _controllers['businessWebsite'] != null
-            ? _controllers['businessWebsite']!.text
-            : "",
-        top_selling: _controllers['topOfferings'] != null
-            ? _controllers['topOfferings']!.text
-            : "",
-        features: _controllers['keyFeatures'] != null
-            ? _controllers['keyFeatures']!.text
-            : "",
-        facility: _controllers['FacilityDetails'] != null
-            ? _controllers['FacilityDetails']!.text
-            : "",
-        reason:
-        _controllers['reason'] != null ? _controllers['reason']!.text : "",
-        income_source: _controllers['fundingDetails'] != null
-            ? _controllers['fundingDetails']!.text
-            : "",
-        image1: image1,
-        image2: image2,
-        image3: image3,
-        image4: image4,
-        doc1: doc1,
-        proof1: proof1,
-        minimumRange: _controllers['minimumRange'] != null
-            ? _controllers['minimumRange']!.text
-            : "",
-        maximumRange: _controllers['maximumRange'] != null
-            ? _controllers['maximumRange']!.text
-            : "",
-        askingPrice: _controllers['askingPrice'] != null
-            ? _controllers["askingPrice"]!.text
-            : "",
-      );
+        print('Submitting form with:');
+        print('Number of valid images: ${imageFiles.where((f) => f != null).length}');
+        print('Document file: ${documentFile?.path ?? 'None'}');
+        print('Proof file: ${proofFile?.path ?? 'None'}');
 
-      setState(() => _isSubmitting = false);
-      print(response);
+        // Submit the form
+        await BusinessAddPage.businessAddPage(
+          context: context,
+          name: _controllers['businessName']?.text ?? '',
+          singleLineDescription: _controllers['single_desc']?.text ?? '',
+          industry: _selectedIndustry,
+          establish_yr: _controllers['yearEstablished']?.text ?? '',
+          description: _controllers['description']?.text ?? '',
+          address_1: _controllers['address1']?.text ?? '',
+          address_2: _controllers['address2']?.text ?? '',
+          state: _selectedState,
+          pin: _controllers['pin']?.text ?? '',
+          city: _selectedCity,
+          employees: _controllers['numberOfEmployees']?.text ?? '',
+          entity: _selectedBusinessEntityType,
+          avg_monthly: _controllers['averageMonthlySales']?.text ?? '',
+          latest_yearly: _controllers['mostReportedYearlySales']?.text ?? '',
+          ebitda: _controllers['ebitda']?.text ?? '',
+          rate: _controllers['askingPrice']?.text ?? '',
+          type_sale: _controllers['preferredType']?.text ?? '',
+          url: _controllers['businessWebsite']?.text ?? '',
+          top_selling: _controllers['topOfferings']?.text ?? '',
+          features: _controllers['keyFeatures']?.text ?? '',
+          facility: _controllers['facilityDetails']?.text ?? '',
+          reason: _controllers['reason']?.text ?? '',
+          income_source: _controllers['fundingDetails']?.text ?? '',
+          image1: imageFiles[0],
+          image2: imageFiles[1],
+          image3: imageFiles[2],
+          image4: imageFiles[3],
+          doc1: documentFile,
+          proof1: proofFile,
+          minimumRange: _controllers['minimumRange']?.text ?? '',
+          maximumRange: _controllers['maximumRange']?.text ?? '',
+          askingPrice: _controllers['askingPrice']?.text ?? '',
+        );
 
-      if (response == true) {
+        print('Form submitted successfully');
+        setState(() => _isSubmitting = false);
         _controller.fetchListings("business");
         Navigator.pop(context);
-      } else {
+
+      } catch (e, stackTrace) {
+        print('Error submitting form: $e');
+        print('Stack trace: $stackTrace');
+        setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(milliseconds: 800),
-            content: Text('Failed to submit business information'),
+          SnackBar(
+            content: Text('Failed to submit: ${e.toString()}'),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -2091,112 +2123,87 @@ the number of shareholder with their ownership %'''),
   void editForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
-      if (widget.busines != null) {
-        await BusinessGet.updateBusiness(
-          id: widget.busines!.id,
-          name: _controllers["businessName"] != null
-              ? _controllers['businessName']!.text
-              : "",
-          singleLineDescription:
-          _controllers["Title"] != null ? _controllers['Title']!.text : "",
-          industry: _selectedIndustry != widget.busines!.industry
-              ? _selectedIndustry
-              : widget.busines!.industry,
-          establish_yr: _controllers["yearEstablished"] != null
-              ? _controllers['yearEstablished']!.text
-              : "",
-          description: _controllers["description"] != null
-              ? _controllers['description']!.text
-              : "",
-          address_1: _controllers["address1"] != null
-              ? _controllers['address1']!.text
-              : "",
-          address_2: _controllers["address2"] != null
-              ? _controllers['address2']!.text
-              : "",
-          state: _selectedState != widget.busines!.state
-              ? _selectedState
-              : widget.busines!.state,
-          pin: _controllers["pin"] != null ? _controllers['pin']!.text : "",
-          city: _selectedCity != widget.busines!.city
-              ? _selectedCity
-              : widget.busines!.city,
-          employees: _controllers["numberOfEmployees"] != null
-              ? _controllers['numberOfEmployees']!.text
-              : "",
-          entity: _selectedBusinessEntityType != ""
-              ? _selectedBusinessEntityType
-              : widget.busines!.entity,
-          avg_monthly: _controllers["averageMonthlySales"] != null
-              ? _controllers['averageMonthlySales']!.text
-              : "",
-          latest_yearly: _controllers["mostReportedYearlySales"] != null
-              ? _controllers['mostReportedYearlySales']!.text
-              : "",
-          ebitda: _controllers["ebitda"] != null
-              ? _controllers['ebitda']!.text
-              : "",
-          rate: _controllers["askingPrice"] != null
-              ? _controllers['askingPrice']!.text
-              : "",
-          type_sale: _controllers["preferredType"] != null
-              ? _controllers['preferredType']!.text
-              : "",
-          url: _controllers["businessWebsite"] != null
-              ? _controllers['businessWebsite']!.text
-              : "",
-          topSelling: _controllers["topOfferings"] != null
-              ? _controllers['topOfferings']!.text
-              : "",
-          features: _controllers["keyFeatures"] != null
-              ? _controllers['keyFeatures']!.text
-              : "",
-          facility: _controllers["facilityDetails"] != null
-              ? _controllers['facilityDetails']!.text
-              : "",
-          reason: _controllers["reason"] != null
-              ? _controllers['reason']!.text
-              : "",
-          income_source: _controllers["fundingDetails"] != null
-              ? _controllers['fundingDetails']!.text
-              : "",
-          image1:
-          _businessPhotos != null ? File(_businessPhotos![0].path) : null,
-          image2:
-          _businessPhotos != null ? File(_businessPhotos![1].path) : null,
-          image3:
-          _businessPhotos != null ? File(_businessPhotos![2].path) : null,
-          image4:
-          _businessPhotos != null ? File(_businessPhotos![3].path) : null,
-          doc1: _businessDocuments != null
-              ? File(_businessDocuments!.first.path!)
-              : null,
-          proof1: _businessProof != null && _businessProof!.path != null
-              ? File(_businessProof!.path!)
-              : null,
-          minimumRange: _controllers["minimumRange"] != null
-              ? _controllers['minimumRange']?.text
-              : "",
-          maximumRange: _controllers["maximumRange"] != null
-              ? _controllers['maximumRange']?.text
-              : "",
-          askingPrice: _controllers["askingPrice"] != null
-              ? _controllers["askingPrice"]?.text
-              : "",
-        );
 
+      try {
+        if (widget.busines != null) {
+          // Prepare image files with null safety
+          List<File?> images = [];
+          if (_businessPhotos != null) {
+            for (var photo in _businessPhotos!) {
+              images.add(File(photo.path));
+            }
+          }
+
+          // Pad the images array with nulls if less than 4 images
+          while (images.length < 4) {
+            images.add(null);
+          }
+
+          final response = await BusinessGet.updateBusiness(
+            id: widget.busines!.id,
+            name: _controllers["businessName"]?.text ?? "",
+            singleLineDescription: _controllers["Title"]?.text ?? "",
+            industry: _selectedIndustry != widget.busines!.industry
+                ? _selectedIndustry
+                : widget.busines!.industry,
+            establish_yr: _controllers["yearEstablished"]?.text ?? "",
+            description: _controllers["description"]?.text ?? "",
+            address_1: _controllers["address1"]?.text ?? "",
+            address_2: _controllers["address2"]?.text ?? "",
+            state: _selectedState != widget.busines!.state
+                ? _selectedState
+                : widget.busines!.state,
+            pin: _controllers["pin"]?.text ?? "",
+            city: _selectedCity != widget.busines!.city
+                ? _selectedCity
+                : widget.busines!.city,
+            employees: _controllers["numberOfEmployees"]?.text ?? "",
+            entity: _selectedBusinessEntityType != ""
+                ? _selectedBusinessEntityType
+                : widget.busines!.entity,
+            avg_monthly: _controllers["averageMonthlySales"]?.text ?? "",
+            latest_yearly: _controllers["mostReportedYearlySales"]?.text ?? "",
+            ebitda: _controllers["ebitda"]?.text ?? "",
+            rate: _controllers["askingPrice"]?.text ?? "",
+            type_sale: _controllers["preferredType"]?.text ?? "",
+            url: _controllers["businessWebsite"]?.text ?? "",
+            topSelling: _controllers["topOfferings"]?.text ?? "",
+            features: _controllers["keyFeatures"]?.text ?? "",
+            facility: _controllers["facilityDetails"]?.text ?? "",
+            reason: _controllers["reason"]?.text ?? "",
+            income_source: _controllers["fundingDetails"]?.text ?? "",
+            image1: images.length > 0 ? images[0] : null,
+            image2: images.length > 1 ? images[1] : null,
+            image3: images.length > 2 ? images[2] : null,
+            image4: images.length > 3 ? images[3] : null,
+            doc1: _businessDocuments?.isNotEmpty == true
+                ? File(_businessDocuments!.first.path!)
+                : null,
+            proof1: _businessProof?.path != null
+                ? File(_businessProof!.path!)
+                : null,
+            minimumRange: _controllers["minimumRange"]?.text ?? "",
+            maximumRange: _controllers["maximumRange"]?.text ?? "",
+            askingPrice: _controllers["askingPrice"]?.text ?? "",
+          );
+
+          // if (response == true) {
+          //   setState(() => _isSubmitting = false);
+          //   _controller.fetchListings("business");
+          //   Navigator.pop(context);
+          // } else {
+          //   throw Exception('Update failed');
+          // }
+        }
+      } catch (e) {
         setState(() => _isSubmitting = false);
-
-        _controller.fetchListings("business");
-        // Navigator.pop(context);
-      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            duration: Duration(milliseconds: 800),
-            content: Text('Failed to submit business information'),
+            content: Text('Failed to update business information: ${e.toString()}'),
+            duration: const Duration(seconds: 3),
           ),
         );
+      }
     }
-    }
-    }
+  }
 }

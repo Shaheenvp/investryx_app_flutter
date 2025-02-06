@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -479,7 +478,7 @@ class _FranchiseExplorePageState extends State<FranchiseExplorePage>
         isBackIcon: true,
         suffixIcon: Padding(
           padding: EdgeInsets.only(right: 16.0),
-          child: Icon(Icons.notifications, color: Colors.black),
+          // child: Icon(Icons.notifications, color: Colors.black),
         ),
       ),
       body: SafeArea(

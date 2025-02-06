@@ -5,7 +5,6 @@ import 'package:project_emergio/Views/Home/business_home.dart';
 import 'package:project_emergio/Views/Home/franchise_home_screen.dart';
 import 'package:project_emergio/Views/Home/investor_home_screen.dart';
 import 'package:project_emergio/Views/notification%20page.dart';
-import 'package:project_emergio/Views/pricing%20screen.dart';
 import 'package:project_emergio/Views/search%20page.dart';
 import 'package:project_emergio/Widgets/banner%20slider%20widget.dart';
 import 'package:project_emergio/Widgets/graph%20widget.dart';
@@ -19,81 +18,163 @@ import '../../Widgets/businessvaluecalculator_widget.dart';
 import '../../Widgets/chat_button_widget.dart';
 import '../../Widgets/recent activities_widget.dart';
 import '../../Widgets/recent_posts_widget.dart';
-import '../../Widgets/roi_homescreen_widget.dart';
+import '../../services/onesignal Id service.dart';
 import '../chat_screens/inbox_list page.dart';
+import '../pricing screen.dart';
 import 'advisor_home_screen.dart';
 import '../featured experts screen.dart';
 
-class InveStryxHomePage extends StatelessWidget {
+
+class InveStryxHomePage extends StatefulWidget {
+  const InveStryxHomePage({super.key});
+
+  @override
+  _InveStryxHomePageState createState() => _InveStryxHomePageState();
+}
+
+class _InveStryxHomePageState extends State<InveStryxHomePage> {
+  DateTime? _lastPressedAt;
+  OverlayEntry? _overlayEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeOnesignal();
+  }
+
+  Future<void> _initializeOnesignal() async {
+    try {
+      final result = await OnesignalService.onesignalId();
+      if (result == null) {
+        print('Failed to initialize OneSignal: null response');
+      } else if (!result) {
+        print('Failed to initialize OneSignal: false response');
+      } else {
+        print('Successfully initialized OneSignal');
+      }
+    } catch (e) {
+      print('Error initializing OneSignal: $e');
+    }
+  }
+
+  void _showToast(BuildContext context, String message) {
+    _overlayEntry?.remove();
+    _overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        bottom: MediaQuery.of(context).size.height * 0.1,
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[700],
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Text(
+                message,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+    Future.delayed(Duration(seconds: 2), () {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _overlayEntry?.remove();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width >= 768;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: _buildAppBar(context),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 70.h),
-        child: ChatFloatingActionButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => InboxListScreen()));
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        if (_lastPressedAt == null ||
+            DateTime.now().difference(_lastPressedAt!) > Duration(seconds: 2)) {
+          _lastPressedAt = DateTime.now();
+          _showToast(context, 'Press back again to exit');
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: _buildAppBar(context),
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(bottom: 70.h),
+          child: ChatFloatingActionButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => InboxListScreen()));
+            },
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: isTablet ? 10.h : 2.h),
-              _buildSearchBar(context),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLeftColumn(context),
-                  _buildRightColumn(context),
-                ],
-              ),
-              const BannerSlider(
-                type: "all",
-              ),
-              SizedBox(
-                height: 15.h,
-              ),
-              const AllRecentPosts(profile: ""),
-              SizedBox(
-                height: 14.h,
-              ),
-              const RecommendedAdsPage(
-                profile: "home",
-              ),
-              const FeatureExpertList(
-                isType: true,
-                profile: "home",
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
-              const BusinessToolsWidget(),
-              SizedBox(
-                height: 16.h,
-              ),
-              SizedBox(height: 400.h, child: InvestmentChart()),
-              // RoiHomeScreenWidget(),
-              SizedBox(
-                height: 16.h,
-              ),
-              SizedBox(height: 370.h, child: RecentActivitiesWidget()),
-              buildFooter(),
-              SizedBox(
-                height: 50.h,
-              ), // Increased bottom padding
-            ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: isTablet ? 10.h : 2.h),
+                _buildSearchBar(context),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLeftColumn(context),
+                    _buildRightColumn(context),
+                  ],
+                ),
+                const BannerSlider(
+                  type: "all",
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                const AllRecentPosts(profile: ""),
+                SizedBox(
+                  height: 14.h,
+                ),
+                const RecommendedAdsPage(
+                  profile: "home",
+                ),
+                const FeatureExpertList(
+                  isType: true,
+                  profile: "home",
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                const BusinessToolsWidget(),
+                SizedBox(
+                  height: 16.h,
+                ),
+                SizedBox(height: 400.h, child: InvestmentChart()),
+                SizedBox(
+                  height: 16.h,
+                ),
+                SizedBox(height: 370.h, child: RecentActivitiesWidget()),
+                buildFooter(),
+                SizedBox(
+                  height: 50.h,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
 
   Widget buildFooter() {
     return Container(
@@ -333,10 +414,10 @@ class InveStryxHomePage extends StatelessWidget {
         actions: [
           InkWell(
               onTap: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => PricingScreenNew()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PricingScreenNew()));
               },
               child: const Icon(Icons.workspace_premium, color: buttonColor)),
           SizedBox(width: 16.w),

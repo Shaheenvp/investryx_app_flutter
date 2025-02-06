@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,7 +10,6 @@ import '../../services/messages get service.dart';
 import 'attachment_handler.dart';
 import 'chat_screen_components.dart';
 import 'composer.dart';
-
 
 class ChatScreen extends StatefulWidget {
   final String roomId;
@@ -155,6 +155,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _handleNewMessage(Map<String, String> messageData) {
     setState(() {
       messages.insert(0, messageData);
+      print('full messagews   :   $messages');
       if (!_showScrollButton) {
         _scrollToBottom();
       } else {
@@ -166,7 +167,6 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _initializeWebSocketConnection() async {
     try {
       token = await _storage.read(key: 'token');
-
       if (token != null) {
         channel = WebSocketChannel.connect(
           Uri.parse('wss://test.investryx.com/${widget.roomId}?token=$token'),
@@ -174,52 +174,78 @@ class _ChatScreenState extends State<ChatScreen> {
 
         channel.stream.listen((message) {
           try {
+            debugPrint('🔹 WebSocket Raw Message: $message');
             final data = jsonDecode(message);
-            if (data['token'] != null && data['roomId'] == widget.roomId) {
-              Map<String, String> messageData = {
-                'sendedBy': (data['sendedBy'] ?? '').toString(),
-                'sendedTo': (data['sendedTo'] ?? '').toString(),
-                'time': data['time'] ?? DateTime.now().toIso8601String(),
-              };
 
-              switch (data['messageType']) {
-                case 'voice':
-                  messageData['audio'] = data['audio'].toString();
-                  messageData['duration'] = (data['duration'] ?? '0').toString();
-                  messageData['messageType'] = 'voice';
-                  messageData['message'] = 'Voice Message';
-                  break;
+            // Handle room_update type messages
+            if (data['type'] == 'room_update') {
+              debugPrint('📢 Room update received: ${data['room']}');
+              // Handle room update logic here
+              return;
+            }
 
-                case 'attachment':
-                  if (data['attachment'] != null) {
-                    messageData['messageType'] = 'attachment';
-                    messageData['attachment'] = jsonEncode(data['attachment']);
-                    messageData['message'] = 'Attachment';
-                  }
-                  break;
+            // Check if the message is for the current room
+            if (data['roomId']?.toString() != widget.roomId.toString()) {
+              return;
+            }
 
-                default:
-                  messageData['message'] = data['message'] ?? '';
-                  messageData['messageType'] = 'text';
-              }
+            // Create a standardized message format
+            Map<String, String> messageData = {
+              'sendedBy': (data['sendedBy'] ?? '').toString(),
+              'sendedTo': (data['sendedTo'] ?? '').toString(),
+              'time': data['time'] ?? DateTime.now().toIso8601String(),
+              'messageType': data['messageType'] ?? 'text',
+            };
 
-              _handleNewMessage(messageData);
+            // Handle different message types
+            switch (messageData['messageType']) {
+              case 'voice':
+                messageData['audio'] = data['audio']?.toString() ?? '';
+                messageData['duration'] = (data['duration'] ?? '0').toString();
+                messageData['message'] = 'Voice Message';
+                break;
+
+              case 'attachment':
+                if (data['attachment'] != null) {
+                  messageData['attachment'] = jsonEncode(data['attachment']);
+                  messageData['message'] = 'Attachment';
+                }
+                break;
+
+              case 'text':
+              default:
+                messageData['message'] = data['message']?.toString() ?? '';
+                break;
+            }
+
+            // Only process messages if they have content
+            if (messageData['message']?.isNotEmpty == true) {
+              setState(() {
+                messages.insert(0, messageData);
+                if (!_showScrollButton) {
+                  _scrollToBottom();
+                } else {
+                  _unreadCount++;
+                }
+              });
+              debugPrint('📩 Processed Message: $messageData');
             }
           } catch (e) {
-            print('Error processing WebSocket message: $e');
+            debugPrint('❌ Error processing WebSocket message: $e');
           }
         }, onError: (error) {
-          print('WebSocket Error: $error');
+          debugPrint('❌ WebSocket Error: $error');
           _showSnackBar('Connection error occurred');
         }, cancelOnError: false);
       } else {
         _showSnackBar('Token not found. Please login again.');
       }
     } catch (e) {
-      print('Error initializing WebSocket: $e');
+      debugPrint('❌ Error initializing WebSocket: $e');
       _showSnackBar('Failed to establish connection');
     }
   }
+
 
 
   Future<void> sendMessage() async {
@@ -228,11 +254,8 @@ class _ChatScreenState extends State<ChatScreen> {
       _showSnackBar('The message is empty');
     } else {
       if (token != null) {
-        final data = jsonEncode({
-          'token': token,
-          'message': message,
-          'roomId': widget.roomId
-        });
+        final data = jsonEncode(
+            {'token': token, 'message': message, 'roomId': widget.roomId});
 
         channel.sink.add(data);
         _messageController.clear();
@@ -242,6 +265,8 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
   }
+
+
 
   Future<void> _startVoiceMessage() async {
     if (!_isRecording) {
@@ -262,6 +287,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
   }
+
 
   void _startRecordingTimer() {
     _recordingTimer?.cancel();
@@ -369,7 +395,6 @@ class _ChatScreenState extends State<ChatScreen> {
             });
 
             channel.sink.add(data);
-
           } catch (e) {
             print('Error sending voice message: $e');
             _showSnackBar('Failed to send voice message');
@@ -490,14 +515,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: isLoading
                       ? ChatShimmerEffect()
                       : hasError
-                      ? ChatErrorState()
-                      : ChatMessagesList(
-                    messages: messages,
-                    scrollController: _scrollController,
-                    chatUserId: widget.chatUserId,
-                    onPlayVoiceMessage: _handleVoiceMessagePlay,
-                    currentlyPlayingPath: _currentlyPlayingPath,
-                  ),
+                          ? ChatErrorState()
+                          : ChatMessagesList(
+                              messages: messages,
+                              scrollController: _scrollController,
+                              chatUserId: widget.chatUserId,
+                              onPlayVoiceMessage: _handleVoiceMessagePlay,
+                              currentlyPlayingPath: _currentlyPlayingPath,
+                            ),
                 ),
                 ChatMessageComposer(
                   messageController: _messageController,
@@ -540,7 +565,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       });
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: primaryYellow,
                         borderRadius: BorderRadius.circular(20),
@@ -563,7 +589,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           if (_unreadCount > 0) ...[
                             const SizedBox(width: 4),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),

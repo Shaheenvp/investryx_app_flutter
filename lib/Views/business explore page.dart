@@ -67,13 +67,13 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
   String preference = '';
   bool isLoading = false;
   late TextEditingController minRnageController =
-  TextEditingController(text: rangeStarting);
+      TextEditingController(text: rangeStarting);
   late TextEditingController maxRangeContoller =
-  TextEditingController(text: rangeEnding);
+      TextEditingController(text: rangeEnding);
   late TextEditingController fromYearController =
-  TextEditingController(text: establishFrom);
+      TextEditingController(text: establishFrom);
   late TextEditingController toYearContoller =
-  TextEditingController(text: establishTo);
+      TextEditingController(text: establishTo);
 
   int _currentTab = 0;
   late TabController _tabController;
@@ -142,7 +142,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
       isLoading = false;
       if (result['success']) {
         final List<SearchResult> rawResults =
-        result['results'] as List<SearchResult>;
+            result['results'] as List<SearchResult>;
 
         searchResults =
             rawResults.where((item) => item.entityType == "business").toList();
@@ -280,7 +280,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
                             },
 
                             popupProps: PopupProps.menu(
-                              showSearchBox: true, // Enables the search box
+                              showSearchBox: true,
 
                               searchFieldProps: TextFieldProps(
                                 decoration: InputDecoration(
@@ -375,7 +375,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
                               BoxShadow(
                                   blurRadius: 3,
                                   color:
-                                  const Color.fromARGB(255, 200, 199, 199),
+                                      const Color.fromARGB(255, 200, 199, 199),
                                   offset: Offset(1, 1))
                             ],
                             borderRadius: BorderRadius.circular(10),
@@ -563,7 +563,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
                                     "Error", "Please choose any filter option");
                               } else {
                                 if ((rangeStarting != "" &&
-                                    rangeEnding != "") &&
+                                        rangeEnding != "") &&
                                     (int.parse(rangeStarting) >
                                         int.parse(rangeEnding))) {
                                   Get.snackbar(
@@ -628,7 +628,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
         isBackIcon: true,
         suffixIcon: Padding(
           padding: EdgeInsets.only(right: 16.0),
-          child: Icon(Icons.notifications, color: Colors.black),
+          // child: Icon(Icons.notifications, color: Colors.black),
         ),
       ),
       body: SafeArea(
@@ -702,43 +702,43 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
                     TabBarWidget(_tabController),
                     controller.isFilter.value == true
                         ? Expanded(
-                        child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                              Obx(() {
-                                return filterTab(
-                                    businessLists: controller
-                                        .recentBusinessInvestorLists,
-                                    tabName: "recent");
-                              }),
-                              Obx(() {
-                                return filterTab(
-                                    businessLists: controller
-                                        .featuredBusinessInvestorLists,
-                                    tabName: "featured");
-                              }),
-                              Obx(() {
-                                return filterTab(
-                                    businessLists: controller
-                                        .recommednedBusinessInvestorLists,
-                                    tabName: "recommended");
-                              }),
-                            ]))
+                            child: TabBarView(
+                                controller: _tabController,
+                                children: [
+                                Obx(() {
+                                  return filterTab(
+                                      businessLists: controller
+                                          .recentBusinessInvestorLists,
+                                      tabName: "recent");
+                                }),
+                                Obx(() {
+                                  return filterTab(
+                                      businessLists: controller
+                                          .featuredBusinessInvestorLists,
+                                      tabName: "featured");
+                                }),
+                                Obx(() {
+                                  return filterTab(
+                                      businessLists: controller
+                                          .recommednedBusinessInvestorLists,
+                                      tabName: "recommended");
+                                }),
+                              ]))
                         : Expanded(
-                      child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            BusinessGrid(
-                              tabName: "recent",
-                            ),
-                            BusinessGrid(
-                              tabName: "featured",
-                            ),
-                            BusinessGrid(
-                              tabName: "recommended",
-                            ),
-                          ]),
-                    ),
+                            child: TabBarView(
+                                controller: _tabController,
+                                children: [
+                                  BusinessGrid(
+                                    tabName: "recent",
+                                  ),
+                                  BusinessGrid(
+                                    tabName: "featured",
+                                  ),
+                                  BusinessGrid(
+                                    tabName: "recommended",
+                                  ),
+                                ]),
+                          ),
                   ],
                 );
               })),
@@ -802,106 +802,106 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
                 ),
               )
             else if (searchResults.isNotEmpty)
-                Column(
-                  children: searchResults.map((result) {
-                    return GestureDetector(
-                      onTap: () => _navigateToDetail(result, result.id),
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                result.imageUrl,
+              Column(
+                children: searchResults.map((result) {
+                  return GestureDetector(
+                    onTap: () => _navigateToDetail(result, result.id),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              result.imageUrl,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
                                 width: 100,
                                 height: 100,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      width: 100,
-                                      height: 100,
-                                      color: Colors.grey[300],
-                                      child: const Icon(Icons.error),
-                                    ),
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.error),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    result.title,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  result.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_on,
+                                        size: 16, color: Colors.grey[600]),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      result.location,
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  result.description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.grey[800],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: buttonColor.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    result.type,
                                     style: const TextStyle(
+                                      color: buttonColor,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.location_on,
-                                          size: 16, color: Colors.grey[600]),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        result.location,
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    result.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.grey[800],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: buttonColor.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      result.type,
-                                      style: const TextStyle(
-                                        color: buttonColor,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    );
-                  }).toList(),
-                ),
+                    ),
+                  );
+                }).toList(),
+              ),
           ]),
         ),
       ),
@@ -957,7 +957,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
 
   Widget filterTab(
       {required RxList<BusinessInvestorExplr> businessLists,
-        required String tabName}) {
+      required String tabName}) {
     if (tabName == "recent") {
       if (businessLists.isEmpty && controller.isLoading.value == true) {
         return _buildShimmerWidget();
@@ -1033,14 +1033,17 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
     final businessData = BusinessInvestorExplr(
         id: result.id,
         imageUrl: result.imageUrl,
-        image2: result.rawData['image2']?.toString() ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
-        image3: result.rawData['image3']?.toString() ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+        image2: result.rawData['image2']?.toString() ??
+            'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+        image3: result.rawData['image3']?.toString() ??
+            'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
         image4: result.rawData['image4']?.toString(),
         name: result.title, // Using title as name since it's required
         title: result.title,
         singleLineDescription: result.description,
         city: result.location,
-        postedTime: result.rawData['listed_on'] ?? DateTime.now().toIso8601String(),
+        postedTime:
+            result.rawData['listed_on'] ?? DateTime.now().toIso8601String(),
         topSelling: result.rawData['top_selling']?.toString() ?? 'N/A',
 
         // Optional fields
@@ -1072,8 +1075,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
         entityType: result.rawData['entity_type']?.toString() ?? '',
         preference: result.rawData['preference'] as List<dynamic>? ?? [],
         profileSummary: result.rawData['profile_summary']?.toString() ?? 'N/A',
-        askingPrice: result.rawData['asking_price']?.toString() ?? 'N/A'
-    );
+        askingPrice: result.rawData['asking_price']?.toString() ?? 'N/A');
 
     Navigator.push(
       context,
@@ -1085,6 +1087,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
       ),
     );
   }
+
 // Helper function to safely convert values to string
   String toStringValue(dynamic value) {
     if (value == null) return '';
@@ -1110,8 +1113,6 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
       },
     );
   }
-
-
 }
 
 class BusinessGrid extends StatefulWidget {
@@ -1243,7 +1244,6 @@ class _BusinessGridState extends State<BusinessGrid> {
       itemBuilder: (context, index) {
         final business = _businessLists[index];
         return BusinessCard(
-
           business: business,
         );
       },
@@ -1291,7 +1291,8 @@ class BusinessCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
                 image: DecorationImage(
-                  image: NetworkImage(business.imageUrl ?? 'assets/businessimg.png'),
+                  image: NetworkImage(
+                      business.imageUrl ?? 'assets/businessimg.png'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -1384,7 +1385,7 @@ class BusinessCard extends StatelessWidget {
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
+                        loadingProgress.expectedTotalBytes!
                     : null,
               ),
             ),

@@ -419,7 +419,7 @@ class _AdvisorExploreScreenState extends State<AdvisorExploreScreen>
         isBackIcon: true,
         suffixIcon: Padding(
           padding: EdgeInsets.only(right: 16.0),
-          child: Icon(Icons.notifications, color: Colors.black),
+          // child: Icon(Icons.notifications, color: Colors.black),
         ),),
       body: SafeArea(
         child: DefaultTabController(
