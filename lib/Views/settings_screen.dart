@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:project_emergio/Views/FAQ%20page.dart';
 import 'package:project_emergio/Views/Suggestion%20page.dart';
 import 'package:project_emergio/Views/contact%20us%20page.dart';
 import 'package:project_emergio/Views/manage%20profile%20screen.dart';
 import 'package:project_emergio/Views/pricing%20screen.dart';
 import 'package:project_emergio/Views/tutorial%20page.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'Auth Screens/ForgotPassword/change password.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -17,6 +19,41 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
+  static const String _notificationPrefKey = 'notifications_enabled';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationSettings();
+  }
+
+  // Load saved notification settings
+  Future<void> _loadNotificationSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _notificationsEnabled = prefs.getBool(_notificationPrefKey) ?? true;
+    });
+    // Sync the loaded setting with OneSignal
+    _updateOneSignalNotificationSettings(_notificationsEnabled);
+  }
+
+  // Update OneSignal notification settings
+  Future<void> _updateOneSignalNotificationSettings(bool enabled) async {
+    if (enabled) {
+      // Enable notifications
+      await OneSignal.Notifications.requestPermission(true);
+      await OneSignal.Notifications.clearAll();
+      await OneSignal.User.pushSubscription.optIn();
+    } else {
+      // Disable notifications
+      await OneSignal.Notifications.clearAll();
+      await OneSignal.User.pushSubscription.optOut();
+    }
+
+    // Save the setting
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_notificationPrefKey, enabled);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +101,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           builder: (context) => const ChangePasswordScreen()));
                 },
               ),
-              // _buildSettingsOption(
-              //   'Feedback',
-              //       () {
-              //     // Navigate to Feedback screen
-              //   },
-              // ),
               const SizedBox(height: 16),
 
               // Notifications Section
@@ -83,10 +114,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SwitchListTile(
                 title: const Text('Notifications'),
                 value: _notificationsEnabled,
-                onChanged: (bool value) {
+                onChanged: (bool value) async {
                   setState(() {
                     _notificationsEnabled = value;
                   });
+                  await _updateOneSignalNotificationSettings(value);
                 },
                 activeColor: const Color(0xffFFCC00),
               ),
@@ -103,10 +135,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildSettingsOption(
                 'Pricings',
                     () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>  PricingScreenNew()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>  PricingScreenNew()));
                 },
               ),
               _buildSettingsOption(

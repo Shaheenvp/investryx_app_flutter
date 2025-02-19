@@ -575,17 +575,17 @@ class _RecommendedAdsPageState extends State<RecommendedAdsPage> {
   double _getViewportFraction(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth >= 768) {
-      return 0.90; // Reduced from 0.85 for better tablet fit
+      return 0.90;
     }
-    return 0.95; // Original mobile
+    return 0.95;
   }
 
   double _getCarouselHeight(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth >= 768) {
-      return 165.h; // Reduced from 180.h for tablets
+      return 165.h;
     }
-    return 158.h; // Original mobile
+    return 158.h;
   }
 
 

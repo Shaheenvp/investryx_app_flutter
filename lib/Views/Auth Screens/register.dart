@@ -395,12 +395,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.trim().isEmpty) {
       return 'Please enter your name';
     }
-    final namePattern = RegExp(r'^[a-zA-Z]{1,20}$');
+    final namePattern = RegExp(r'^[a-zA-Z ]{1,20}$');
     if (!namePattern.hasMatch(value)) {
-      return 'Name must be alphabetic, without spaces, and up to 20 characters only';
+      return 'Name must contain only alphabets and spaces, and be up to 20 characters';
     }
     return null;
   }

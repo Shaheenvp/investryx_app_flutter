@@ -82,7 +82,7 @@ class LatestTransactions {
           'token': token, // Pass the token in the header
         },
       );
-      print(
+      log(
           'Response: fetch latest posts ${response.statusCode} - ${response.body}');
 
       if (response.statusCode == 200) {

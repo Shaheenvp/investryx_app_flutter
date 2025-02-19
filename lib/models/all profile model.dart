@@ -3,6 +3,7 @@ import 'package:project_emergio/services/api_list.dart';
 
 class BusinessInvestorExplr {
   final String id;
+  final bool? verified;
   final String imageUrl;
   final String image2;
   final String image3;
@@ -67,6 +68,7 @@ class BusinessInvestorExplr {
         required this.image3,
         required this.singleLineDescription,
         required this.title,
+        this.verified,
         this.image4,
         required this.name,
         this.industry,
@@ -116,6 +118,7 @@ class BusinessInvestorExplr {
         image4: validateUrl(json['image4']),
         name: json['name']?.toString() ?? 'N/A',
         title: json['title']?.toString() ?? 'N/A',
+      verified: json['verified']?? '',
         singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
         industry: json['industry']?.toString(),
         establish_yr: json['establish_yr']?.toString(),
@@ -184,6 +187,7 @@ class FranchiseExplr {
   final String image3;
   final String image4;
   final String id;
+  final bool? verified;
   final String brandName;
   final String title;
   final String singleLineDescription;
@@ -224,6 +228,7 @@ class FranchiseExplr {
         required this.city,
         required this.postedTime,
         required this.id,
+        this.verified,
         this.state,
         this.industry,
         this.description,
@@ -255,6 +260,7 @@ class FranchiseExplr {
     return FranchiseExplr(
       title: json['title']?.toString() ?? 'N/A',
       singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
+      verified: json['verified']?? '',
       imageUrl: validateUrl(json['image1']) ??
           'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image2: validateUrl(json['image2']) ??
@@ -364,6 +370,7 @@ class AdvisorExplr {
   final String imageUrl;
   final String? type;
   final String id;
+  final bool? verified;
   final String user;
   final String name;
   final String title;
@@ -373,18 +380,20 @@ class AdvisorExplr {
   final String postedTime;
   final String? state;
   final String? expertise;
+  final String? experience;
   final String? url;
   final String? contactNumber;
   final String? interest;
   final String? description;
-  final List<String>? brandLogo; // URLs of brand logos
-  final List<String>? businessPhotos; // URLs of business photos
-  final String? businessProof; // URL of business proof
-  final List<String>? businessDocuments; // URLs of business documents
+  final List<String>? brandLogo;
+  final List<String>? businessPhotos;
+  final String? businessProof;
+  final List<String>? businessDocuments;
 
   AdvisorExplr( {
     required this.imageUrl,
     required this.id,
+    this.verified,
     required this.user,
     required this.name,
     required this.location,
@@ -395,6 +404,7 @@ class AdvisorExplr {
     required this.singleLineDescription,
     required this.title,
     this.expertise,
+    this.experience,
     this.url,
     this.contactNumber,
     this.interest,
@@ -416,14 +426,16 @@ class AdvisorExplr {
       location: json['city'] ?? 'N/A',
       postedTime: json['listed_on'] ?? 'N/A',
       state: json['state'],
-      expertise: json['expertise'],
-      url: json['url'],
+      expertise: json['industry'],
+      experience: json['experience'],
+      url: json['email'],
       type: json["type"].toString(),
       contactNumber: json['number'],
       interest: json['interest'],
-      description: json['about'],
-      id: json['id']?.toString() ?? '', // Ensure id is a String
-      user: json['user']?.toString() ?? '', // Ensure id is a String
+      description: json['description'],
+      id: json['id']?.toString() ?? '',
+      verified: json['verified']?? '',
+      user: json['user']?.toString() ?? '',
       brandLogo: json['brandLogo'] != null
           ? List<String>.from(json['brandLogo'])
           : null,

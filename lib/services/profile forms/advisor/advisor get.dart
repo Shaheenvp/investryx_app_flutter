@@ -44,7 +44,7 @@ class AdvisorFetchPage {
           postedTime: json['listed_on'] ?? 'N/A',
           state: json['state'],
           expertise: json['expertise'],
-          url: json['url'],
+          url: json['email'],
           type: json['type']?.toString(),
           contactNumber: json['number'],
           interest: json['interest'],

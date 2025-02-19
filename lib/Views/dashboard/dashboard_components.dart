@@ -1122,6 +1122,16 @@ class ProfileHeaderWithSlider extends StatefulWidget {
 class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
   int activeIndex = 0;
 
+  bool _isVerified() {
+    if (widget.type.toLowerCase() == "advisor") {
+      return (widget.profile as AdvisorExplr).verified ?? false;
+    } else if (widget.type.toLowerCase() == "franchise") {
+      return (widget.profile as FranchiseExplr).verified ?? false;
+    } else {
+      return (widget.profile as BusinessInvestorExplr).verified ?? false;
+    }
+  }
+
   void _handleProfileSwitch(dynamic newProfile) {
     if (widget.onProfileChanged != null) {
       widget.onProfileChanged!(newProfile);
@@ -1234,6 +1244,34 @@ class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
     }
   }
 
+  void _showVerificationMessage(BuildContext context) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: MediaQuery.of(context).padding.bottom + 16,
+        left: 16,
+        right: 16,
+        child: Material(
+          elevation: 8,
+          borderRadius: BorderRadius.circular(10.r),
+          color: Colors.black87,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Text(
+              'Admin verification pending. Our team will review your profile and contact you within 24-48 hours',
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
+  }
 
 
   @override
@@ -1293,12 +1331,8 @@ class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
                       ),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
                         ProfileSwitcher(
                           profiles: widget.allProfiles,
                           onProfileSelected: _handleProfileSwitch,
@@ -1351,6 +1385,8 @@ class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
                   children: [
                     Expanded(
                       child: Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         _getDisplayName(),
                         style: AppTheme.titleText(lightTextColor).copyWith(
                           fontSize: 16.sp,
@@ -1358,33 +1394,42 @@ class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 2.h,
+                    GestureDetector(
+                      onTap: () {
+                        if (!_isVerified()) {
+                          _showVerificationMessage(context);
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _isVerified()
+                              ? _themeColor.withOpacity(0.1)
+                              : Colors.orange.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _isVerified() ? Icons.verified : Icons.pending_outlined,
+                              size: 12.sp,
+                              color: _isVerified() ? _themeColor : Colors.orange,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              _isVerified() ? 'Verified' : 'Pending',
+                              style: AppTheme.smallText(
+                                _isVerified() ? _themeColor : Colors.orange,
+                              ).copyWith(fontSize: 10.sp),
+                            ),
+                          ],
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: _themeColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.verified,
-                            size: 12.sp,
-                            color: _themeColor,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            'Verified',
-                            style: AppTheme.smallText(_themeColor)
-                                .copyWith(fontSize: 10.sp),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    )                  ],
                 ),
                 SizedBox(height: 8.h),
                 Row(
@@ -1726,6 +1771,8 @@ class _ProfileSwitcherState extends State<ProfileSwitcher> {
                           ? 'Switch Franchise Profile'
                           : widget.type == "investor"
                           ? 'Switch Investor Profile'
+                          : widget.type == "advisor"
+                          ? 'Switch Advisor Profile'
                           : 'Switch Business Profile',
                       style: AppTheme.titleText(lightTextColor),
                     ),
@@ -1820,6 +1867,8 @@ class _ProfileSwitcherState extends State<ProfileSwitcher> {
                                     ? 'Add New Franchise'
                                     : widget.type.toLowerCase() == "investor"
                                     ? 'Add New Investor Profile'
+                                    : widget.type.toLowerCase() == "advisor"
+                                    ? 'Add New Advisor Profile'
                                     : 'Add New Business',
                                 style: AppTheme.titleText(Colors.white),
                               ),
@@ -1829,6 +1878,8 @@ class _ProfileSwitcherState extends State<ProfileSwitcher> {
                                     ? 'Create a new franchise profile'
                                     : widget.type.toLowerCase() == "investor"
                                     ? 'Create a new investor profile'
+                                    : widget.type.toLowerCase() == "advisor"
+                                    ? 'Create a new advisor profile'
                                     : 'Create a new business profile',
                                 style: AppTheme.smallText(Colors.white.withOpacity(0.8)),
                               ),

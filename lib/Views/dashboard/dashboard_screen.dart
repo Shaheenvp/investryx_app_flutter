@@ -811,6 +811,7 @@ import '../../models/all profile model.dart';
 import '../../generated/constants.dart';
 import '../../services/recent_enquries.dart';
 import '../../controller/dashboard_controller.dart';
+import '../chat_screens/chat screen.dart';
 import 'dashboard_components.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -903,6 +904,65 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 2,
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                // Back Button
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: lightTextColor),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                // Spacer to push action buttons to the right
+                const Spacer(),
+                // Edit Profile Button
+                IconButton(
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    color: _getProgressColor(),
+                    size: 24,
+                  ),
+                  onPressed: _handleEdit,
+                ),
+                // Delete Profile Button
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                    size: 24,
+                  ),
+                  onPressed: () => _showDeleteDialog(
+                    context,
+                        () {
+                      if (widget.type == 'business') {
+                        BusinessGet.deleteBusiness(widget.id.toString());
+                      } else if (widget.type == 'investor') {
+                        InvestorFetchPage.deleteInvestor(widget.id.toString());
+                      } else if (widget.type == 'franchise') {
+                        FranchiseFetchPage.deleteFranchise(widget.id.toString());
+                      } else if (widget.type == 'advisor') {
+                        AdvisorFetchPage.deleteAdvisorProfile(widget.id.toString());
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(width: 8.w),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Obx(() {
           if (_controller.isLoading.value &&
@@ -938,18 +998,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.43.h,
-                  child: Column(
-                    children: [
-                      _buildProfileSection(),
-                    ],
-                  ),
-                ),
-
+                _buildModernProfileSection(),
                 _buildStatsSection(),
-
-                // Profile Progress and Enquiries sections
                 Padding(
                   padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 16.h),
                   child: Column(
@@ -959,7 +1009,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       _buildEnquiriesHeader(),
                       SizedBox(height: 12.h),
                       _buildEnquiriesSection(),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 24.h),
                     ],
                   ),
                 ),
@@ -968,114 +1018,213 @@ class _DashboardScreenState extends State<DashboardScreen>
           );
         }),
       ),
-      floatingActionButton: Stack(
-        children: [
-          Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: FloatingActionButton(
-              backgroundColor: buttonColor,
-              onPressed: () {
-                String type = widget.type;
+    );
+  }
 
-                if (type == "business") {
-                  Get.to(BusinessInfoPage(
-                    isEdit: true,
-                    busines: _controller.businessInvestorList[0],
-                    type: type,
-                  ));
-                } else if (type == "investor") {
-                  Get.to(InvestorFormScreen(
-                    isEdit: true,
-                    investor: _controller.businessInvestorList[0],
-                    type: type,
-                  ));
-                } else if (type == "advisor") {
-                  Get.to(EditProfileScreen(
-                    isEdit: true,
-                    advisor: _controller.advisorList[0],
-                    type: type,
-                    action: () {},
-                  ));
-                } else if (type == "franchise") {
-                  Get.to(FranchiseFormScreen(
-                    isEdit: true,
-                    franchise: _controller.franchiseLists[0],
-                    type: type,
-                  ));
-                } else {
-                  // Handle unknown type if necessary.
-                  print("Unknown type: $type");
-                }
-              },
-              child: const Text(
-                "Edit",
-                style: TextStyle(color: whiteTextColor),
+  Widget _buildModernProfileSection() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.39.h,
+      child: Stack(
+        children: [
+          // Background gradient overlay
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    _getProgressColor().withOpacity(0.05),
+                  ],
+                ),
               ),
             ),
           ),
-          Positioned(
-            bottom: 80.0, // Adjust the position as needed
-            right: 16.0, // Aligns with the other FAB
-            child: FloatingActionButton(
-              backgroundColor: buttonColor,
-              onPressed: () {
-                _showDeleteDialog(
-                  context,
-                      () {
-                    // Conditional logic based on the type
-                    if (widget.type == 'business') {
-                      BusinessGet.deleteBusiness(widget.id.toString());
-                    } else if (widget.type == 'investor') {
-                      InvestorFetchPage.deleteInvestor(widget.id.toString());
-                    } else if (widget.type == 'franchise') {
-                      FranchiseFetchPage.deleteFranchise(widget.id.toString());
-                    } else if (widget.type == 'advisor') {
-                      AdvisorFetchPage.deleteAdvisorProfile(widget.id.toString());
-                    } else {
-                      // Optional: Handle unknown type if needed
-                      print("Unknown type: ${widget.type}");
-                    }
-                  },
-                );
-              },
-              child: const Icon(
-                Icons.delete,
-                color: whiteTextColor,
-              ),
-            ),
 
+          Column(
+            children: [
+              Expanded(
+                child: _buildProfileSection(),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
+
+
+  // Widget _buildModernProfileSection() {
+  //   return Container(
+  //     height: MediaQuery.of(context).size.height * 0.43.h,
+  //     child: Stack(
+  //       children: [
+  //         // Background gradient overlay
+  //         Positioned.fill(
+  //           child: Container(
+  //             decoration: BoxDecoration(
+  //               gradient: LinearGradient(
+  //                 begin: Alignment.topCenter,
+  //                 end: Alignment.bottomCenter,
+  //                 colors: [
+  //                   Colors.transparent,
+  //                   _getProgressColor().withOpacity(0.05),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //
+  //         // Main profile content
+  //         Column(
+  //           children: [
+  //             Expanded(
+  //               child: _buildProfileSection(),
+  //             ),
+  //
+  //             // Control strip at the bottom of profile section
+  //             Container(
+  //               padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 boxShadow: [
+  //                   BoxShadow(
+  //                     color: Colors.black.withOpacity(0.05),
+  //                     blurRadius: 10,
+  //                     offset: Offset(0, -2),
+  //                   ),
+  //                 ],
+  //               ),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.end,
+  //                 children: [
+  //                   _buildActionButton(
+  //                     icon: Icons.edit_outlined,
+  //                     label: 'Edit Profile',
+  //                     onTap: _handleEdit,
+  //                     isPrimary: true,
+  //                   ),
+  //                   SizedBox(width: 12.w),
+  //                   _buildActionButton(
+  //                     icon: Icons.delete_outline,
+  //                     label: 'Delete',
+  //                     onTap: () => _showDeleteDialog(
+  //                       context,
+  //                           () {
+  //                         if (widget.type == 'business') {
+  //                           BusinessGet.deleteBusiness(widget.id.toString());
+  //                         } else if (widget.type == 'investor') {
+  //                           InvestorFetchPage.deleteInvestor(widget.id.toString());
+  //                         } else if (widget.type == 'franchise') {
+  //                           FranchiseFetchPage.deleteFranchise(widget.id.toString());
+  //                         } else if (widget.type == 'advisor') {
+  //                           AdvisorFetchPage.deleteAdvisorProfile(widget.id.toString());
+  //                         }
+  //                       },
+  //                     ),
+  //                     isDestructive: true,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildActionButton({
+  //   required IconData icon,
+  //   required String label,
+  //   required VoidCallback onTap,
+  //   bool isPrimary = false,
+  //   bool isDestructive = false,
+  // }) {
+  //   Color baseColor = isPrimary
+  //       ? _getProgressColor()
+  //       : isDestructive
+  //       ? Colors.red
+  //       : greyTextColor!;
+  //
+  //   return Material(
+  //     color: Colors.transparent,
+  //     child: InkWell(
+  //       onTap: onTap,
+  //       borderRadius: BorderRadius.circular(8.r),
+  //       child: Container(
+  //         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+  //         decoration: BoxDecoration(
+  //           border: Border.all(
+  //             color: baseColor.withOpacity(0.2),
+  //           ),
+  //           borderRadius: BorderRadius.circular(8.r),
+  //           color: isPrimary
+  //               ? baseColor.withOpacity(0.1)
+  //               : Colors.transparent,
+  //         ),
+  //         child: Row(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Icon(
+  //               icon,
+  //               size: 18.sp,
+  //               color: baseColor,
+  //             ),
+  //             SizedBox(width: 8.w),
+  //             Text(
+  //               label,
+  //               style: AppTheme.smallText(baseColor).copyWith(
+  //                 fontWeight: FontWeight.w500,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   void _showDeleteDialog(BuildContext context, VoidCallback onConfirm) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Confirm Delete"),
-          content: const Text("Are you sure you want to delete this item?"),
+          title: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
+              SizedBox(width: 8),
+              Text("Delete Profile"),
+            ],
+          ),
+          content: Text(
+            "Are you sure you want to delete this profile? This action cannot be undone.",
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("Cancel"),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                "Cancel",
+                style: TextStyle(color: greyTextColor),
+              ),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
                 onConfirm();
-                // Perform the delete action
-                Navigator.of(context).pop(); // Close the dialog
-
+                Navigator.of(context).pop();
               },
-              child: const Text(
+              child: Text(
                 "Delete",
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -1083,6 +1232,70 @@ class _DashboardScreenState extends State<DashboardScreen>
       },
     );
   }
+
+  void _handleEdit() {
+    String type = widget.type;
+
+    if (type == "business") {
+      Get.to(() => BusinessInfoPage(
+        isEdit: true,
+        busines: _controller.businessInvestorList[0],
+        type: type,
+      ));
+    } else if (type == "investor") {
+      Get.to(() => InvestorFormScreen(
+        isEdit: true,
+        investor: _controller.businessInvestorList[0],
+        type: type,
+      ));
+    } else if (type == "advisor") {
+      Get.to(() => EditProfileScreen(
+        isEdit: true,
+        advisor: _controller.advisorList[0],
+        type: type,
+        action: () {},
+      ));
+    } else if (type == "franchise") {
+      Get.to(() => FranchiseFormScreen(
+        isEdit: true,
+        franchise: _controller.franchiseLists[0],
+        type: type,
+      ));
+    }
+  }
+
+  // void _showDeleteDialog(BuildContext context, VoidCallback onConfirm) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text("Confirm Delete"),
+  //         content: const Text("Are you sure you want to delete this item?"),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Close the dialog
+  //             },
+  //             child: const Text("Cancel"),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Close the dialog
+  //               onConfirm();
+  //               // Perform the delete action
+  //               Navigator.of(context).pop(); // Close the dialog
+  //
+  //             },
+  //             child: const Text(
+  //               "Delete",
+  //               style: TextStyle(color: Colors.red),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildProfileSection() {
     return Obx(() {
@@ -1544,7 +1757,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 }
 
-// Enquiry Card Widget
 class _EnquiryCard extends StatelessWidget {
   final enquiry enquiryData;
 
@@ -1565,23 +1777,26 @@ class _EnquiryCard extends StatelessWidget {
     }
   }
 
-  // Function to navigate to chat screen
+  /// Function to navigate to chat screen
   void _navigateToChat(BuildContext context) {
-    // Navigate to chat screen with user details
-    Get.toNamed('/chat', arguments: {
-      'userId': enquiryData.user.id,
-      'userName': enquiryData.user.firstName.isNotEmpty
+    Get.to(() => ChatScreen(
+      chatUserId: enquiryData.user.id,
+      name: enquiryData.user.firstName.isNotEmpty
           ? enquiryData.user.firstName
           : enquiryData.user.username,
-      'userImage': enquiryData.user.image,
-    });
+      imageUrl: enquiryData.user.image,
+      roomId: enquiryData.roomId.toString(),
+      number: enquiryData.user.username,
+      lastActive: '',
+      isActive: false,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     final dateTime = DateTime.parse(enquiryData.created);
-    final formatDate = DateFormat("dd MMM yyyy", 'en_US').format(dateTime);
-    final formatTime = DateFormat("hh:mm a", 'en_US').format(dateTime);
+    final formatDate = DateFormat("dd MMM yyyy", 'en_US').format(dateTime.toLocal());
+    final formatTime = DateFormat("hh:mm a", 'en_US').format(dateTime.toLocal());
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -1600,7 +1815,6 @@ class _EnquiryCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // User Image section remains the same...
           ClipRRect(
             borderRadius: BorderRadius.circular(12.r),
             child: enquiryData.user.image != null
@@ -1617,7 +1831,6 @@ class _EnquiryCard extends StatelessWidget {
           ),
           SizedBox(width: 12.w),
 
-          // User Details section remains the same...
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

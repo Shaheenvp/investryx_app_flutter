@@ -1125,10 +1125,10 @@ class _BusinessDetailPageState extends State<BusinessDetailPage> {
                                 child: Text('View plans'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(builder: (context) => PricingScreenNew()),
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => PricingScreenNew()),
+                                  );
                                 },
                               ),
                             ],

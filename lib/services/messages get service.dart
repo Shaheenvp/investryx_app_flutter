@@ -203,6 +203,7 @@ class MessageService {
   static final _storage = FlutterSecureStorage();
 
   static Future<MessageDataResponse?> fetchMessageData(String id) async {
+
     try {
       final token = await _storage.read(key: 'token');
       if (token == null) {
@@ -218,6 +219,7 @@ class MessageService {
       );
 
       log('Response body: ${response.body}');
+
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);

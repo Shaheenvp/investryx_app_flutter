@@ -93,11 +93,12 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
 
   String _formatCurrency(String value) {
     if (value.isEmpty) return '';
+
     final onlyNumbers = value.replaceAll(RegExp(r'[^\d]'), '');
     if (onlyNumbers.isEmpty) return '';
-    final number = int.parse(onlyNumbers);
 
-    // Convert to Lakhs and Crores format
+    final number = int.tryParse(onlyNumbers) ?? 0;
+
     if (number >= 10000000) { // 1 Crore or more
       double crores = number / 10000000;
       return '₹${crores.toStringAsFixed(2)} Cr';
@@ -105,7 +106,7 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
       double lakhs = number / 100000;
       return '₹${lakhs.toStringAsFixed(2)} L';
     } else {
-      return '₹$number';
+      return '₹$number'; // Less than 1 Lakh, show raw number
     }
   }
 
@@ -276,18 +277,14 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
                               ),
                             ),
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              TextInputFormatter.withFunction(
-                                    (oldValue, newValue) => TextEditingValue(
-                                  text: _formatCurrency(newValue.text),
-                                  selection: TextSelection.collapsed(
-                                    offset: _formatCurrency(newValue.text).length,
-                                  ),
-                                ),
-                              ),
+                              FilteringTextInputFormatter.digitsOnly, // Allow only numbers
                             ],
                             onChanged: (value) {
-                              setState(() {});
+                              String formattedValue = _formatCurrency(value.replaceAll(RegExp(r'[^\d]'), ''));
+                              _turnoverController.value = TextEditingValue(
+                                text: formattedValue,
+                                selection: TextSelection.collapsed(offset: formattedValue.length),
+                              );
                             },
                           ),
                         ),

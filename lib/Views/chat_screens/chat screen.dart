@@ -254,8 +254,11 @@ class _ChatScreenState extends State<ChatScreen> {
       _showSnackBar('The message is empty');
     } else {
       if (token != null) {
-        final data = jsonEncode(
-            {'token': token, 'message': message, 'roomId': widget.roomId});
+        final data = jsonEncode({
+          'token': token,
+          'message': message,
+          'roomId': widget.roomId
+        });
 
         channel.sink.add(data);
         _messageController.clear();
@@ -265,7 +268,6 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
   }
-
 
 
   Future<void> _startVoiceMessage() async {

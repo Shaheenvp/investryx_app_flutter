@@ -46,7 +46,7 @@ class AdvisorProfileService {
         'email': email,
         'number': number,
         'industry': industry,
-        'experiance': experience, // Note the spelling in API
+        'experience': experience,
         'interest': areaOfInterest,
         'state': state,
         'city': city,

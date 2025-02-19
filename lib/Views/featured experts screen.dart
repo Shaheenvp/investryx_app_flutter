@@ -403,6 +403,7 @@ class ExpertCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => AdvisorDetailPage(
               advisor: expert,
+
             ),
           ),
         );
@@ -455,6 +456,7 @@ class ExpertCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
+                    maxLines: 1,
                     expert.singleLineDescription ?? 'Expert',
                     style: AppTheme.mediumSmallText(Colors.white).copyWith(
                       fontSize: isTablet ? 12.sp : null,

@@ -26,7 +26,7 @@ class BusinessGet {
           'token': token,
         },
       );
-      print(
+      log(
           'Response of fetching my business listing: ${response.statusCode} - ${response.body}');
 
       if (response.statusCode == 200) {

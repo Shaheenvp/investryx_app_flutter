@@ -1095,6 +1095,7 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {
     'businessName': TextEditingController(),
+    'Title': TextEditingController(),
     'yearEstablished': TextEditingController(),
     'description': TextEditingController(),
     'address1': TextEditingController(),
@@ -1170,7 +1171,6 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
       }
     }
 
-    // Pad with nulls to ensure we have exactly 4 slots
     while (imageFiles.length < 4) {
       imageFiles.add(null);
     }
@@ -1179,8 +1179,10 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
   }
 
   void setTextFields() {
+    // print("Business data: ${widget.busines!.toString()}");
     if (widget.busines != null) {
       setState(() {
+        _controllers["Title"] = TextEditingController(text: widget.busines!.singleLineDescription);
         _controllers["askingPrice"] =
             TextEditingController(text: widget.busines!.askingPrice);
         _controllers["maximumRange"] =
@@ -2068,7 +2070,7 @@ the number of shareholder with their ownership %'''),
         await BusinessAddPage.businessAddPage(
           context: context,
           name: _controllers['businessName']?.text ?? '',
-          singleLineDescription: _controllers['single_desc']?.text ?? '',
+          singleLineDescription: _controllers['Title']?.text ?? '',
           industry: _selectedIndustry,
           establish_yr: _controllers['yearEstablished']?.text ?? '',
           description: _controllers['description']?.text ?? '',
@@ -2126,7 +2128,6 @@ the number of shareholder with their ownership %'''),
 
       try {
         if (widget.busines != null) {
-          // Prepare image files with null safety
           List<File?> images = [];
           if (_businessPhotos != null) {
             for (var photo in _businessPhotos!) {
@@ -2134,12 +2135,11 @@ the number of shareholder with their ownership %'''),
             }
           }
 
-          // Pad the images array with nulls if less than 4 images
           while (images.length < 4) {
             images.add(null);
           }
 
-          final response = await BusinessGet.updateBusiness(
+          await BusinessGet.updateBusiness(
             id: widget.busines!.id,
             name: _controllers["businessName"]?.text ?? "",
             singleLineDescription: _controllers["Title"]?.text ?? "",
@@ -2187,13 +2187,15 @@ the number of shareholder with their ownership %'''),
             askingPrice: _controllers["askingPrice"]?.text ?? "",
           );
 
-          // if (response == true) {
-          //   setState(() => _isSubmitting = false);
-          //   _controller.fetchListings("business");
-          //   Navigator.pop(context);
-          // } else {
-          //   throw Exception('Update failed');
-          // }
+          setState(() => _isSubmitting = false);
+          _controller.fetchListings("business");
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Business information updated successfully'),
+              duration: Duration(seconds: 2),
+            ),
+          );
         }
       } catch (e) {
         setState(() => _isSubmitting = false);

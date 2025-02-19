@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_emergio/Views/chat_screens/websocket%20integration.dart';
 import 'package:shimmer/shimmer.dart';
@@ -62,6 +63,18 @@ class _InboxListScreenState extends State<InboxListScreen>
   @override
   void didPopNext() {
     _refreshInboxData();
+  }
+
+  String _decodeMessage(String message) {
+    try {
+      if (message.codeUnits.any((unit) => unit > 127)) {
+        return utf8.decode(message.codeUnits);
+      }
+      return message;
+    } catch (e) {
+      print('Error decoding message: $e');
+      return message;
+    }
   }
 
   Future<void> _refreshInboxData() async {
@@ -771,16 +784,26 @@ class _InboxListScreenState extends State<InboxListScreen>
     return Row(
       children: [
         Expanded(
-          child: Text(
-            message ?? 'No messages yet',
+          child:
+          Text(
+            _decodeMessage(message ?? 'No messages yet'),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14.sp,
+            style: GoogleFonts.notoSans(
+              fontSize: 15,
               color: hasUnread ? const Color(0xFF2D2D2D) : Colors.grey[600],
               fontWeight: hasUnread ? FontWeight.w500 : FontWeight.normal,
             ),
-          ),
+          ),          // Text(
+          //   message ?? 'No messages yet',
+          //   maxLines: 1,
+          //   overflow: TextOverflow.ellipsis,
+          //   style: TextStyle(
+          //     fontSize: 14.sp,
+          //     color: hasUnread ? const Color(0xFF2D2D2D) : Colors.grey[600],
+          //     fontWeight: hasUnread ? FontWeight.w500 : FontWeight.normal,
+          //   ),
+          // ),
         ),
         if (hasUnread)
           Container(

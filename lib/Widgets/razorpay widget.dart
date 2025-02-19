@@ -343,7 +343,8 @@ class _PayMoneyState extends State<PayMoney> {
 
   void openCheckout() async {
     var options = {
-      'key': 'rzp_live_5MsiGMuSQ2YP3m', // Live key for testing
+      // 'key': 'rzp_live_5MsiGMuSQ2YP3m',
+      'key': 'rzp_test_l5y7T0LlpGjuTh',
       'amount': widget.amount * 100,
       'name': widget.name,
       'description': widget.description,

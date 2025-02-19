@@ -770,6 +770,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:open_file/open_file.dart';
+
 
 class AttachmentHandler {
   static Future<Map<String, dynamic>?> pickAttachment(BuildContext context) async {
@@ -952,13 +954,11 @@ class AttachmentBottomSheet extends StatelessWidget {
   }
 }
 
-// Custom exception for permission handling
 class PermissionException implements Exception {
   final String message;
   PermissionException(this.message);
 }
 
-// Progress dialog widget
 class DownloadProgressDialog extends StatelessWidget {
   final ValueNotifier<double> progress;
 
@@ -1223,64 +1223,126 @@ class AttachmentBubble extends StatelessWidget {
 
   Widget _buildImagePreview(BuildContext context, String url) {
     return InkWell(
-        onTap: () => _showFullScreenImage(context, url),
-        child: Hero(
-            tag: url,
-            child: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    child: Image.network(
-    url,
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: 200,
-    loadingBuilder: (context, child, loadingProgress) {
-    if (loadingProgress == null) return child;
-    return Container(
-    height: 200,
-    color: Colors.grey[200],
-    child: Center(child: CircularProgressIndicator()),
-    );
-    },
-    errorBuilder: (context, error, stackTrace) {
-    return Container(
-    height: 200,
-    color: Colors.grey[200],
-      child: Icon(Icons.error_outline, color: Colors.red),
-    );
-    },
-    ),
-            ),
+      onTap: () => _showFullScreenImage(context, url),
+      child: Hero(
+        tag: url,
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          child: Image.network(
+            url,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 200,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                height: 200,
+                color: Colors.grey[200],
+                child: Center(child: CircularProgressIndicator()),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                height: 200,
+                color: Colors.grey[200],
+                child: Icon(Icons.error_outline, color: Colors.red),
+              );
+            },
+          ),
         ),
+      ),
     );
   }
 
   Widget _buildFilePreview(BuildContext context, String fileName, String url) {
-    return Padding(
-      padding: EdgeInsets.all(12),
-      child: Row(
-        children: [
-          Icon(Icons.insert_drive_file, color: Colors.blue, size: 24),
-          SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fileName,
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  'Tap to preview',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
+    return InkWell(
+      onTap: () => _previewFile(context, url, fileName),
+      child: Padding(
+        padding: EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Icon(_getFileIcon(fileName), color: Colors.blue, size: 24),
+            SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileName,
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    'Tap to open',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  IconData _getFileIcon(String fileName) {
+    final extension = fileName.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      case 'ppt':
+      case 'pptx':
+        return Icons.present_to_all;
+      case 'txt':
+        return Icons.text_snippet;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
+  Future<void> _previewFile(BuildContext context, String url, String fileName) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      // Get cached file or download it
+      final file = await _attachmentManager.getCachedFile(url, fileName);
+
+      // Hide loading indicator
+      Navigator.pop(context);
+
+      if (file != null) {
+        // Open file with system viewer
+        final result = await OpenFile.open(file.path);
+        if (result.type != ResultType.done) {
+          throw Exception(result.message);
+        }
+      } else {
+        throw Exception('Failed to load file');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening file: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildActions(BuildContext context) {
@@ -1289,6 +1351,10 @@ class AttachmentBubble extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // IconButton(
+          //   icon: Icon(Icons.download, size: 20),
+          //   onPressed: () => _downloadAttachment(context),
+          // ),
           IconButton(
             icon: Icon(Icons.share, size: 20),
             onPressed: () => _shareAttachment(context),
@@ -1299,13 +1365,26 @@ class AttachmentBubble extends StatelessWidget {
   }
 
   Widget _buildFooter() {
+    String formattedTime = _formatTime(time);
+
     return Padding(
       padding: EdgeInsets.all(8),
       child: Text(
-        time,
+        formattedTime,
         style: TextStyle(fontSize: 10, color: Colors.grey),
       ),
     );
+  }
+
+  String _formatTime(String timeString) {
+    try {
+      DateTime dateTime = DateTime.parse(timeString).toLocal();
+
+
+      return DateFormat('hh:mm a').format(dateTime);
+    } catch (e) {
+      return timeString;
+    }
   }
 
   void _showFullScreenImage(BuildContext context, String url) {
@@ -1374,17 +1453,6 @@ class FullScreenImage extends StatelessWidget {
         backgroundColor: Colors.black,
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
-          IconButton(
-            icon: Icon(Icons.download),
-            onPressed: () async {
-              final fileName = imageUrl.split('/').last;
-              await AttachmentManager().downloadAttachment(
-                context,
-                imageUrl,
-                fileName,
-              );
-            },
-          ),
           IconButton(
             icon: Icon(Icons.share),
             onPressed: () async {

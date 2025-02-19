@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:project_emergio/Views/chat_screens/voice_handler.dart';
 import 'package:project_emergio/Views/detail%20page/business%20deatil%20page.dart';
 import 'package:project_emergio/Views/detail%20page/franchise%20detail%20page.dart';
@@ -367,6 +367,18 @@ class MessageBubble extends StatelessWidget {
     this.audioPath,
   }) : super(key: key);
 
+  String _decodeMessage(String message) {
+    try {
+      if (message.codeUnits.any((unit) => unit > 127)) {
+        return utf8.decode(message.codeUnits);
+      }
+      return message;
+    } catch (e) {
+      print('Error decoding message: $e');
+      return message;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isVoiceMessage) {
@@ -379,22 +391,20 @@ class MessageBubble extends StatelessWidget {
       );
     }
 
-    // Regular text message
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Align(
         alignment: isFromUser ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.75,
           ),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color:
-                isFromUser ? ChatColors.primaryLight : ChatColors.messageBubble,
+            color: isFromUser ? ChatColors.primaryLight : ChatColors.messageBubble,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+              topLeft: const Radius.circular(20),
+              topRight: const Radius.circular(20),
               bottomLeft: Radius.circular(isFromUser ? 20 : 0),
               bottomRight: Radius.circular(isFromUser ? 0 : 20),
             ),
@@ -402,24 +412,27 @@ class MessageBubble extends StatelessWidget {
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 5,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                message,
-                style: TextStyle(
-                  color: ChatColors.text,
-                  fontSize: 15,
+              // Use a RichText to properly render both regular text and emojis
+              RichText(
+                text: TextSpan(
+                  text: _decodeMessage(message),
+                  style: GoogleFonts.notoSans(
+                    fontSize: 15,
+                    color: ChatColors.text,
+                  ),
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 _formatDateTime(time),
-                style: TextStyle(
+                style: const TextStyle(
                   color: ChatColors.subtleText,
                   fontSize: 9,
                 ),

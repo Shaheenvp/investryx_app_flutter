@@ -10,6 +10,7 @@ class FaqScreen extends StatefulWidget {
 
 class _FaqScreenState extends State<FaqScreen> {
   String selectedCategory = 'Business';
+  String searchQuery = "";
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,11 @@ class _FaqScreenState extends State<FaqScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextField(
+              onChanged: (query) {
+                setState(() {
+                  searchQuery = query.toLowerCase();
+                });
+              },
               decoration: InputDecoration(
                 hintText: 'Search...',
                 filled: true,
@@ -40,20 +46,7 @@ class _FaqScreenState extends State<FaqScreen> {
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
                 ),
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: const Color(0xffFFCC00),
-                      child: IconButton(
-                        icon: const Icon(Icons.search, color: Colors.white),
-                        onPressed: () {
-                          // Handle search
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                suffixIcon: const Icon(Icons.search, color: Colors.grey),
               ),
             ),
           ),
