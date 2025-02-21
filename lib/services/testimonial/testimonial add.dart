@@ -7,51 +7,53 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Add this
 import '../api_list.dart';
 
 class TestimonialAdd {
-  static var client = http.Client();
-  static final storage = FlutterSecureStorage(); // Initialize secure storage
+  static final client = http.Client();
+  static final storage = FlutterSecureStorage();
 
   static Future<bool?> testimonial({
-    required String companyName,
+    required int rating,
     required String testimonial,
+    required String advisorId,
   }) async {
     try {
-      // Retrieve token from secure storage
       final token = await storage.read(key: 'token');
-
       if (token == null) {
         log('Error: token not found in secure storage');
         return null;
       }
 
-      var body = jsonEncode({
-        "company": companyName,
-        "testimonial": testimonial,
-      });
-
-      var response = await client.post(
+      final response = await client.post(
         Uri.parse(ApiList.testimonial!),
         headers: {
           'Content-Type': 'application/json',
-          'token': token, // Add token to request headers
+          'token': token,
         },
-        body: body,
+        body: jsonEncode({
+          "rate": rating,
+          "testimonial": testimonial,
+          "advisorId": advisorId,
+        }),
       );
 
-      print('Response: ${response.statusCode} - ${response.body}');
-      Map<String, dynamic> responseBody = json.decode(response.body);
-      bool status = responseBody['status'];
-      if (status) {
-        return status;
-      } else {
-        log('Failed to add testimonial: ${response.statusCode}');
+      log('Response: ${response.statusCode} - ${response.body}');
+
+      if (response.statusCode != 200) {
+        log('Server error: ${response.statusCode}');
         return false;
       }
+
+      final responseBody = jsonDecode(response.body) as Map<String, dynamic>;
+      return responseBody['status'] as bool? ?? false;
+
     } on SocketException catch (e) {
       log('SocketException: ${e.message}');
       return null;
     } on http.ClientException catch (e) {
       log('ClientException: ${e.message}');
       return null;
+    } on FormatException catch (e) {
+      log('FormatException (Invalid JSON): ${e.message}');
+      return false;
     } catch (e) {
       log('Unexpected error: $e');
       return null;

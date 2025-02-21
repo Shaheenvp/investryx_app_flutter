@@ -292,12 +292,58 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
 class ReportButton extends StatelessWidget {
   final Function(String reason, String reasonType, String id) onSubmit;
   final String postId;
+  final bool autoOpen;
 
-  const ReportButton({Key? key, required this.onSubmit, required this.postId})
-      : super(key: key);
+  const ReportButton({
+    Key? key,
+    required this.onSubmit,
+    required this.postId,
+    this.autoOpen = false,
+  }) : super(key: key);
 
-  void _showReportBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+  @override
+  Widget build(BuildContext context) {
+    // If autoOpen is true, automatically show the bottom sheet
+    if (autoOpen) {
+      Future.microtask(() async {
+        await _showReportBottomSheet(context);
+        if (Navigator.canPop(context)) {
+          Navigator.of(context).pop();
+        }
+      });
+
+      return const SizedBox();
+    }
+
+    // Otherwise show a button that needs to be clicked
+    return GestureDetector(
+      onTap: () => _showReportBottomSheet(context),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.flag_rounded, color: Colors.red.shade700, size: 18),
+            const SizedBox(width: 4),
+            Text(
+              'Report',
+              style: TextStyle(
+                color: Colors.red.shade700,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showReportBottomSheet(BuildContext context) async {
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -308,18 +354,6 @@ class ReportButton extends StatelessWidget {
         builder: (_, controller) => ReportBottomSheet(
           onSubmit: (reason, details) => onSubmit(reason, details, postId),
         ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: () => _showReportBottomSheet(context),
-      icon: Icon(Icons.flag_rounded, color: Colors.red.shade600),
-      label: Text(
-        'Report',
-        style: TextStyle(color: Colors.red.shade600),
       ),
     );
   }

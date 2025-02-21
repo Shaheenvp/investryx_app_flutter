@@ -765,9 +765,11 @@ import 'package:project_emergio/services/testimonial/testimonial%20get.dart';
 import 'package:project_emergio/Views/chat_screens/chat%20screen.dart';
 import 'package:project_emergio/Views/pricing%20screen.dart';
 
+import '../../Widgets/rating_widget.dart';
 import '../../Widgets/report_widget.dart';
 import '../../services/recommended ads.dart';
 import '../../services/report_post_service.dart';
+import '../../services/testimonial/testimonial add.dart';
 
 class AdvisorDetailPage extends StatefulWidget {
   final AdvisorExplr? advisor;
@@ -795,6 +797,11 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
   dynamic subscription;
   bool subscribed = false;
   double _scrollOffset = 0.0;
+  double _userRating = 0;
+  double _averageRating = 0.0;
+  final TextEditingController _reviewController = TextEditingController();
+  bool _isSubmitting = false;
+
 
   // Helper getters for data access
   String get name => widget.isFromRecommended
@@ -888,12 +895,16 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
     });
 
     try {
-      final testimonials = await TestimonialGet.fetchTestimonials(
-        userId: id,
+      final response = await TestimonialGet.fetchTestimonials(
+        advisorId: id,
       );
+
       if (mounted) {
         setState(() {
-          _testimonials = testimonials ?? [];
+          if (response != null) {
+            _testimonials = response['testimonials'] ?? [];
+            _averageRating = response['avgRating'] ?? 0.0;
+          }
           _isLoadingTestimonials = false;
         });
       }
@@ -906,11 +917,118 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
       }
     }
   }
+  Future<void> submitReview(double rating, String review) async {
+    if (!mounted) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                height: 20.h,
+                width: 20.w,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Text('Submitting your review...'),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Call the testimonial API
+      final result = await TestimonialAdd.testimonial(
+        rating: rating.toInt(),
+        testimonial: review,
+        advisorId: widget.isFromRecommended
+            ? widget.recommendedAdvisor!.id.toString()
+            : widget.advisor!.id.toString(),
+      );
+
+      // Handle null result (connection/API errors)
+      if (result == null) {
+        throw Exception('Failed to connect to the server');
+      }
+
+      // Handle successful submission
+      if (result) {
+        if (!mounted) return;
+
+        setState(() {
+          _userRating = 0;
+          _reviewController.clear();
+          _isSubmitting = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Thank you for your feedback!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        Navigator.of(context).pop();
+        await _fetchTestimonials();
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              e.toString().contains('connect to the server')
+                  ? 'Connection error. Please check your internet connection.'
+                  : 'Failed to submit review. Please try again later.'
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+
+      debugPrint('Error submitting review: $e');
+    }
+  }
+
+  void showRatingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: !_isSubmitting,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => !_isSubmitting,
+          child: CustomRatingDialog(
+            onSubmit: (rating, review) async {
+              await submitReview(rating, review);
+            },
+            isSubmitting: _isSubmitting,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
     _tabController.dispose();
     _scrollController.dispose();
+    _reviewController.dispose();
     super.dispose();
   }
 
@@ -989,48 +1107,115 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
           ],
         ),
       ),
-      leading: Container(
-        margin: EdgeInsets.all(8.r),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(40.r),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 1,
-          ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.pop(context),
+      ),
+      actions: [
+        PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert, color: Colors.yellow, size: 30), // More visible icon
+          onSelected: (String choice) {
+            if (choice == 'rate') {
+              showRatingDialog();
+            } else if (choice == 'report') {
+              // Directly show the report bottom sheet
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => SingleChildScrollView(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ReportButton(
+                          autoOpen: true,
+                          onSubmit: (String reason, String reasonType, String id) async {
+                            try {
+                              if (id.isEmpty) {
+                                throw Exception('Post ID cannot be empty');
+                              }
+                              await ReportPost.reportPost(
+                                reason: reason,
+                                reasonType: reasonType,
+                                postId: reportId,
+                              );
+                              return true;
+                            } catch (e) {
+                              throw e;
+                            }
+                          },
+                          postId: reportId,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+            PopupMenuItem<String>(
+              value: 'rate',
+              child: Row(
+                children: [
+                  Icon(Icons.star_rate_rounded, color: Colors.amber),
+                  SizedBox(width: 8),
+                  Text('Rate'),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'report',
+              child: Row(
+                children: [
+                  Icon(Icons.flag_outlined, color: Colors.red[300]),
+                  SizedBox(width: 8),
+                  Text('Report'),
+                ],
+              ),
+            ),
+          ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.r),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
+      ],
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    required Color bgColor,
+    required Color iconColor,
+  }) {
+    return Container(
+      margin: EdgeInsets.all(8.r),
+      decoration: BoxDecoration(
+        color: bgColor.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(14.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14.r),
+          onTap: onPressed,
+          child: Padding(
+            padding: EdgeInsets.all(8.r),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 24.sp,
             ),
           ),
         ),
       ),
-      actions: [
-        ReportButton(
-          onSubmit: (String reason, String reasonType, String id) async {
-            try {
-              if (id.isEmpty) {
-                throw Exception('Post ID cannot be empty');
-              }
-
-              await ReportPost.reportPost(
-                reason: reason,
-                reasonType: reasonType,
-                postId: reportId,
-              );
-              return true;
-            } catch (e) {
-              throw e;
-            }
-          },
-          postId: reportId,
-        ),
-      ],
     );
   }
 
@@ -1090,7 +1275,7 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
           Icon(Icons.star, color: Colors.amber, size: 18.sp),
           SizedBox(width: 4.w),
           Text(
-            '4.8',
+            _averageRating.toStringAsFixed(1),
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
@@ -1390,6 +1575,12 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
   }
 
   Widget _buildTestimonialCard(Map<String, dynamic> testimonial) {
+    // Extract user data correctly
+    final userData = testimonial['user'] ?? {};
+    final String userName = userData['first_name'] ?? 'Anonymous';
+    final String userImage = userData['image'] ?? '';
+    final int rating = testimonial['rate'] ?? 0;
+
     return Container(
       margin: EdgeInsets.only(bottom: 15.h),
       padding: EdgeInsets.all(20.r),
@@ -1409,10 +1600,40 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
         children: [
           Row(
             children: [
-              CircleAvatar(
+              userImage.isNotEmpty
+                  ? ClipRRect(
+                borderRadius: BorderRadius.circular(20.r),
+                child: CachedNetworkImage(
+                  imageUrl: userImage,
+                  width: 40.w,
+                  height: 40.h,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => CircleAvatar(
+                    backgroundColor: buttonColor.withOpacity(0.1),
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : 'A',
+                      style: TextStyle(
+                        color: buttonColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    backgroundColor: buttonColor.withOpacity(0.1),
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : 'A',
+                      style: TextStyle(
+                        color: buttonColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+                  : CircleAvatar(
                 backgroundColor: buttonColor.withOpacity(0.1),
                 child: Text(
-                  (testimonial['company'] ?? 'A')[0].toUpperCase(),
+                  userName.isNotEmpty ? userName[0].toUpperCase() : 'A',
                   style: TextStyle(
                     color: buttonColor,
                     fontWeight: FontWeight.bold,
@@ -1425,19 +1646,29 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      testimonial['company'] ?? 'Anonymous',
+                      userName,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
                     ),
-                    Text(
-                      'Verified Client',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[600],
-                      ),
+                    Row(
+                      children: [
+                        ...List.generate(5, (index) => Icon(
+                          index < rating ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                          size: 16.sp,
+                        )),
+                        SizedBox(width: 5.w),
+                        Text(
+                          'Verified Client',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
