@@ -1883,7 +1883,7 @@ the number of shareholder with their ownership %'''),
 
                 const SizedBox(height: 16.0),
                 Text(
-                  'Uploads your Documents',
+                  'Upload your Documents',
                   style: TextStyle(
                       color: const Color(0xff5A5A5A),
                       fontWeight: FontWeight.w400,

@@ -36,8 +36,7 @@ class OnBoardingScreen1 extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                      'A platform for buying and selling businesses, securing stakes in successful ventures, and exploring real estate portfolios. It connects investors, franchise seekers, sellers, and advisors. Your hub for business opportunities and partnerships.',
-                      textAlign: TextAlign.center,
+                      'InveStryx is a comprehensive platform for business owners looking to sell, expand, or attract investment. Entrepreneurs can list their businesses for sale, seek potential investors, or franchise their brand to new markets. With a seamless connection between buyers, investors, and advisors, InveStryx simplifies the process of scaling, selling, or securing funding for businesses',
                       style: AppTheme.bodyMediumTitleText(lightTextColor.withOpacity(0.7))
                   ),
                 ),

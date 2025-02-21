@@ -116,6 +116,7 @@ class Recent {
   final String? pin;
   final String city;
   final String? state;
+  final String? title;
   final String? employees;
   final String? entity;
   final String? avg_monthly;
@@ -165,10 +166,10 @@ class Recent {
   final String? contactNumber;
   final String? interest;
 
-  final List<String>? brandLogo; // URLs of brand logos
-  final List<String>? businessPhotos; // URLs of business photos
-  final String? businessProof; // URL of business proof
-  final List<String>? businessDocuments; // URLs of business documents
+  final List<String>? brandLogo;
+  final List<String>? businessPhotos;
+  final String? businessProof;
+  final List<String>? businessDocuments;
 
   Recent({
     required this.id,
@@ -187,6 +188,7 @@ class Recent {
     this.state,
     this.employees,
     this.entity,
+    this.title,
     this.avg_monthly,
     this.latest_yearly,
     this.ebitda,
@@ -250,6 +252,7 @@ class Recent {
       validateUrl(json['image3']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       image4: validateUrl(json['image4']),
       name: json['name']?.toString() ?? 'N/A',
+      title: json['title']?.toString() ?? 'N/A',
       industry: json['industry']?.toString(),
       establish_yr: json['establish_yr']?.toString(),
       description: json['description']?.toString(),

@@ -593,7 +593,7 @@ class _RecommendedAdsPageState extends State<RecommendedAdsPage> {
     try {
       var data = await RecommendedAds.fetchRecommended();
 
-      if (data != null && data["error"] == "Preference doesnot exist") {
+      if (data != null && data["error"] == "Preference doesn't exist") {
         setState(() {
           _isLoading = false;
           _noData = true;
@@ -1120,7 +1120,7 @@ class _RecommendedAdsPageState extends State<RecommendedAdsPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>AdvisorDetailPage(
+          builder: (context) => AdvisorDetailPage(
             recommendedAdvisor: item,
             isFromRecommended: true,
           ),

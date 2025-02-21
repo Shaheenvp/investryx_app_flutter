@@ -818,7 +818,7 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
       : "${widget.advisor?.location ?? ''}, ${widget.advisor?.state ?? ''}";
 
   String get contactNumber => widget.isFromRecommended
-      ? 'Contact information available after connection'
+      ? widget.recommendedAdvisor?.contactNumber ?? ''
       : widget.advisor?.contactNumber ?? '';
 
   String get websiteUrl => widget.isFromRecommended
@@ -826,7 +826,7 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
       : widget.advisor?.url ?? '';
 
   String get interest => widget.isFromRecommended
-      ? 'Areas of expertise information available after connection'
+      ? widget.recommendedAdvisor?.interest ?? ''
       : widget.advisor?.interest ?? '';
 
   String get id => widget.isFromRecommended
@@ -834,12 +834,16 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
       : widget.advisor?.id.toString() ?? '';
 
   String get expertise => widget.isFromRecommended
-      ? 'Expertise information available after connection'
+      ? widget.recommendedAdvisor?.expertise ?? ''
       : widget.advisor?.expertise ?? '';
 
   String get experience => widget.isFromRecommended
-      ? 'Experience information available after connection'
+      ? widget.recommendedAdvisor?.experience ?? ''
       : widget.advisor?.experience ?? '';
+
+  String get reportId => widget.isFromRecommended
+      ? widget.recommendedAdvisor!.id.toString()
+      : widget.advisor!.id.toString();
 
   @override
   void initState() {
@@ -1017,14 +1021,14 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
               await ReportPost.reportPost(
                 reason: reason,
                 reasonType: reasonType,
-                postId: widget.advisor!.id.toString(),
+                postId: reportId,
               );
               return true;
             } catch (e) {
               throw e;
             }
           },
-          postId: widget.advisor!.id.toString(),
+          postId: reportId,
         ),
       ],
     );
@@ -1044,22 +1048,15 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-           widget.advisor!.title,
+            widget.isFromRecommended
+                ? widget.recommendedAdvisor!.title
+                : widget.advisor!.title,
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          // SizedBox(height: 4.h),
-          // Text(
-          //   CustomFunctions.toSentenceCase(widget.advisor!.singleLineDescription),
-          //   style: TextStyle(
-          //     fontSize: 18.sp,
-          //     fontWeight: FontWeight.w500,
-          //     color: Colors.black87,
-          //   ),
-          // ),
           SizedBox(height: 5.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1078,6 +1075,7 @@ class _AdvisorDetailPageState extends State<AdvisorDetailPage>
       ),
     );
   }
+
 
   Widget _buildRatingBadge() {
     return Container(

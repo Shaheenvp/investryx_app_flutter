@@ -38,7 +38,7 @@ class OnBoardingScreen3 extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         Text(
-                            'A one-stop platform for buying and selling businesses, plots, and real estate properties, offering convenience and efficiency for users A one-stop platform for buying and selling businesses, plots, and real estate properties, offering convenience and efficiency for users.',
+                            'InveStryx provides a dedicated platform for advisors to connect with entrepreneurs, investors, and business owners. Advisors can showcase their expertise, offer professional guidance, and help users make informed investment and business decisions. Whether you are a business consultant, financial expert, or industry specialist, InveStryx enables you to expand your reach and connect with potential clients',
                             style: AppTheme.bodyMediumTitleText(lightTextColor.withOpacity(0.7))
                         ),
                       ],

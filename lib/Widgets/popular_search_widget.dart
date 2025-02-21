@@ -75,7 +75,7 @@ class _PopularSearchWidgetState extends State<PopularSearchWidget> {
                   buisines: BusinessInvestorExplr(
                       id: item.id,
                       singleLineDescription: '',
-                      title: '',
+                      title: item.title!,
                       imageUrl: item.imageUrl,
                       image2: item.image2,
                       image3: item.image3,
@@ -120,7 +120,7 @@ class _PopularSearchWidgetState extends State<PopularSearchWidget> {
                   investor: BusinessInvestorExplr(
                       id: item.id,
                       singleLineDescription: '',
-                      title: '',
+                      title: item.title!,
                       imageUrl: item.imageUrl,
                       image2: item.image2,
                       image3: item.image3,
@@ -163,7 +163,7 @@ class _PopularSearchWidgetState extends State<PopularSearchWidget> {
           MaterialPageRoute(
               builder: (context) => FranchiseDetailPage(
                   franchise: FranchiseExplr(
-                      title: '',
+                      title: item.title!,
                       singleLineDescription: 'N/A',
                       id: item.id,
                       imageUrl: item.imageUrl,
@@ -204,7 +204,7 @@ class _PopularSearchWidgetState extends State<PopularSearchWidget> {
           MaterialPageRoute(
               builder: (context) => AdvisorDetailPage(
                   advisor: AdvisorExplr(
-                      title: '',
+                      title: item.title!,
                       singleLineDescription: 'N/A',
                       imageUrl: item.imageUrl,
                       id: item.id,
@@ -312,7 +312,7 @@ class _PopularSearchWidgetState extends State<PopularSearchWidget> {
                                 padding:
                                 const EdgeInsets.all(6.0),
                                 child: Text(
-                                  CustomFunctions.toSentenceCase(item.name),
+                                  CustomFunctions.toSentenceCase(item.title!),
                                   style: AppTheme.mediumTitleText(lightTextColor).copyWith(fontWeight: FontWeight.bold),
                                   maxLines: 1,
                                   overflow:

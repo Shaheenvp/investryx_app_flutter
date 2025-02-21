@@ -227,7 +227,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                         image2: businessItem.image2 ?? '',
                         image3: businessItem.image3 ?? '',
                         image4: businessItem.image4 ?? '',
-                        name: businessItem.name,
+                        name: businessItem.title,
                         industry: businessItem.industry ?? '',
                         establish_yr: businessItem.establish_yr ?? '',
                         description: businessItem.description ?? '',
@@ -278,7 +278,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                         image2: franchiseItem.image2 ?? '',
                         image3: franchiseItem.image3 ?? '',
                         image4: franchiseItem.image4 ?? '',
-                        brandName: franchiseItem.brandName ?? '',
+                        brandName: franchiseItem.title ?? '',
                         city: franchiseItem.city,
                         postedTime: franchiseItem.postedTime,
                         state: franchiseItem.state ?? '',
@@ -329,7 +329,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       builder: (context) => InvestorDetailPage(
                         investor: investorItem,
                         imageUrl: investorItem.imageUrl,
-                        name: investorItem.name,
+                        name: investorItem.title,
                         city: investorItem.city,
                         postedTime: investorItem.postedTime,
                         state: investorItem.state ?? '',
@@ -391,7 +391,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
                             ),
                             padding: const EdgeInsets.all(4),
                             child: Text(
-                              item.name,
+                              item.title!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,

@@ -366,6 +366,7 @@ class WishList {
 
 class ProductDetails {
   final String id;
+  final String? title;
   final String type;
   final String imageUrl;
   final String name;
@@ -375,6 +376,7 @@ class ProductDetails {
   ProductDetails({
     required this.id,
     required this.type,
+    this.title,
     required this.imageUrl,
     required this.name,
     required this.city,
@@ -385,6 +387,7 @@ class ProductDetails {
     return ProductDetails(
       id: json['id'].toString(),
       type: json['entity_type'].toString(),
+      title: json['title'].toString() ?? 'N/A',
       imageUrl: validateUrl(json['image1']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       name: json['name'] ?? 'N/A',
       city: json['city'] ?? "json['locations_available'],",

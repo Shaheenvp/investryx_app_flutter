@@ -32,6 +32,7 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
   final TextEditingController _turnoverController = TextEditingController();
   String? selectedRange;
   bool isCustomTurnover = false;
+  String? _turnoverError;
 
   final List<Map<String, String>> turnoverRanges = [
     {
@@ -70,11 +71,19 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
     if (value == null || value.isEmpty) {
       return 'Please enter your turnover';
     }
-    final turnover = int.tryParse(value.replaceAll(RegExp(r'[^\d]'), ''));
+
+    // Extract only digit characters, ignoring currency symbols and formatting
+    final cleanValue = value.replaceAll(RegExp(r'[^\d]'), '');
+
+    if (cleanValue.isEmpty) {
+      return 'Please enter a valid amount';
+    }
+
+    final turnover = BigInt.tryParse(cleanValue);
     if (turnover == null) {
       return 'Please enter a valid amount';
     }
-    if (turnover <= 0) {
+    if (turnover <= BigInt.zero) {
       return 'Turnover must be greater than 0';
     }
     return null;
@@ -87,6 +96,7 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
       isCustomTurnover = range == 'Custom Turnover';
       if (!isCustomTurnover) {
         _turnoverController.clear();
+        _turnoverError = null;
       }
     });
   }
@@ -97,17 +107,44 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
     final onlyNumbers = value.replaceAll(RegExp(r'[^\d]'), '');
     if (onlyNumbers.isEmpty) return '';
 
-    final number = int.tryParse(onlyNumbers) ?? 0;
+    return '₹${_formatWithCommas(onlyNumbers)}';
+  }
 
-    if (number >= 10000000) { // 1 Crore or more
-      double crores = number / 10000000;
-      return '₹${crores.toStringAsFixed(2)} Cr';
-    } else if (number >= 100000) { // 1 Lakh or more
-      double lakhs = number / 100000;
-      return '₹${lakhs.toStringAsFixed(2)} L';
-    } else {
-      return '₹$number'; // Less than 1 Lakh, show raw number
+  String _formatWithCommas(String numStr) {
+    String result = '';
+    int len = numStr.length;
+
+    for (int i = 0; i < len; i++) {
+      if (i > 0 && (len - i) % 2 == 0 && (len - i) > 2) {
+        result += ',';
+      }
+      result += numStr[i];
     }
+
+    return result;
+  }
+
+  // Get min value (for string substring operations)
+  int min(int a, int b) {
+    return a < b ? a : b;
+  }
+
+  // This function validates input without changing state
+  bool _isFormValid() {
+    if (selectedRange == null) return false;
+
+    if (isCustomTurnover) {
+      final validationResult = _validateTurnover(_turnoverController.text);
+      return validationResult == null && _turnoverController.text.isNotEmpty;
+    }
+
+    return true;
+  }
+
+  // Get clean turnover value for passing to next screen
+  String _getCleanTurnoverValue() {
+    if (!isCustomTurnover) return selectedRange!;
+    return _turnoverController.text.isEmpty ? 'Custom' : _turnoverController.text;
   }
 
   @override
@@ -275,16 +312,44 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
                                 horizontal: 16.w,
                                 vertical: 12.h,
                               ),
+                              errorText: _turnoverError,
+                              errorStyle: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.red[700],
+                              ),
+                              helperText: 'Enter any amount without limit',
+                              helperStyle: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey[600],
+                              ),
                             ),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly, // Allow only numbers
                             ],
                             onChanged: (value) {
-                              String formattedValue = _formatCurrency(value.replaceAll(RegExp(r'[^\d]'), ''));
-                              _turnoverController.value = TextEditingValue(
-                                text: formattedValue,
-                                selection: TextSelection.collapsed(offset: formattedValue.length),
-                              );
+                              setState(() {
+                                // Validate the input
+                                _turnoverError = _validateTurnover(value);
+
+                                // Only format if valid
+                                if (_turnoverError == null && value.isNotEmpty) {
+                                  // Remove all non-digit characters
+                                  final rawDigits = value.replaceAll(RegExp(r'[^\d]'), '');
+
+                                  if (rawDigits.isNotEmpty) {
+                                    // Format the raw digits with commas
+                                    String formattedValue = _formatCurrency(rawDigits);
+
+                                    // Update the controller only if the formatted value is different
+                                    if (_turnoverController.text != formattedValue) {
+                                      _turnoverController.value = TextEditingValue(
+                                        text: formattedValue,
+                                        selection: TextSelection.collapsed(offset: formattedValue.length),
+                                      );
+                                    }
+                                  }
+                                }
+                              });
                             },
                           ),
                         ),
@@ -310,10 +375,9 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
                   width: double.infinity,
                   height: 48.h,
                   child: ElevatedButton(
-                    onPressed: (selectedRange != null &&
-                        (!isCustomTurnover || (isCustomTurnover && _turnoverController.text.isNotEmpty)))
+                    onPressed: _isFormValid()
                         ? () {
-                      final turnover = isCustomTurnover ? _turnoverController.text : selectedRange;
+                      final turnover = _getCleanTurnoverValue();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -323,7 +387,7 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
                             businessStage: widget.businessStage,
                             businessGoal: widget.businessGoal,
                             operationDuration: widget.operationDuration,
-                            budget: selectedRange!, // Note: The parameter name remains 'budget' to maintain compatibility
+                            budget: turnover,
                             type: widget.type,
                           ),
                         ),

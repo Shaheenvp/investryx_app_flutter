@@ -1418,7 +1418,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(CustomFunctions.toSentenceCase(result.name),
+                                Text(CustomFunctions.toSentenceCase(result.title),
                                     style:
                                     AppTheme.mediumTitleText(lightTextColor)
                                         .copyWith(

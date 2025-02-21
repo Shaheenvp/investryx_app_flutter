@@ -12,7 +12,8 @@ class AddAdvisorProfileScreen extends StatefulWidget {
   const AddAdvisorProfileScreen({Key? key}) : super(key: key);
 
   @override
-  _AddAdvisorProfileScreenState createState() => _AddAdvisorProfileScreenState();
+  _AddAdvisorProfileScreenState createState() =>
+      _AddAdvisorProfileScreenState();
 }
 
 class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
@@ -21,7 +22,7 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _designationController = TextEditingController();
-  final _yearExperienceController = TextEditingController(text: '0 Years');
+  final _yearExperienceController = TextEditingController();
   final _areaOfInterestController = TextEditingController();
   final _aboutController = TextEditingController();
 
@@ -147,7 +148,8 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
           if (response['status'] == true) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(response['message'] ?? 'Advisor profile created successfully!'),
+                content: Text(response['message'] ??
+                    'Advisor profile created successfully!'),
                 backgroundColor: Colors.green,
               ),
             );
@@ -359,182 +361,174 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
 
   Widget _buildInputFields() {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         _buildInputLabel('Full Name'),
-    _buildTextField(
-    controller: _fullNameController,
-    prefixIcon: Icons.person_outline,
-    hintText: 'Enter full name',
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Full name is required';
-    }
-    if (value.length < 2) {
-    return 'Full name must be at least 2 characters';
-    }
-    return null;
-    },
-    ),
-    const SizedBox(height: 16),
-
-    _buildInputLabel('Designation'),
-    _buildTextField(
-    controller: _designationController,
-    prefixIcon: Icons.work_outline,
-    hintText: 'Enter designation',
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Designation is required';
-    }
-    return null;
-    },
-    ),
-    const SizedBox(height: 16),
-
-    _buildInputLabel('Phone Number'),
-    _buildTextField(
-    controller: _phoneController,
-    prefixIcon: Icons.phone_outlined,
-    hintText: 'Enter phone number',
-    keyboardType: TextInputType.phone,
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Phone number is required';
-    }
-    if (!phonePattern.hasMatch(value)) {
-    return 'Please enter a valid 10-digit phone number';
-    }
-    return null;
-    },
-    ),
-    const SizedBox(height: 16),
-
-    _buildInputLabel('Email'),
-    _buildTextField(
-    controller: _emailController,
-    prefixIcon: Icons.mail_outline,
-    hintText: 'Enter email address',
-    keyboardType: TextInputType.emailAddress,
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Email is required';
-    }
-    if (!emailPattern.hasMatch(value)) {
-    return 'Enter a valid email address';
-    }
-    return null;
-    },
-    ),
-    const SizedBox(height: 16),
-
-    _buildInputLabel('Industry Expertise'),
-    _buildDropdownField(
-    value: _selectedIndustry,
-    icon: Icons.business_outlined,
-    items: _industryList,
-    onChanged: (value) => setState(() => _selectedIndustry = value),
-    hint: 'Select Industry Expertise',
-    ),
-    const SizedBox(height: 16),
-
-    _buildInputLabel('Years of Experience'),
-    _buildTextField(
-    controller: _yearExperienceController,
-    prefixIcon: Icons.timeline_outlined,
-    hintText: '0 Years',
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Years of experience is required';
-    }
-    return null;
-    },
-    ),
-    const SizedBox(height: 16),
-
-    _buildInputLabel('Area of Interest'),
-    _buildTextField(
-    controller: _areaOfInterestController,
-    prefixIcon: Icons.interests_outlined,
-    hintText: 'Enter your area of interest',
-    validator: (value) {
-    if (value == null || value.isEmpty) {
-    return 'Area of interest is required';
-    }
-    return null;
-    },
-    ),
-    const SizedBox(height: 16),
-
-    Row(
-    children: [
-    Expanded(
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    _buildInputLabel('State'),
-    SizedBox(
-    height: 60,
-    child: _buildDropdownField(
-    value: _selectedState,
-    icon: Icons.location_on_outlined,
-    items: IndianLocations.getStates(),
-    onChanged: (value) {
-    setState(() {
-    _selectedState = value;
-    _selectedCity = null;
-    });
-    },
-    hint: 'Select State',
-    ),
-    ),
-    ],
-    ),
-    ),
-    const SizedBox(width: 16),
-    Expanded(
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    _buildInputLabel('City'),
-    SizedBox(
-    height: 60,
-    child: _buildDropdownField(
-    value: _selectedCity,
-    icon: Icons.location_city_outlined,
-    items: _selectedState != null
-    ? IndianLocations.getCitiesForState(_selectedState!)
-        : [],
-    onChanged: _selectedState != null
-    ? (value) => setState(() => _selectedCity = value)
-        : null,
-    hint: 'Select City',
-    ),
-    ),
-    ],
-    ),
-    ),
-    ],
-    ),
-          const SizedBox(height: 16),
-
-          _buildInputLabel('About'),
-          _buildTextField(
-            controller: _aboutController,
-            prefixIcon: Icons.info_outline,
-            hintText: 'Enter description about yourself...',
-            maxLines: 3,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Description is required';
-              }
-              if (value.length < 50) {
-                return 'Description must be at least 50 characters';
-              }
-              return null;
-            },
-          ),
-        ],
+        _buildTextField(
+          controller: _fullNameController,
+          prefixIcon: Icons.person_outline,
+          hintText: 'Enter full name',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Full name is required';
+            }
+            if (value.length < 2) {
+              return 'Full name must be at least 2 characters';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('Designation'),
+        _buildTextField(
+          controller: _designationController,
+          prefixIcon: Icons.work_outline,
+          hintText: 'Enter designation',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Designation is required';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('Phone Number'),
+        _buildTextField(
+          controller: _phoneController,
+          prefixIcon: Icons.phone_outlined,
+          hintText: 'Enter phone number',
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Phone number is required';
+            }
+            if (!phonePattern.hasMatch(value)) {
+              return 'Please enter a valid 10-digit phone number';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('Email'),
+        _buildTextField(
+          controller: _emailController,
+          prefixIcon: Icons.mail_outline,
+          hintText: 'Enter email address',
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Email is required';
+            }
+            if (!emailPattern.hasMatch(value)) {
+              return 'Enter a valid email address';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('Industry Expertise'),
+        _buildDropdownField(
+          value: _selectedIndustry,
+          icon: Icons.business_outlined,
+          items: _industryList,
+          onChanged: (value) => setState(() => _selectedIndustry = value),
+          hint: 'Select Industry Expertise',
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('Years of Experience'),
+        _buildTextField(
+          controller: _yearExperienceController,
+          prefixIcon: Icons.timeline_outlined,
+          hintText: '0',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Years of experience is required';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('Area of Interest'),
+        _buildTextField(
+          controller: _areaOfInterestController,
+          prefixIcon: Icons.interests_outlined,
+          hintText: 'Enter your area of interest',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Area of interest is required';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInputLabel('State'),
+                  SizedBox(
+                    height: 60,
+                    child: _buildDropdownField(
+                      value: _selectedState,
+                      icon: Icons.location_on_outlined,
+                      items: IndianLocations.getStates(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedState = value;
+                          _selectedCity = null;
+                        });
+                      },
+                      hint: 'Select State',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInputLabel('City'),
+                  SizedBox(
+                    height: 60,
+                    child: _buildDropdownField(
+                      value: _selectedCity,
+                      icon: Icons.location_city_outlined,
+                      items: _selectedState != null
+                          ? IndianLocations.getCitiesForState(_selectedState!)
+                          : [],
+                      onChanged: _selectedState != null
+                          ? (value) => setState(() => _selectedCity = value)
+                          : null,
+                      hint: 'Select City',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _buildInputLabel('About'),
+        _buildTextField(
+          controller: _aboutController,
+          prefixIcon: Icons.info_outline,
+          hintText: 'Enter description about yourself...',
+          maxLines: 3,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Description is required';
+            }
+            if (value.length < 50) {
+              return 'Description must be at least 50 characters';
+            }
+            return null;
+          },
+        ),
+      ],
     );
   }
 
@@ -648,7 +642,8 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
           filled: true,
           fillColor: Colors.white,
           hintText: hint,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
         items: items.map((String item) {
           return DropdownMenuItem<String>(
@@ -689,21 +684,21 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
             ),
             child: _isLoading
                 ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 2,
-              ),
-            )
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
+                    ),
+                  )
                 : const Text(
-              'Submit',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+                    'Submit',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
         const SizedBox(height: 16),
@@ -810,33 +805,33 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
       ),
       child: _imageFile != null
           ? ClipOval(
-        child: Image.file(
-          _imageFile!,
-          fit: BoxFit.cover,
-          width: 120,
-          height: 120,
-        ),
-      )
-          : Stack(
-        alignment: Alignment.center,
-        children: [
-          const Icon(
-            Icons.add_photo_alternate_outlined,
-            size: 40,
-            color: Colors.grey,
-          ),
-          Positioned(
-            bottom: 20,
-            child: Text(
-              'Add Photo',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
+              child: Image.file(
+                _imageFile!,
+                fit: BoxFit.cover,
+                width: 120,
+                height: 120,
               ),
+            )
+          : Stack(
+              alignment: Alignment.center,
+              children: [
+                const Icon(
+                  Icons.add_photo_alternate_outlined,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+                Positioned(
+                  bottom: 20,
+                  child: Text(
+                    'Add Photo',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 

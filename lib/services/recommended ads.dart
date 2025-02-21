@@ -123,6 +123,10 @@ class ProductDetails {
   final String singleLineDescription;
   final String postedTime;
   final String type;
+  final String? contactNumber;
+  final String? interest;
+  final String? expertise;
+  final String? experience;
   final String? description;
   final String? url;
   final String? city;
@@ -133,10 +137,14 @@ class ProductDetails {
     required this.imageUrl,
     required this.title,
     required this.type,
+    this.interest,
     required this.singleLineDescription,
     required this.postedTime,
+    this.expertise,
+    this.experience,
     this.description,
     this.url,
+    this.contactNumber,
     this.city,
     this.state,
   });
@@ -150,8 +158,12 @@ class ProductDetails {
       title: json['title'] ?? 'N/A',
       singleLineDescription: json['single_desc'] ?? 'N/A',
       postedTime: json['listed_on'] ?? 'N/A',
-      description: json['about'],
-      url: json['url'],
+      description: json['description'],
+      interest: json['interest'],
+      contactNumber: json['number'],
+      expertise: json['industry'],
+      experience: json['experience'],
+      url: json['email'],
       state: json['state'],
       city: json['city'] ?? 'N/A',
 

@@ -93,10 +93,10 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
       if (response['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                response['message'] ?? 'OTP resent successfully',
-                style: AppTheme.mediumHeadingText(lightTextColor),
-              )),
+            content: Text(response['message'] ?? 'OTP resent successfully'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 3),
+          ),
         );
         setState(() {
           textEditingController.clear();
@@ -108,17 +108,19 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                response['message'] ?? 'Failed to resend OTP. Please try again.',
-                style: AppTheme.mediumHeadingText(lightTextColor),
-              )),
+            content: Text(response['message'] ?? 'Failed to resend OTP. Please try again.'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 3),
+          ),
         );
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('An error occurred. Please try again.',
-                style: AppTheme.mediumHeadingText(lightTextColor))),
+          content: Text('An error occurred. Please try again.'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
       );
     } finally {
       setState(() {

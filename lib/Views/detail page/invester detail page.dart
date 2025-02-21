@@ -938,12 +938,12 @@ class _InvestorDetailPageState extends State<InvestorDetailPage> {
 
   Widget _buildCompanyTitle() {
     return Padding(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            CustomFunctions.toSentenceCase(widget.investor!.name),
+            CustomFunctions.toSentenceCase(widget.investor!.title),
             style: AppTheme.mediumHeadingText(lightTextColor),
           ),
           SizedBox(height: 8.h),
@@ -1175,7 +1175,7 @@ class _ImageSliderHeaderState extends State<ImageSliderHeader> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.black12,
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
@@ -1187,7 +1187,8 @@ class _ImageSliderHeaderState extends State<ImageSliderHeader> {
           right: 16.w,
           child: Obx(() {
             return CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.2),
+              // backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Colors.black12,
               child: Center(
                 child: LikeButton(
                   isLiked: wishlistController.isAddedToWishlist.value,

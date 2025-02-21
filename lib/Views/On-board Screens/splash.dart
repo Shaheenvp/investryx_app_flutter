@@ -70,6 +70,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:async';
 import '../../Widgets/bottom navbar_widget.dart';
+import '../../services/Questionnaire.dart';
+import '../Auth Screens/location access page.dart';
 import 'on-board1.dart';
 import 'onboarding_flow.dart';
 
@@ -96,8 +98,24 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
 
   Future<void> _handleNavigation() async {
     try {
+      Map<String, dynamic>? response;
+      try {
+        response = await QuestionnairePost.questionnaireGet();
+      } catch (e) {
+        if (e is QuestionnaireException && e.statusCode == 404) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const LocationAccessScreen(),
+            ),
+          );
+          return;
+        }
+        print('Error fetching questionnaire: $e');
+      }
+
       String? token = await storage.read(key: 'token');
       if (!mounted) return;
+
       if (token != null && token.isNotEmpty) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
@@ -107,7 +125,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
       } else {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const  OnboardingFlow(),
+            builder: (context) => const OnboardingFlow(),
           ),
         );
       }
@@ -126,16 +144,16 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SizedBox.expand( // This makes the container fill the screen
+      body: SizedBox.expand(
         child: Center(
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Lottie.asset(
                 'assets/investryx_logo_splash.json',
                 controller: _animationController,
-                width: constraints.maxWidth,  // Use full width
-                height: constraints.maxHeight, // Use full height
-                fit: BoxFit.contain, // This will ensure the animation fills the screen while maintaining aspect ratio
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                fit: BoxFit.contain,
                 onLoaded: (composition) {
                   _animationController.duration = composition.duration;
                 },

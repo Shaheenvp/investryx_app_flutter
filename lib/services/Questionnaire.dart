@@ -126,7 +126,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'api_list.dart';
 
-// Custom exception for questionnaire-related errors
 class QuestionnaireException implements Exception {
   final String message;
   final int? statusCode;
@@ -242,4 +241,44 @@ class QuestionnairePost {
       throw QuestionnaireException('Unexpected error: $e');
     }
   }
+
+
+  static Future<Map<String, dynamic>> questionnaireGet() async {
+    // Retrieve and validate token
+    String? token = await storage.read(key: 'token');
+    if (token == null) {
+      throw QuestionnaireException('Authentication token is missing');
+    }
+
+    try {
+      final response = await client.get(
+        Uri.parse(ApiList.questionnaire!),
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+      );
+
+      log('Questionnaire GET Response: ${response.statusCode} - ${response.body}');
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+
+      throw QuestionnaireException(
+        'Server error occurred',
+        statusCode: response.statusCode,
+      );
+    } on SocketException {
+      throw QuestionnaireException('Network connection error');
+    } on FormatException {
+      throw QuestionnaireException('Invalid response format');
+    } on http.ClientException catch (e) {
+      throw QuestionnaireException('Request failed: ${e.message}');
+    } catch (e) {
+      if (e is QuestionnaireException) rethrow;
+      throw QuestionnaireException('Unexpected error: $e');
+    }
+  }
+
 }

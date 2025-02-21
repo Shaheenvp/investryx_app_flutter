@@ -1230,7 +1230,7 @@ class _FranchiseDetailPageState extends State<FranchiseDetailPage> {
 
   Widget _buildCompanyTitle() {
     return Padding(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(8.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1239,7 +1239,7 @@ class _FranchiseDetailPageState extends State<FranchiseDetailPage> {
             children: [
               Text(
                 CustomFunctions.toSentenceCase(
-                    widget.franchise!.brandName.toString()),
+                    widget.franchise!.title.toString()),
                 style: AppTheme.titleText(lightTextColor),
               ),
               SizedBox(height: 10.h),
@@ -1510,7 +1510,7 @@ class _ImageSliderHeaderState extends State<ImageSliderHeader> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.black12,
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
@@ -1522,7 +1522,7 @@ class _ImageSliderHeaderState extends State<ImageSliderHeader> {
           right: 16.w,
           child: Obx(() {
             return CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Colors.black12,
               child: Center(
                 child: LikeButton(
                   isLiked: wishlistController.isAddedToWishlist.value,
