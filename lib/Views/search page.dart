@@ -57,7 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     _loadRecentSearches();
-    _loadRecentResults();
+    // _loadRecentResults();
   }
 
   Future<void> _loadRecentSearches() async {
@@ -910,14 +910,14 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Future<void> _loadRecentResults() async {
-    final data = await SearchServices.fetchRecentSearches();
-    if (data != null) {
-      setState(() {
-        _recentSearchLists = data;
-      });
-    }
-  }
+  // Future<void> _loadRecentResults() async {
+  //   final data = await SearchServices.fetchRecentSearches();
+  //   if (data != null) {
+  //     setState(() {
+  //       _recentSearchLists = data;
+  //     });
+  //   }
+  // }
 
   void _recentSearchNavigation(Recent product) {
     switch (product.entityType) {
@@ -1067,8 +1067,8 @@ class _SearchScreenState extends State<SearchScreen> {
             MaterialPageRoute(
                 builder: (context) => AdvisorDetailPage(
                   advisor: AdvisorExplr(
-                      title: '',
-                      singleLineDescription: 'N/A',
+                      title: product.title!,
+                      singleLineDescription: product.singleLineDescription!,
                       imageUrl: product.imageUrl,
                       id: product.id,
                       user: product.user.toString(),
@@ -1245,7 +1245,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 errorMessage = null;
                                 hasSearched = false;
                                 isLoading = false;
-                                _loadRecentResults();
+                                // _loadRecentResults();
                               });
                             },
                           ),

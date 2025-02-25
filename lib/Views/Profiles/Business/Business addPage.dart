@@ -1065,9 +1065,6 @@
 //     }
 // }
 
-
-
-
 import 'dart:io';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -1079,6 +1076,8 @@ import 'package:project_emergio/models/all%20profile%20model.dart';
 import 'package:project_emergio/models/places.dart';
 import 'package:project_emergio/services/profile%20forms/business/BusinessAddPage.dart';
 import 'package:project_emergio/services/profile%20forms/business/business%20get.dart';
+
+import '../../../Widgets/state_and_cities_widget.dart';
 
 class BusinessInfoPage extends StatefulWidget {
   final String type;
@@ -1118,8 +1117,8 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
   };
 
   String _selectedIndustry = 'Fashion';
-  String _selectedState = 'Kerala';
-  String _selectedCity = 'Kakkanad';
+  String? _selectedCity = 'Kakkanad';
+  String? _selectedState = 'Kerala';
   String _selectedBusinessEntityType = '';
   List<XFile>? _businessPhotos;
   List<PlatformFile>? _businessDocuments;
@@ -1179,56 +1178,61 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
   }
 
   void setTextFields() {
-    // print("Business data: ${widget.busines!.toString()}");
     if (widget.busines != null) {
       setState(() {
+        // Existing field assignments
         _controllers["Title"] = TextEditingController(text: widget.busines!.singleLineDescription);
-        _controllers["askingPrice"] =
-            TextEditingController(text: widget.busines!.askingPrice);
-        _controllers["maximumRange"] =
-            TextEditingController(text: widget.busines!.rangeStarting);
-        _controllers["minimumRange"] =
-            TextEditingController(text: widget.busines!.rangeEnding);
-        _controllers["reason"] =
-            TextEditingController(text: widget.busines!.reason);
-        _controllers["fundingDetails"] =
-            TextEditingController(text: widget.busines!.income_source);
-        _controllers["facilityDetails"] =
-            TextEditingController(text: widget.busines!.facility);
-        _controllers["keyFeatures"] =
-            TextEditingController(text: widget.busines!.features);
-        _controllers["topOfferings"] =
-            TextEditingController(text: widget.busines!.topSelling);
-        _controllers["businessWebsite"] =
-            TextEditingController(text: widget.busines!.url);
-        _controllers["preferredType"] =
-            TextEditingController(text: widget.busines!.type_sale);
-        _controllers["ebitda"] =
-            TextEditingController(text: widget.busines!.ebitda);
-        _controllers["mostReportedYearlySales"] =
-            TextEditingController(text: widget.busines!.latest_yearly);
-        _controllers["averageMonthlySales"] =
-            TextEditingController(text: widget.busines!.avg_monthly);
-        _controllers["numberOfEmployees"] =
-            TextEditingController(text: widget.busines!.employees);
-        _controllers["address2"] =
-            TextEditingController(text: widget.busines!.address_2);
+        _controllers["askingPrice"] = TextEditingController(text: widget.busines!.askingPrice);
+        _controllers["maximumRange"] = TextEditingController(text: widget.busines!.rangeStarting);
+        _controllers["minimumRange"] = TextEditingController(text: widget.busines!.rangeEnding);
+        _controllers["reason"] = TextEditingController(text: widget.busines!.reason);
+        _controllers["fundingDetails"] = TextEditingController(text: widget.busines!.income_source);
+        _controllers["facilityDetails"] = TextEditingController(text: widget.busines!.facility);
+        _controllers["keyFeatures"] = TextEditingController(text: widget.busines!.features);
+        _controllers["topOfferings"] = TextEditingController(text: widget.busines!.topSelling);
+        _controllers["businessWebsite"] = TextEditingController(text: widget.busines!.url);
+        _controllers["preferredType"] = TextEditingController(text: widget.busines!.type_sale);
+        _controllers["ebitda"] = TextEditingController(text: widget.busines!.ebitda);
+        _controllers["mostReportedYearlySales"] = TextEditingController(text: widget.busines!.latest_yearly);
+        _controllers["averageMonthlySales"] = TextEditingController(text: widget.busines!.avg_monthly);
+        _controllers["numberOfEmployees"] = TextEditingController(text: widget.busines!.employees);
+        _controllers["address2"] = TextEditingController(text: widget.busines!.address_2);
         _controllers["pin"] = TextEditingController(text: widget.busines!.pin);
-        _controllers["address1"] =
-            TextEditingController(text: widget.busines!.address_1);
-        _controllers["description"] =
-            TextEditingController(text: widget.busines!.description);
-        _controllers["yearEstablished"] =
-            TextEditingController(text: widget.busines!.establish_yr);
-        _controllers["businessName"] =
-            TextEditingController(text: widget.busines!.name);
+        _controllers["address1"] = TextEditingController(text: widget.busines!.address_1);
+        _controllers["description"] = TextEditingController(text: widget.busines!.description);
+        _controllers["yearEstablished"] = TextEditingController(text: widget.busines!.establish_yr);
+        _controllers["businessName"] = TextEditingController(text: widget.busines!.name);
+
+        // Set state and city values
+        if (widget.busines!.state != null) {
+          _selectedState = widget.busines!.state;
+        }
+
+        // Only set the city after setting the state to ensure the cities list is populated
+        Future.delayed(Duration.zero, () {
+          setState(() {
+            if (widget.busines!.city != null) {
+              _selectedCity = widget.busines!.city;
+            }
+          });
+        });
+
+        // Set industry if it exists and is not null
+        if ((widget.busines!.industry ?? "").isNotEmpty) {
+          _selectedIndustry = widget.busines!.industry!;
+        }
+
+        if ((widget.busines!.entity ?? "").isNotEmpty) {
+          _selectedBusinessEntityType = widget.busines!.entity!;
+        }
+
       });
     }
   }
 
   @override
   void dispose() {
-    _controllers.forEach((_ , controller) => controller.dispose());
+    _controllers.forEach((_, controller) => controller.dispose());
     super.dispose();
   }
 
@@ -1236,18 +1240,20 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
     try {
       final result = await ImagePicker().pickMultiImage();
       if (result != null && result.isNotEmpty) {
-        for (var image in result) {
-          // Verify the file exists and print its details
-          final file = File(image.path);
-          final fileSize = await file.length();
-          print('Image selected:');
-          print('Path: ${file.path}');
-          print('Size: ${fileSize} bytes');
-          print('Exists: ${await file.exists()}');
+        // Check if adding new photos will exceed the limit of 4
+        if ((_businessPhotos?.length ?? 0) + result.length > 4) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You can only upload a maximum of 4 photos.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          return;
         }
 
+        // Add the selected photos to the list
         setState(() {
-          _businessPhotos = result;
+          _businessPhotos = [...?_businessPhotos, ...result];
         });
 
         // Show success message
@@ -1464,7 +1470,7 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide:
-          const BorderSide(color: Color.fromARGB(255, 224, 228, 230)),
+              const BorderSide(color: Color.fromARGB(255, 224, 228, 230)),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
@@ -1478,6 +1484,74 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
           borderRadius: BorderRadius.circular(15),
           borderSide: const BorderSide(color: Colors.red),
         ));
+  }
+
+  Widget _buildDropdownField({
+    required String? value,
+    required IconData icon,
+    required List<String> items,
+    required void Function(String?)? onChanged,
+    required String hint,
+  }) {
+    // Only include the value in the DropdownButtonFormField if it exists in the items list
+    final effectiveValue = items.contains(value) ? value : null;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: effectiveValue,
+        icon: const Icon(Icons.arrow_drop_down),
+        isExpanded: true,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.amber, width: 1),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          hintText: hint,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        ),
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(
+              item,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14),
+            ),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please select an option';
+          }
+          return null;
+        },
+        dropdownColor: Colors.white,
+      ),
+    );
   }
 
   Widget _buildHintText(String text) {
@@ -1495,14 +1569,14 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
 
   Widget _buildTextFormField(String key,
       {String? Function(String?)? validator,
-        int? maxLines,
-        TextInputType? keyboardType}) {
+      int? maxLines,
+      TextInputType? keyboardType}) {
     return TextFormField(
       controller: _controllers[key],
       decoration: _inputDecoration(),
       onChanged: (_) {},
       validator: validator ??
-              (value) => value!.isEmpty ? 'This field is required' : null,
+          (value) => value!.isEmpty ? 'This field is required' : null,
       maxLines: maxLines,
       keyboardType: keyboardType,
     );
@@ -1516,18 +1590,18 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
       isExpanded: true,
       items: items
           .map((item) => DropdownMenuItem(
-          value: item,
-          child: Text(
-            item,
-            style: const TextStyle(
-                color: Color(0xff6C7278),
-                fontWeight: FontWeight.w400,
-                fontSize: 16),
-          )))
+              value: item,
+              child: Text(
+                item,
+                style: const TextStyle(
+                    color: Color(0xff6C7278),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16),
+              )))
           .toList(),
       decoration: _inputDecoration(),
       validator: (value) =>
-      value == null || value.isEmpty ? 'Please select an option' : null,
+          value == null || value.isEmpty ? 'Please select an option' : null,
     );
   }
 
@@ -1585,7 +1659,7 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
                                 .map((i) => i['value']!)
                                 .cast<String>()
                                 .toList(), // Cast to List<String>
-                                (value) =>
+                            (value) =>
                                 setState(() => _selectedIndustry = value!),
                           ),
                         ],
@@ -1609,111 +1683,40 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
                 _buildHintText('Address 1'),
                 _buildTextFormField('address1',
                     validator: (value) =>
-                    value!.isNotEmpty ? _validateAddress(value) : null),
+                        value!.isNotEmpty ? _validateAddress(value) : null),
                 const SizedBox(height: 16.0),
                 _buildHintText('Address 2'),
                 _buildTextFormField('address2',
                     validator: (value) =>
-                    value!.isNotEmpty ? _validateAddress(value) : null),
+                        value!.isNotEmpty ? _validateAddress(value) : null),
                 const SizedBox(height: 16.0),
 
                 _buildHintText('State'),
-                DropdownSearch<String>(
-                  validator: validateRequiredState,
-                  autoValidateMode: AutovalidateMode.onUserInteraction,
-                  decoratorProps: DropDownDecoratorProps(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 224, 228, 230)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 224, 228, 230)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 224, 228, 230)),
-                      ),
-                    ),
-                  ),
-                  items: (filter, infiniteScrollProps) => states,
-                  selectedItem: _selectedState.isEmpty ? null : _selectedState,
-                  onChanged: (String? newValue) {
+                _buildDropdownField(
+                  value: _selectedState,
+                  icon: Icons.location_on_outlined,
+                  items: IndianLocations.getStates(),
+                  onChanged: (value) {
                     setState(() {
-                      _selectedState = newValue!;
+                      _selectedState = value;
+                      _selectedCity = null;
                     });
                   },
-                  popupProps: PopupProps.menu(
-                    showSearchBox: true,
-                    searchFieldProps: TextFieldProps(
-                      decoration: InputDecoration(
-                        hintText: 'Search states...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 224, 228, 230)),
-                        ),
-                      ),
-                    ),
-                  ),
+                  hint: 'Select State',
                 ),
                 const SizedBox(height: 16.0),
 
                 _buildHintText('City'),
-                DropdownSearch<String>(
-                  validator: validateRequiredCity,
-                  autoValidateMode: AutovalidateMode.onUserInteraction,
-                  decoratorProps: DropDownDecoratorProps(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 224, 228, 230)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 224, 228, 230)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 224, 228, 230)),
-                      ),
-                    ),
-                  ),
-                  items: (filter, infiniteScrollProps) => AllPlaces().places,
-                  selectedItem: _selectedCity.isEmpty ? null : _selectedCity,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedCity = newValue ?? '';
-                    });
-                  },
-                  popupProps: PopupProps.menu(
-                    showSearchBox: true,
-                    searchFieldProps: TextFieldProps(
-                      decoration: InputDecoration(
-                        hintText: 'Search locations...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 224, 228, 230)),
-                        ),
-                      ),
-                    ),
-                  ),
+                _buildDropdownField(
+                  value: _selectedCity,
+                  icon: Icons.location_city_outlined,
+                  items: _selectedState != null
+                      ? IndianLocations.getCitiesForState(_selectedState!)
+                      : [],
+                  onChanged: _selectedState != null
+                      ? (value) => setState(() => _selectedCity = value)
+                      : null,
+                  hint: 'Select City',
                 ),
 
                 const SizedBox(width: 16.0),
@@ -1757,8 +1760,8 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
                                 'S Corporation',
                                 'Other'
                               ],
-                                  (value) => setState(
-                                      () => _selectedBusinessEntityType = value!)),
+                              (value) => setState(
+                                  () => _selectedBusinessEntityType = value!)),
                         ],
                       ),
                     ),
@@ -1785,53 +1788,53 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
                 _buildHintText('Preferred Type of Selling'),
                 _buildDropdownFormField(_controllers['preferredType']!.text,
                     ['Investment', 'Selling'], (value) {
-                      setState(() {
-                        _controllers['preferredType']!.text = value!;
-                      });
-                    }),
+                  setState(() {
+                    _controllers['preferredType']!.text = value!;
+                  });
+                }),
                 const SizedBox(height: 16.0),
                 _controllers["preferredType"]!.text == "Investment"
                     ? Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHintText('Minimum Investment Range'),
-                          _buildTextFormField('minimumRange',
-                              maxLines: null,
-                              validator: _validateMinmumRange),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHintText('Minimum Investment Range'),
+                                _buildTextFormField('minimumRange',
+                                    maxLines: null,
+                                    validator: _validateMinmumRange),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHintText('Maximum Investment Range'),
+                                _buildTextFormField('maximumRange',
+                                    maxLines: null,
+                                    validator: _validateMaximumRange),
+                              ],
+                            ),
+                          )
                         ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHintText('Maximum Investment Range'),
-                          _buildTextFormField('maximumRange',
-                              maxLines: null,
-                              validator: _validateMaximumRange),
-                        ],
-                      ),
-                    )
-                  ],
-                )
+                      )
                     : _controllers["preferredType"]!.text == "Selling"
-                    ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHintText('Asking Price of Business'),
-                    _buildTextFormField('askingPrice',
-                        keyboardType: TextInputType.number,
-                        validator: (value) =>
-                            _validateSales(value, 'askingPrice')),
-                  ],
-                )
-                    : const SizedBox.shrink(),
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildHintText('Asking Price of Business'),
+                              _buildTextFormField('askingPrice',
+                                  keyboardType: TextInputType.number,
+                                  validator: (value) =>
+                                      _validateSales(value, 'askingPrice')),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                 const SizedBox(height: 16.0),
                 _buildHintText('Business Website URL'),
                 _buildTextFormField('businessWebsite', validator: _validateUrl),
@@ -1872,8 +1875,7 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
                         minLength: 50, maxLength: 500)),
                 const SizedBox(height: 16.0),
                 _buildHintText(
-                    '''Summarize funding Source, outstanding debts, and
-the number of shareholder with their ownership %'''),
+                    '''Summarize funding Source, outstanding debts, and the number of shareholder with their ownership %'''),
                 _buildTextFormField('fundingDetails',
                     maxLines: 4,
                     validator: (value) => _validateTextArea(
@@ -1920,7 +1922,7 @@ the number of shareholder with their ownership %'''),
                     child: _isSubmitting
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(widget.isEdit == true ? "Save changes" : 'Next',
-                        style: const TextStyle(color: Colors.white)),
+                            style: const TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -1988,13 +1990,13 @@ the number of shareholder with their ownership %'''),
                           padding: const EdgeInsets.only(left: 8.0),
                           child: file.extension?.toLowerCase() == 'pdf'
                               ? const Icon(Icons.picture_as_pdf,
-                              color: Colors.red)
+                                  color: Colors.red)
                               : Image.file(
-                            File(file.path!),
-                            width: 50,
-                            height: 40,
-                            fit: BoxFit.cover,
-                          ),
+                                  File(file.path!),
+                                  width: 50,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
                         );
                       } else if (file is XFile) {
                         return Padding(
@@ -2041,6 +2043,15 @@ the number of shareholder with their ownership %'''),
           throw Exception('No valid image files were processed');
         }
 
+        // Print image file paths for debugging
+        for (var file in imageFiles) {
+          if (file != null) {
+            print('Image file path: ${file.path}');
+          } else {
+            print('Image file is null');
+          }
+        }
+
         // Process document file
         File? documentFile;
         if (_businessDocuments != null &&
@@ -2062,11 +2073,11 @@ the number of shareholder with their ownership %'''),
         }
 
         print('Submitting form with:');
-        print('Number of valid images: ${imageFiles.where((f) => f != null).length}');
+        print(
+            'Number of valid images: ${imageFiles.where((f) => f != null).length}');
         print('Document file: ${documentFile?.path ?? 'None'}');
         print('Proof file: ${proofFile?.path ?? 'None'}');
 
-        // Submit the form
         await BusinessAddPage.businessAddPage(
           context: context,
           name: _controllers['businessName']?.text ?? '',
@@ -2076,9 +2087,9 @@ the number of shareholder with their ownership %'''),
           description: _controllers['description']?.text ?? '',
           address_1: _controllers['address1']?.text ?? '',
           address_2: _controllers['address2']?.text ?? '',
-          state: _selectedState,
+          state: _selectedState!,
           pin: _controllers['pin']?.text ?? '',
-          city: _selectedCity,
+          city: _selectedCity!,
           employees: _controllers['numberOfEmployees']?.text ?? '',
           entity: _selectedBusinessEntityType,
           avg_monthly: _controllers['averageMonthlySales']?.text ?? '',
@@ -2107,7 +2118,6 @@ the number of shareholder with their ownership %'''),
         setState(() => _isSubmitting = false);
         _controller.fetchListings("business");
         Navigator.pop(context);
-
       } catch (e, stackTrace) {
         print('Error submitting form: $e');
         print('Stack trace: $stackTrace');
@@ -2146,32 +2156,33 @@ the number of shareholder with their ownership %'''),
             industry: _selectedIndustry != widget.busines!.industry
                 ? _selectedIndustry
                 : widget.busines!.industry,
-            establish_yr: _controllers["yearEstablished"]?.text ?? "",
+            establish_yr: _controllers["yearEstablished"]?.text ?? null,
             description: _controllers["description"]?.text ?? "",
             address_1: _controllers["address1"]?.text ?? "",
             address_2: _controllers["address2"]?.text ?? "",
             state: _selectedState != widget.busines!.state
                 ? _selectedState
                 : widget.busines!.state,
-            pin: _controllers["pin"]?.text ?? "",
+            pin: _controllers["pin"]?.text ?? null,
             city: _selectedCity != widget.busines!.city
                 ? _selectedCity
                 : widget.busines!.city,
-            employees: _controllers["numberOfEmployees"]?.text ?? "",
+            employees: _controllers["numberOfEmployees"]?.text ?? null,
             entity: _selectedBusinessEntityType != ""
                 ? _selectedBusinessEntityType
                 : widget.busines!.entity,
-            avg_monthly: _controllers["averageMonthlySales"]?.text ?? "",
-            latest_yearly: _controllers["mostReportedYearlySales"]?.text ?? "",
-            ebitda: _controllers["ebitda"]?.text ?? "",
+            avg_monthly: _controllers["averageMonthlySales"]?.text ?? null,
+            latest_yearly:
+                _controllers["mostReportedYearlySales"]?.text ?? null,
+            ebitda: _controllers["ebitda"]?.text ?? "null",
             rate: _controllers["askingPrice"]?.text ?? "",
             type_sale: _controllers["preferredType"]?.text ?? "",
-            url: _controllers["businessWebsite"]?.text ?? "",
-            topSelling: _controllers["topOfferings"]?.text ?? "",
-            features: _controllers["keyFeatures"]?.text ?? "",
-            facility: _controllers["facilityDetails"]?.text ?? "",
-            reason: _controllers["reason"]?.text ?? "",
-            income_source: _controllers["fundingDetails"]?.text ?? "",
+            url: _controllers["businessWebsite"]?.text ?? null,
+            topSelling: _controllers["topOfferings"]?.text ?? null,
+            features: _controllers["keyFeatures"]?.text ?? null,
+            facility: _controllers["facilityDetails"]?.text ?? null,
+            reason: _controllers["reason"]?.text ?? null,
+            income_source: _controllers["fundingDetails"]?.text ?? null,
             image1: images.length > 0 ? images[0] : null,
             image2: images.length > 1 ? images[1] : null,
             image3: images.length > 2 ? images[2] : null,
@@ -2201,7 +2212,8 @@ the number of shareholder with their ownership %'''),
         setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update business information: ${e.toString()}'),
+            content:
+                Text('Failed to update business information: ${e.toString()}'),
             duration: const Duration(seconds: 3),
           ),
         );

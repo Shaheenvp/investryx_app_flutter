@@ -128,7 +128,7 @@ class ApiList {
   static String? recentEnquiries ='$baseUrl/recent_enquiries';
   static String? countEnquiries = '$baseUrl/count_enquiries';
   static String? popularSearch = '$baseUrl/popularsearch';
-  static String? recentSearch = '$baseUrl/recentsearchview';
+  // static String? recentSearch = '$baseUrl/recentsearchview';
   static String filterSearch = "$baseUrl/filter_posts";
   static String aadhaar = "$baseUrl/aadhaar";
   static String getPost = "$baseUrl/get_post";

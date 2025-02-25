@@ -398,6 +398,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
   List<BusinessInvestorExplr>? businessListings;
   List<BusinessInvestorExplr>? investorListings;
   List<FranchiseExplr>? franchiseListings;
+  List<AdvisorExplr>? advisorListings;
   bool isLoading = true;
 
   final Map<String, ProfileType> profiles = {
@@ -430,6 +431,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       icon: Icons.person_rounded,
       description: 'Manage your advisor services',
       deleteFunction: AdvisorFetchPage.deleteAdvisorProfile,
+      fetchFunction: AdvisorFetchPage.fetchAdvisorData,
+      deleteItemFunction: (String id) => AdvisorFetchPage.deleteAdvisorProfile(id),
     ),
   };
 
@@ -457,12 +460,14 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
         BusinessGet.fetchBusinessListings(),
         InvestorFetchPage.fetchInvestorData(),
         FranchiseFetchPage.fetchFranchiseData(),
+        AdvisorFetchPage.fetchAdvisorData() ?? Future.value([]),
       ]);
 
       setState(() {
         businessListings = futures[0] as List<BusinessInvestorExplr>?;
         investorListings = futures[1] as List<BusinessInvestorExplr>?;
         franchiseListings = futures[2] as List<FranchiseExplr>?;
+        advisorListings = futures[3] as List<AdvisorExplr>?;
       });
     } catch (e) {
       _showErrorSnackbar('Failed to fetch profiles', e.toString());
@@ -509,18 +514,26 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
         return;
       }
 
+      // Close the dialog before making any API calls
+      Get.back();
+
       if (isCompleteProfile) {
         final profile = profiles[itemName]!;
-        if (itemName == 'Business Profile' || itemName == 'Advisor Profile') {
+        if (itemName == 'Business Profile') {
           await profile.deleteFunction(token);
+        } else if (itemName == 'Advisor Profile') {
+          await profile.deleteFunction(listingId ?? "0");
         } else {
           await profile.deleteFunction();
         }
       } else {
-        await profiles[itemName]!.deleteItemFunction!(listingId!);
+        if (itemName == 'Advisor Profile') {
+          await AdvisorFetchPage.deleteAdvisorProfile(listingId ?? "0");
+        } else {
+          await profiles[itemName]!.deleteItemFunction!(listingId!);
+        }
       }
 
-      Get.back();
       _showSuccessSnackbar(
         isCompleteProfile
             ? '$itemName deleted successfully'
@@ -528,10 +541,10 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       );
       await _loadProfiles();
     } catch (e) {
-      Get.back();
       _showErrorSnackbar('Delete Failed', e.toString());
     }
   }
+
 
   void _showDeleteConfirmationDialog(
       BuildContext context,
@@ -563,6 +576,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
         return investorListings;
       case 'Franchise Profile':
         return franchiseListings;
+      case 'Advisor Profile':
+        return advisorListings;
       default:
         return null;
     }
@@ -1100,14 +1115,23 @@ class ListingsSheet extends StatelessWidget {
       itemCount: listings.length,
       itemBuilder: (context, index) {
         final listing = listings[index];
-        final title = listing is BusinessInvestorExplr
-            ? listing.name
-            : listing is FranchiseExplr
-            ? listing.brandName
-            : 'Unknown';
-        final subtitle = listing is BusinessInvestorExplr || listing is FranchiseExplr
-            ? listing.city
-            : '';
+        String title;
+        String subtitle;
+
+        // Handle different types of listings
+        if (listing is BusinessInvestorExplr) {
+          title = listing.name;
+          subtitle = listing.city;
+        } else if (listing is FranchiseExplr) {
+          title = listing.brandName;
+          subtitle = listing.city;
+        } else if (listing is AdvisorExplr) {
+          title = listing.name ?? 'N/A';  // Use the name from AdvisorExplr
+          subtitle = listing.location ?? 'N/A';  // Use location as subtitle
+        } else {
+          title = 'Unknown';
+          subtitle = '';
+        }
 
         return Container(
           margin: EdgeInsets.only(bottom: 12.h),
@@ -1149,7 +1173,10 @@ class ListingsSheet extends StatelessWidget {
                   ],
                 ),
                 trailing: IconButton(
-                  onPressed: () => onDeleteListing(listing.id, title),
+                  onPressed: () => onDeleteListing(
+                    listing is AdvisorExplr ? listing.id : listing.id.toString(),
+                    title,
+                  ),
                   icon: Icon(
                     Icons.delete_outline,
                     color: Theme.of(context).colorScheme.error,
@@ -1184,7 +1211,6 @@ class ListingsSheet extends StatelessWidget {
     }
   }
 }
-
 
 class AccountCard extends StatelessWidget {
   final VoidCallback onDeleteAccount;

@@ -301,7 +301,7 @@ class _BusinessQuestionnareScreen4State extends State<BusinessQuestionnareScreen
                             style: TextStyle(fontSize: 15.sp),
                             decoration: InputDecoration(
                               hintText: 'Enter your annual turnover',
-                              prefixText: '₹ ',
+                              prefixText: '',
                               filled: true,
                               fillColor: Colors.grey[100],
                               border: OutlineInputBorder(

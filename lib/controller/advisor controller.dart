@@ -27,47 +27,47 @@ class AdvisorController extends GetxController {
     }
   }
 
-  Future<void> updateAdvisor({
-    required String advisorId,
-    required String advisorName,
-    required String designation,
-    required String businessWebsite,
-    required String state,
-    required String city,
-    required String contactNumber,
-    required String describeExpertise,
-    required String areaOfInterest,
-    required List<File> brandLogo,
-    required List<File> businessPhotos,
-    required File businessProof,
-    required List<File> businessDocuments,
-  }) async {
-    try {
-      bool success = await AdvisorFetchPage.updateAdvisorProfile(
-        advisorId: int.parse(advisorId),
-        advisorName: advisorName,
-        designation: designation,
-        businessWebsite: businessWebsite,
-        state: state,
-        city: city,
-        contactNumber: contactNumber,
-        describeExpertise: describeExpertise,
-        areaOfInterest: areaOfInterest,
-        brandLogo: brandLogo,
-        businessPhotos: businessPhotos,
-        businessProof: businessProof,
-        businessDocuments: businessDocuments,
-      );
-
-      if (success) {
-        fetchAdvisor(); // Update local advisor data
-        Get.snackbar('Success', 'Advisor updated successfully');
-      } else {
-        Get.snackbar('Error', 'Failed to update advisor');
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Error: ${e.toString()}');
-      print('Error: $e');
-    }
-  }
+  // Future<void> updateAdvisor({
+  //   required String advisorId,
+  //   required String advisorName,
+  //   required String designation,
+  //   required String businessWebsite,
+  //   required String state,
+  //   required String city,
+  //   required String contactNumber,
+  //   required String describeExpertise,
+  //   required String areaOfInterest,
+  //   required List<File> brandLogo,
+  //   required List<File> businessPhotos,
+  //   required File businessProof,
+  //   required List<File> businessDocuments,
+  // }) async {
+  //   try {
+  //     bool success = await AdvisorFetchPage.updateAdvisorProfile(
+  //       advisorId: int.parse(advisorId),
+  //       advisorName: advisorName,
+  //       designation: designation,
+  //       businessWebsite: businessWebsite,
+  //       state: state,
+  //       city: city,
+  //       contactNumber: contactNumber,
+  //       describeExpertise: describeExpertise,
+  //       areaOfInterest: areaOfInterest,
+  //       brandLogo: brandLogo,
+  //       businessPhotos: businessPhotos,
+  //       businessProof: businessProof,
+  //       businessDocuments: businessDocuments,
+  //     );
+  //
+  //     if (success) {
+  //       fetchAdvisor(); // Update local advisor data
+  //       Get.snackbar('Success', 'Advisor updated successfully');
+  //     } else {
+  //       Get.snackbar('Error', 'Failed to update advisor');
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Error: ${e.toString()}');
+  //     print('Error: $e');
+  //   }
+  // }
 }

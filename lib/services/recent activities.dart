@@ -117,6 +117,7 @@ class Recent {
   final String city;
   final String? state;
   final String? title;
+  final String? singleLineDescription;
   final String? employees;
   final String? entity;
   final String? avg_monthly;
@@ -189,6 +190,7 @@ class Recent {
     this.employees,
     this.entity,
     this.title,
+    this.singleLineDescription,
     this.avg_monthly,
     this.latest_yearly,
     this.ebitda,
@@ -253,6 +255,7 @@ class Recent {
       image4: validateUrl(json['image4']),
       name: json['name']?.toString() ?? 'N/A',
       title: json['title']?.toString() ?? 'N/A',
+      singleLineDescription: json['single_desc']?.toString() ?? 'N/A',
       industry: json['industry']?.toString(),
       establish_yr: json['establish_yr']?.toString(),
       description: json['description']?.toString(),

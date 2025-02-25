@@ -1233,9 +1233,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  void _handleEdit() {
+  Future<void> _handleEdit() async {
     String type = widget.type;
-
     if (type == "business") {
       Get.to(() => BusinessInfoPage(
         isEdit: true,
@@ -1249,12 +1248,19 @@ class _DashboardScreenState extends State<DashboardScreen>
         type: type,
       ));
     } else if (type == "advisor") {
-      Get.to(() => EditProfileScreen(
+      final result = await Get.to(() => AddAdvisorProfileScreen(
         isEdit: true,
         advisor: _controller.advisorList[0],
         type: type,
         action: () {},
       ));
+
+      if (result is AdvisorExplr) {
+        _controller.updateCurrentAdvisorProfile(result);
+      } else {
+        print("No valid advisor profile returned");
+      }
+
     } else if (type == "franchise") {
       Get.to(() => FranchiseFormScreen(
         isEdit: true,
@@ -1449,7 +1455,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         type: type,
                       ));
                     } else if (type == "advisor") {
-                      Get.to(EditProfileScreen(
+                      Get.to(AddAdvisorProfileScreen(
                         isEdit: true,
                         advisor: _controller.advisorList[0],
                         type: type,
@@ -1762,7 +1768,6 @@ class _EnquiryCard extends StatelessWidget {
 
   const _EnquiryCard({required this.enquiryData});
 
-  // Function to launch phone dialer
   void _launchPhoneDialer(BuildContext context) async {
     final phoneNumber = enquiryData.user.username;
     final uri = Uri.parse('tel:+91$phoneNumber');
@@ -1777,20 +1782,29 @@ class _EnquiryCard extends StatelessWidget {
     }
   }
 
-  /// Function to navigate to chat screen
   void _navigateToChat(BuildContext context) {
+    final lastSeen = enquiryData.user.inactiveFrom ?? enquiryData.user.activeFrom ?? '';
+
+    print('Debug - Chat User ID: ${enquiryData.user.id}');
+    print('Debug - Last Seen Timestamp: $lastSeen');
+    print('Debug - Active From: ${enquiryData.user.activeFrom}');
+    print('Debug - Inactive From: ${enquiryData.user.inactiveFrom}');
+    print('Debug - Is Active: ${enquiryData.user.isActive}');
+
     Get.to(() => ChatScreen(
-      chatUserId: enquiryData.user.id,
+      chatUserId: enquiryData.chatUserId,
       name: enquiryData.user.firstName.isNotEmpty
           ? enquiryData.user.firstName
           : enquiryData.user.username,
       imageUrl: enquiryData.user.image,
       roomId: enquiryData.roomId.toString(),
       number: enquiryData.user.username,
-      lastActive: '',
-      isActive: false,
+      lastActive: lastSeen,
+      isActive: enquiryData.user.isActive,
     ));
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1817,17 +1831,35 @@ class _EnquiryCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12.r),
-            child: enquiryData.user.image != null
-                ? Image.network(
-              enquiryData.user.image!,
-              width: 60.w,
-              height: 60.w,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return _buildDefaultImage();
-              },
-            )
-                : _buildDefaultImage(),
+            child: Stack(
+              children: [
+                enquiryData.user.image != null
+                    ? Image.network(
+                  enquiryData.user.image!,
+                  width: 60.w,
+                  height: 60.w,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _buildDefaultImage();
+                  },
+                )
+                    : _buildDefaultImage(),
+                if (enquiryData.user.isActive)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 12.w,
+                      height: 12.w,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
           SizedBox(width: 12.w),
 
@@ -1879,7 +1911,6 @@ class _EnquiryCard extends StatelessWidget {
             ),
           ),
 
-          // Updated Action Buttons with functionality
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [

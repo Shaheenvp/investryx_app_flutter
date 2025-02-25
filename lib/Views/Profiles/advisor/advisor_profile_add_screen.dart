@@ -1,20 +1,32 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:project_emergio/Views/digilocker/digilocker_verification_screen.dart';
 import 'dart:io';
 import '../../../Widgets/state_and_cities_widget.dart';
+import '../../../models/all profile model.dart';
 import '../../../services/profile forms/advisor/advisor add.dart';
-import '../../../services/profile forms/profile_creation_service.dart';
+import '../../../services/profile forms/advisor/advisor get.dart';
 
 class AddAdvisorProfileScreen extends StatefulWidget {
-  const AddAdvisorProfileScreen({Key? key}) : super(key: key);
+  final bool isEdit;
+  final AdvisorExplr? advisor;
+  final String? type;
+  final Function? action;
+
+  const AddAdvisorProfileScreen({
+    Key? key,
+    this.isEdit = false,
+    this.advisor,
+    this.type,
+    this.action,
+  }) : super(key: key);
 
   @override
-  _AddAdvisorProfileScreenState createState() =>
-      _AddAdvisorProfileScreenState();
+  _AddAdvisorProfileScreenState createState() => _AddAdvisorProfileScreenState();
 }
+
 
 class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
   final _formKey = GlobalKey<FormState>();
@@ -25,7 +37,7 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
   final _yearExperienceController = TextEditingController();
   final _areaOfInterestController = TextEditingController();
   final _aboutController = TextEditingController();
-
+  String? _networkImageUrl;
   String? _selectedIndustry;
   String? _selectedState;
   String? _selectedCity;
@@ -56,12 +68,44 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
     'Consulting'
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.advisor != null) {
+      _loadAdvisorData();
+    }
+  }
+
+  void _loadAdvisorData() {
+    final advisor = widget.advisor!;
+    _fullNameController.text = advisor.name;
+    _phoneController.text = advisor.contactNumber ?? '';
+    _emailController.text = advisor.url ?? '';
+    _designationController.text = advisor.designation ?? '';
+    _yearExperienceController.text = advisor.expertise ?? '';
+    _areaOfInterestController.text = advisor.interest ?? '';
+    _aboutController.text = advisor.description ?? '';
+
+    setState(() {
+      _selectedIndustry = advisor.type;
+      _selectedState = advisor.state;
+      _selectedCity = advisor.location;
+
+      // Handle logo display
+      if (advisor.brandLogo != null && advisor.brandLogo!.isNotEmpty) {
+        _networkImageUrl = advisor.brandLogo!.first;
+      }
+    });
+  }
+
+
   bool _validateForm() {
     if (!_formKey.currentState!.validate()) {
       return false;
     }
 
-    if (_imageFile == null) {
+    // Remove image validation for edit mode
+    if (!widget.isEdit && _imageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please upload a profile image'),
@@ -102,26 +146,6 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
       return false;
     }
 
-    if (_designationController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your designation'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return false;
-    }
-
-    if (_areaOfInterestController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your area of interest'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return false;
-    }
-
     return true;
   }
 
@@ -130,56 +154,111 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
       try {
         setState(() => _isLoading = true);
 
-        final response = await AdvisorProfileService.createAdvisorProfile(
-          name: _fullNameController.text,
-          designation: _designationController.text,
-          email: _emailController.text,
-          number: _phoneController.text,
-          industry: _selectedIndustry!,
-          experience: _yearExperienceController.text,
-          areaOfInterest: _areaOfInterestController.text,
-          state: _selectedState!,
-          city: _selectedCity!,
-          about: _aboutController.text,
-          profileImage: _imageFile!,
-        );
+        if (widget.isEdit) {
+          // Only include brandLogo if a new image is selected
+          List<File>? brandLogo;
+          if (_imageFile != null) {
+            brandLogo = [_imageFile!];
+          }
 
-        if (mounted) {
-          if (response['status'] == true) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(response['message'] ??
-                    'Advisor profile created successfully!'),
+          final success = await AdvisorFetchPage.updateAdvisorProfile(
+            advisorId: int.parse(widget.advisor!.id),
+            advisorName: _fullNameController.text,
+            designation: _designationController.text,
+            contactNumber: _phoneController.text,
+            email: _emailController.text,
+            industry: _selectedIndustry!,
+            experience: _yearExperienceController.text,
+            areaOfInterest: _areaOfInterestController.text,
+            state: _selectedState!,
+            city: _selectedCity!,
+            description: _aboutController.text,
+            brandLogo: brandLogo,
+          );
+
+          if (mounted) {
+            if (success) {
+              // Show success message
+              Get.snackbar(
+                'Success',
+                'Advisor profile updated successfully!',
                 backgroundColor: Colors.green,
-              ),
-            );
-            Navigator.pop(context);
-          } else if (response['status'] == "loggedout") {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Session expired. Please login again.'),
+                colorText: Colors.white,
+                duration: const Duration(seconds: 2),
+                snackPosition: SnackPosition.TOP,
+              );
+
+
+              if (widget.action != null) {
+                widget.action!();
+              }
+
+              // Navigate back to dashboard after a short delay
+              Future.delayed(const Duration(seconds: 1), () {
+                Navigator.pop(context, true);
+              });
+
+            } else {
+              Get.snackbar(
+                'Error',
+                'Failed to update profile',
                 backgroundColor: Colors.red,
-              ),
-            );
-            // Handle navigation to login screen here
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(response['error'] ?? 'Failed to create profile'),
+                colorText: Colors.white,
+                snackPosition: SnackPosition.TOP,
+              );
+            }
+          }
+        } else {
+          // Create new profile logic
+          final response = await AdvisorProfileService.createAdvisorProfile(
+            name: _fullNameController.text,
+            designation: _designationController.text,
+            email: _emailController.text,
+            number: _phoneController.text,
+            industry: _selectedIndustry!,
+            experience: _yearExperienceController.text,
+            areaOfInterest: _areaOfInterestController.text,
+            state: _selectedState!,
+            city: _selectedCity!,
+            about: _aboutController.text,
+            profileImage: _imageFile!,
+          );
+
+          if (mounted) {
+            if (response is Map<String, dynamic> && response['status'] == true) {
+              // Show success message
+              Get.snackbar(
+                'Success',
+                'Advisor profile created successfully!',
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+                duration: const Duration(seconds: 2),
+                snackPosition: SnackPosition.TOP,
+              );
+
+              // Navigate back to dashboard after a short delay
+              Future.delayed(const Duration(seconds: 2), () {
+                Navigator.pop(context);
+              });
+            } else {
+              Get.snackbar(
+                'Error',
+                response['error'] ?? 'Failed to create profile',
                 backgroundColor: Colors.red,
-              ),
-            );
+                colorText: Colors.white,
+                snackPosition: SnackPosition.TOP,
+              );
+            }
           }
         }
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        Get.snackbar(
+          'Error',
+          'An unexpected error occurred: $e',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
       } finally {
         if (mounted) {
           setState(() => _isLoading = false);
@@ -736,9 +815,9 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Add Advisor',
-          style: TextStyle(
+        title: Text(
+          widget.isEdit ? 'Edit Advisor' : 'Add Advisor',
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w500,
             color: Colors.black,
@@ -803,37 +882,108 @@ class _AddAdvisorProfileScreenState extends State<AddAdvisorProfileScreen> {
           ),
         ],
       ),
-      child: _imageFile != null
-          ? ClipOval(
-              child: Image.file(
-                _imageFile!,
-                fit: BoxFit.cover,
-                width: 120,
-                height: 120,
-              ),
-            )
-          : Stack(
-              alignment: Alignment.center,
-              children: [
-                const Icon(
+      child: ClipOval(
+        child: Container(
+          width: 120,
+          height: 120,
+          color: Colors.grey[100],
+          child: _imageFile != null
+          // Show selected local image
+              ? Image.file(
+            _imageFile!,
+            fit: BoxFit.cover,
+            width: 120,
+            height: 120,
+          )
+              : _networkImageUrl != null && _networkImageUrl!.isNotEmpty
+          // Show network image
+              ? Image.network(
+            _networkImageUrl!,
+            fit: BoxFit.cover,
+            width: 120,
+            height: 120,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.add_photo_alternate_outlined,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Add Photo',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+          )
+          // Show placeholder for new images
+              : Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(
                   Icons.add_photo_alternate_outlined,
                   size: 40,
                   color: Colors.grey,
                 ),
-                Positioned(
-                  bottom: 20,
-                  child: Text(
-                    'Add Photo',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                    ),
+                SizedBox(height: 4),
+                Text(
+                  'Add Photo',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
+          ),
+        ),
+      ),
     );
   }
+
+  // Widget _buildDefaultProfileWidget() {
+  //   return Stack(
+  //     alignment: Alignment.center,
+  //     children: [
+  //       const Icon(
+  //         Icons.add_photo_alternate_outlined,
+  //         size: 40,
+  //         color: Colors.grey,
+  //       ),
+  //       Positioned(
+  //         bottom: 20,
+  //         child: Text(
+  //           'Add Photo',
+  //           style: TextStyle(
+  //             color: Colors.grey[600],
+  //             fontSize: 12,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   void dispose() {

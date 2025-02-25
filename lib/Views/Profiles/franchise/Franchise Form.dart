@@ -1177,7 +1177,15 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
   }
 
   Future<void> _pickBrandLogo() async {
-    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    // If logo already exists, show warning
+    if (_brandLogo != null && _brandLogo!.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Only 1 brand logo is allowed. Please remove the existing one first.')),
+      );
+      return;
+    }
+
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
     if (result != null) {
       setState(() {
         _brandLogo = result.files;
@@ -1186,11 +1194,35 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
   }
 
   Future<void> _pickBusinessPhotos() async {
+    // Check if we already have 4 images
+    if (_businessPhotos != null && _businessPhotos!.length >= 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Maximum 4 business photos allowed')),
+      );
+      return;
+    }
+
     final result = await ImagePicker().pickMultiImage();
     if (result != null) {
       setState(() {
-        _businessPhotos = result;
+        if (_businessPhotos == null) {
+          // If no photos yet, initialize with the new ones (up to 4)
+          _businessPhotos = result.take(4).toList();
+        } else {
+          // Add new photos but respect the limit of 4 total
+          final remainingSlots = 4 - _businessPhotos!.length;
+          if (remainingSlots > 0) {
+            _businessPhotos!.addAll(result.take(remainingSlots));
+          }
+        }
       });
+
+      // Show feedback if some photos were not added due to the limit
+      if (result.length > 4 - (_businessPhotos?.length ?? 0)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Only added photos up to the maximum of 4')),
+        );
+      }
     }
   }
 
@@ -1710,7 +1742,7 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
         File? brandLogoFile;
         File? businessProofFile;
 
-        // Handle brand logo if exists
+        // Handle brand logo if exists (optional)
         if (_brandLogo != null && _brandLogo!.isNotEmpty && _brandLogo!.first.path != null) {
           try {
             final file = File(_brandLogo!.first.path!);
@@ -1722,7 +1754,7 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
           }
         }
 
-        // Handle business photos if exist
+        // Handle business photos if exist (optional)
         if (_businessPhotos != null) {
           for (var photo in _businessPhotos!) {
             try {
@@ -1885,7 +1917,7 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
       child: Container(
         decoration: BoxDecoration(
             border:
-                Border.all(width: 1, color: Color.fromARGB(255, 224, 228, 230)),
+            Border.all(width: 1, color: Color.fromARGB(255, 224, 228, 230)),
             borderRadius: BorderRadius.circular(15)),
         height: 60,
         child: Padding(
@@ -1914,23 +1946,65 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
                         if (file is PlatformFile) {
                           return Padding(
                             padding: const EdgeInsets.only(left: 8.0),
-                            child: file.extension?.toLowerCase() == 'pdf'
-                                ? Icon(Icons.picture_as_pdf, color: Colors.red)
-                                : Image.file(
-                                    File(file.path!),
-                                    width: 50,
-                                    height: 40,
-                                    fit: BoxFit.cover,
+                            child: Stack(
+                              children: [
+                                file.extension?.toLowerCase() == 'pdf'
+                                    ? Icon(Icons.picture_as_pdf, color: Colors.red)
+                                    : Image.file(
+                                  File(file.path!),
+                                  width: 50,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  right: -10,
+                                  top: -10,
+                                  child: IconButton(
+                                    icon: Icon(Icons.cancel, color: Colors.red, size: 20),
+                                    onPressed: () {
+                                      setState(() {
+                                        // Remove this file
+                                        if (label == 'Brand Logo') {
+                                          _brandLogo = null;
+                                        } else if (label == 'Business Proof') {
+                                          _businessProof = null;
+                                        } else if (label == 'Business Documents') {
+                                          _businessDocuments?.remove(file);
+                                        }
+                                      });
+                                    },
                                   ),
+                                ),
+                              ],
+                            ),
                           );
                         } else if (file is XFile) {
                           return Padding(
                             padding: const EdgeInsets.only(left: 8.0),
-                            child: Image.file(
-                              File(file.path),
-                              width: 50,
-                              height: 40,
-                              fit: BoxFit.cover,
+                            child: Stack(
+                              children: [
+                                Image.file(
+                                  File(file.path),
+                                  width: 50,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  right: -10,
+                                  top: -10,
+                                  child: IconButton(
+                                    icon: Icon(Icons.cancel, color: Colors.red, size: 20),
+                                    onPressed: () {
+                                      setState(() {
+                                        // Remove this photo from business photos
+                                        if (label == 'Business Photos') {
+                                          _businessPhotos?.remove(file);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         }

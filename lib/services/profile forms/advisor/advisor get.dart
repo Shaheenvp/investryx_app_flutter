@@ -15,44 +15,42 @@ class AdvisorFetchPage {
   static Future<List<AdvisorExplr>?> fetchAdvisorData() async {
     try {
       final token = await storage.read(key: 'token');
-
       if (token == null) {
         log('Error: token not found in secure storage');
         return null;
       }
 
       var response = await client.get(
-          Uri.parse('${ApiList.advisorAddPage!}${1}'),
-          headers: {
-            'token': '$token',
-          }
+        Uri.parse('${ApiList.advisorAddPage!}${1}'),
+        headers: {'token': token},
       );
 
-      print('Response: ${response.statusCode} - ${response.body}');
+      log('Response: ${response.statusCode} - ${response.body}');
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body) as List;
         List<AdvisorExplr> advisors = data.map((json) => AdvisorExplr(
           title: json['title']?.toString() ?? 'N/A',
-          singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
+          singleLineDescription: json['single_desc']?.toString() ?? 'N/A',
           imageUrl: validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
           id: json['id']?.toString() ?? '',
           user: json['user']?.toString() ?? '',
           name: json['name'] ?? 'N/A',
+          verified: json['verified'] ?? '',
           designation: json['designation'] ?? 'Expert',
           location: json['city'] ?? 'N/A',
           postedTime: json['listed_on'] ?? 'N/A',
-          state: json['state'],
-          expertise: json['expertise'],
-          url: json['email'],
-          type: json['type']?.toString(),
-          contactNumber: json['number'],
-          interest: json['interest'],
-          description: json['about'],
-          businessPhotos: json['image1'] != null ? [validateUrl(json['image1']) ?? ''] : null,
-          businessProof: validateUrl(json['proof1']),
-          businessDocuments: json['doc1'] != null ? [validateUrl(json['doc1']) ?? ''] : null,
-          brandLogo: json['logo'] != null ? [validateUrl(json['logo']) ?? ''] : null,
+          state: json['state'] ?? '',
+          expertise: json['experience'] ?? '', // Changed from expertise to experience
+          url: json['email'] ?? '',
+          type: json['industry'] ?? '', // Changed from type to industry
+          contactNumber: json['number'] ?? '',
+          interest: json['interest'] ?? '',
+          description: json['description'] ?? '', // Changed from about to description
+          businessPhotos: json['image1'] != null ? [validateUrl(json['image1']) ?? ''] : [],
+          businessProof: validateUrl(json['proof1']) ?? '',
+          businessDocuments: json['doc1'] != null ? [validateUrl(json['doc1']) ?? ''] : [],
+          brandLogo: json['logo'] != null ? [validateUrl(json['logo']) ?? ''] : [],
         )).toList();
         return advisors;
       } else {
@@ -89,19 +87,23 @@ class AdvisorFetchPage {
     return null;
   }
 
-  static Future<void> deleteAdvisorProfile(String token) async {
+  static Future<void> deleteAdvisorProfile(String id) async {
     try {
-      final token = await storage.read(key: 'token'); // Retrieve token from secure storage
+      final token = await storage.read(key: 'token');
 
       if (token == null) {
         log('Error: token not found in secure storage');
         return;
       }
 
+      if (id == null) {
+        id = "0";
+      }
+
       var response = await client.delete(
-          Uri.parse('${ApiList.advisorAddPage!}${0}'),
+          Uri.parse('${ApiList.advisorAddPage!}${id}'),
           headers: {
-            'token': token, // Add token to request headers
+            'token': token,
           });
 
       print('Response: ${response.statusCode} - ${response.body}');
@@ -127,12 +129,14 @@ class AdvisorFetchPage {
     required int advisorId,
     required String advisorName,
     required String designation,
-    required String businessWebsite,
+    required String contactNumber,
+    required String email,
+    required String industry,
+    required String experience,
+    required String areaOfInterest,
     required String state,
     required String city,
-    required String contactNumber,
-    required String describeExpertise,
-    required String areaOfInterest,
+    required String description,
     List<File>? brandLogo,
     List<File>? businessPhotos,
     File? businessProof,
@@ -140,10 +144,7 @@ class AdvisorFetchPage {
   }) async {
     try {
       final token = await storage.read(key: 'token');
-      if (token == null) {
-        log('Error: token not found in secure storage');
-        return false;
-      }
+      if (token == null) return false;
 
       var request = http.MultipartRequest(
         'PATCH',
@@ -151,60 +152,46 @@ class AdvisorFetchPage {
       );
 
       request.headers['token'] = token;
-      request.fields['name'] = advisorName;
-      request.fields['designation'] = designation;
-      request.fields['url'] = businessWebsite;
-      request.fields['state'] = state;
-      request.fields['city'] = city;
-      request.fields['number'] = contactNumber;
-      request.fields['description'] = describeExpertise;
-      request.fields['interest'] = areaOfInterest;
 
-      // Helper function to add files to the request
-      Future<void> addFiles(String field, List<File>? files) async {
-        if (files != null && files.isNotEmpty) {
-          for (var file in files) {
-            request.files.add(await http.MultipartFile.fromPath(
-              field,
-              file.path,
-              filename: basename(file.path),
-            ));
-          }
-        }
-      }
+      // Updated field names to match API expectations
+      request.fields.addAll({
+        'name': advisorName,
+        'designation': designation,
+        'number': contactNumber,
+        'email': email,
+        'industry': industry, // Changed from type
+        'experience': experience, // Changed from expertise
+        'interest': areaOfInterest,
+        'state': state,
+        'city': city,
+        'description': description, // Changed from about
+      });
 
-      // Add files only if they are provided
-      await addFiles('logo', brandLogo);
-      await addFiles('image1', businessPhotos);
-      await addFiles('doc1', businessDocuments);
-
-      if (businessProof != null) {
+      // Handle logo upload
+      if (brandLogo?.isNotEmpty ?? false) {
         request.files.add(await http.MultipartFile.fromPath(
-          'proof1',
-          businessProof.path,
-          filename: basename(businessProof.path),
+          'logo',
+          brandLogo!.first.path,
+          filename: basename(brandLogo.first.path),
         ));
       }
 
       var response = await request.send();
+      var responseString = await response.stream.bytesToString();
+      log('Update response: ${response.statusCode} - $responseString');
 
-      if (response.statusCode == 200) {
-        log('Advisor updated successfully!');
-        var responseString = await response.stream.bytesToString();
-        log('Response: $responseString');
-        return true;
-      } else {
-        log('Failed to update advisor: ${response.statusCode}');
-        var responseString = await response.stream.bytesToString();
-        log('Error response: $responseString');
-        return false;
+      if (response.statusCode == 201) { // Changed from 200 to 201
+        var jsonResponse = jsonDecode(responseString);
+        return jsonResponse['status'] == true;
       }
+      return false;
     } catch (e) {
-      log('Unexpected error: $e');
+      log('Error updating advisor profile: $e');
       return false;
     }
   }
 }
+
 
 class Advisor {
   final String imageUrl;
@@ -249,7 +236,7 @@ class Advisor {
       location: json['city'] ?? 'N/A',
       postedTime: json['listed_on'] ?? 'N/A',
       state: json['state'],
-      url: json['url'],
+      url: json['email'],
       contactNumber: json['number'],
       interest: json['interest'],
       description: json['description'],

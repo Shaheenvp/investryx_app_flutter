@@ -336,7 +336,7 @@ class _AdvisorExploreScreenState extends State<AdvisorExploreScreen>
 
   void _navigateToDetail(SearchResult result, String id) async {
     await SearchServices.postToPopularSearch(id);
-    await SearchServices.postToRecentSearch(id);
+    // await SearchServices.postToRecentSearch(id);
 
     final franchiseData = {
       ...result.rawData,

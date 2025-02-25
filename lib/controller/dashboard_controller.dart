@@ -529,7 +529,7 @@ class DashboardController extends GetxController {
   }
 
   // Update current advisor profile
-  Future<void> updateCurrentAdvisorProfile(AdvisorExplr newProfile) async { // Changed from Advisor to AdvisorExplr
+  Future<void> updateCurrentAdvisorProfile(AdvisorExplr newProfile) async {
     try {
       isLoading.value = true;
       errorMessage.value = '';

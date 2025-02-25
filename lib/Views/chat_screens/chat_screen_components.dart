@@ -113,23 +113,31 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   String _formatLastActive(String lastActive) {
+    if (lastActive.isEmpty) return 'unavailable';
+
     try {
       final DateTime lastActiveTime = DateTime.parse(lastActive);
       final DateTime now = DateTime.now();
       final Duration difference = now.difference(lastActiveTime);
 
-      if (difference.inMinutes < 1) {
+      if (isActive) {
+        return 'Online';
+      } else if (difference.inMinutes < 1) {
         return 'just now';
       } else if (difference.inHours < 1) {
-        return '${difference.inMinutes}m ago';
+        final minutes = difference.inMinutes;
+        return '$minutes ${minutes == 1 ? 'minute' : 'minutes'} ago';
       } else if (difference.inDays < 1) {
-        return '${difference.inHours}h ago';
+        final hours = difference.inHours;
+        return '$hours ${hours == 1 ? 'hour' : 'hours'} ago';
       } else if (difference.inDays < 7) {
-        return '${difference.inDays}d ago';
+        final days = difference.inDays;
+        return '$days ${days == 1 ? 'day' : 'days'} ago';
       } else {
         return DateFormat('MMM d, h:mm a').format(lastActiveTime);
       }
     } catch (e) {
+      print('Error formatting last active: $e');
       return 'unavailable';
     }
   }
@@ -272,6 +280,79 @@ class ChatDateHeader extends StatelessWidget {
   }
 }
 
+// class ChatMessagesList extends StatelessWidget {
+//   final List<Map<String, String>> messages;
+//   final ScrollController scrollController;
+//   final int? chatUserId;
+//   final Function(String) onPlayVoiceMessage;
+//   final String? currentlyPlayingPath;
+//
+//   const ChatMessagesList({
+//     Key? key,
+//     required this.messages,
+//     required this.scrollController,
+//     required this.chatUserId,
+//     required this.onPlayVoiceMessage,
+//     this.currentlyPlayingPath,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(30),
+//           topRight: Radius.circular(30),
+//         ),
+//       ),
+//       child: ListView.builder(
+//         controller: scrollController,
+//         reverse: true,
+//         padding: EdgeInsets.only(top: 20, bottom: 10),
+//         itemCount: messages.length,
+//         itemBuilder: (context, index) {
+//           final message = messages[index];
+//           bool isSentMessage = chatUserId.toString() ==
+//               (message['sendedBy'] is String
+//                   ? message['sendedBy']
+//                   : message['sendedBy'].toString());
+//
+//           // Handle different message types
+//           switch (message['messageType']) {
+//             case 'voice':
+//               final duration = message['duration'] != null
+//                   ? Duration(seconds: int.parse(message['duration']!))
+//                   : null;
+//               return VoiceMessageBubble(
+//                 isFromUser: isSentMessage,
+//                 time: message['time'] ?? '',
+//                 duration: duration ?? Duration.zero,
+//                 onPlayPressed: () => onPlayVoiceMessage(message['audio'] ?? ''),
+//                 isPlaying: message['audio'] == currentlyPlayingPath,
+//                 audioPath: message['audio'],
+//               );
+//
+//             case 'attachment':
+//               return AttachmentBubble(
+//                 attachment: jsonDecode(message['attachment'] ?? '{}'),
+//                 isFromUser: isSentMessage,
+//                 time: message['time'] ?? '',
+//               );
+//
+//             default: // Text message
+//               return MessageBubble(
+//                 isFromUser: isSentMessage,
+//                 message: message['message'] ?? 'No message',
+//                 time: message['time'] ?? '',
+//               );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+
 class ChatMessagesList extends StatelessWidget {
   final List<Map<String, String>> messages;
   final ScrollController scrollController;
@@ -305,10 +386,14 @@ class ChatMessagesList extends StatelessWidget {
         itemCount: messages.length,
         itemBuilder: (context, index) {
           final message = messages[index];
-          bool isSentMessage = chatUserId.toString() ==
-              (message['sendedBy'] is String
-                  ? message['sendedBy']
-                  : message['sendedBy'].toString());
+          // Fix: Properly compare sendedBy with chatUserId
+          final messageSenderId = message['sendedBy'];
+          final currentUserId = chatUserId?.toString();
+
+          // Ensure consistent comparison
+          bool isSentMessage = currentUserId != null &&
+              messageSenderId != null &&
+              messageSenderId == currentUserId;
 
           // Handle different message types
           switch (message['messageType']) {

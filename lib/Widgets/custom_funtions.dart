@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_emergio/Views/Auth%20Screens/reg_otp%20verification.dart';
@@ -36,7 +38,7 @@ class CustomFunctions {
   static void navigateToDetail(
       SearchResult result, String id, BuildContext context) async {
     await SearchServices.postToPopularSearch(id);
-    await SearchServices.postToRecentSearch(id);
+    // await SearchServices.postToRecentSearch(id);
 
     switch (result.type.toLowerCase()) {
       case 'business':
@@ -68,7 +70,7 @@ class CustomFunctions {
                 address_2: toStringValue(businessData['address_2']),
                 industry: toStringValue(businessData['industry']),
                 establish_yr: businessData['establish_yr'],
-                description: result.description,
+                description: result.singleLineDescription,
                 pin: toStringValue(businessData['pin']),
                 state: toStringValue(businessData['state']),
                 employees: businessData['employees'],
@@ -83,8 +85,8 @@ class CustomFunctions {
                 facility: toStringValue(businessData['facility']),
                 income_source: toStringValue(businessData['income_source']),
                 reason: toStringValue(businessData['reason']),
-                singleLineDescription: '',
-                title: '',
+                singleLineDescription: toStringValue(result.rawData['single_desc']),
+                title: toStringValue(result.rawData['title']),
               ),
               showEditOption: false,
             ),
@@ -98,9 +100,9 @@ class CustomFunctions {
           MaterialPageRoute(
             builder: (context) => InvestorDetailPage(
               investor: BusinessInvestorExplr(
-                topSelling: "",
-                singleLineDescription: '',
-                title: '',
+                topSelling: toStringValue(result.rawData['top_selling']),
+                singleLineDescription: toStringValue(result.rawData['single_desc']),
+                title: toStringValue(result.rawData['title']),
                 imageUrl: result.imageUrl,
                 image2: toStringValue(result.rawData['image2']),
                 image3: toStringValue(result.rawData['image3']),
@@ -112,15 +114,18 @@ class CustomFunctions {
                 industry: toStringValue(result.rawData['industry']),
                 description: result.description,
                 url: toStringValue(result.rawData['url']),
-                rangeStarting: toStringValue(result.rawData['rangeStarting']),
-                rangeEnding: toStringValue(result.rawData['rangeEnding']),
+                rangeStarting: toStringValue(result.rawData['range_starting']),
+                rangeEnding: toStringValue(result.rawData['range_ending']),
                 evaluatingAspects:
-                toStringValue(result.rawData['evaluatingAspects']),
+                toStringValue(result.rawData['evaluating_aspects']),
                 companyName:
                 toStringValue(result.rawData['company'] ?? result.name),
                 locationIntrested:
-                toStringValue(result.rawData['locationIntrested']),
+                toStringValue(result.rawData['location_interested']),
                 id: result.id,
+                preference: result.rawData["preference"] is String
+                    ? jsonDecode(result.rawData["preference"]) as List<dynamic>?
+                    : result.rawData["preference"] as List<dynamic>?,
               ),
               showEditOption: false,
             ),

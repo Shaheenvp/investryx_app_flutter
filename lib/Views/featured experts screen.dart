@@ -472,8 +472,9 @@ class ExpertCard extends StatelessWidget {
                       ),
                       SizedBox(width: isTablet ? 3.w : 4.w),
                       Text(
-                        '4.5',
-                        style: AppTheme.smallText(Colors.white).copyWith(
+                        expert.average_rating != null
+                            ? expert.average_rating!.toStringAsFixed(1)
+                            : 'N/A',                        style: AppTheme.smallText(Colors.white).copyWith(
                           fontSize: isTablet ? 12.sp : null,
                         ),
                       ),

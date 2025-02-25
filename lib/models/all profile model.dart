@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:project_emergio/services/api_list.dart';
 
 
@@ -149,7 +151,9 @@ class BusinessInvestorExplr {
         evaluatingAspects: json['evaluating_aspects']?.toString(),
         brandName: json['brand_name']?.toString(),
         entityType: json["entity_type"] ?? "",
-        preference: json["preference"] ?? [],
+      preference: json["preference"] is String
+          ? jsonDecode(json["preference"]) as List<dynamic>?
+          : json["preference"] as List<dynamic>?,
         profileSummary: json["profile_summary"] ?? "N/A",
         askingPrice: json["asking_price"] ?? "N/A",
     );
@@ -371,6 +375,7 @@ class AdvisorExplr {
   final String? type;
   final String id;
   final bool? verified;
+  final double? average_rating;
   final String user;
   final String name;
   final String title;
@@ -393,6 +398,7 @@ class AdvisorExplr {
   AdvisorExplr( {
     required this.imageUrl,
     required this.id,
+    this.average_rating,
     this.verified,
     required this.user,
     required this.name,
@@ -419,8 +425,7 @@ class AdvisorExplr {
     return AdvisorExplr(
       title: json['title']?.toString() ?? 'N/A',
       singleLineDescription:  json['single_desc']?.toString() ?? 'N/A',
-      imageUrl:
-      validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
+      imageUrl: validateUrl(json['logo']) ?? 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=',
       name: json['name'] ?? 'N/A',
       designation: json['designation'] ?? 'Expert',
       location: json['city'] ?? 'N/A',
@@ -434,6 +439,11 @@ class AdvisorExplr {
       interest: json['interest'],
       description: json['description'],
       id: json['id']?.toString() ?? '',
+      average_rating: json['average_rating'] != null
+          ? (json['average_rating'] is int
+          ? (json['average_rating'] as int).toDouble()
+          : json['average_rating'] as double)
+          : null,
       verified: json['verified']?? '',
       user: json['user']?.toString() ?? '',
       brandLogo: json['brandLogo'] != null

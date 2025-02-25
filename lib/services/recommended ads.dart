@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:project_emergio/Views/Auth%20Screens/login.dart';
 import '../models/all profile model.dart';
 import 'api_list.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -35,12 +39,19 @@ class RecommendedAds {
       print(
           'Response: fetching recommended $token ${response.statusCode} - ${response.body}');
 
-      if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
         if (decodedResponse is Map<String, dynamic> &&
             decodedResponse.containsKey('status') &&
             decodedResponse['status'] == false) {
           if (decodedResponse['message'] == "User doesnot exist") {
+            Get.snackbar(
+              "Session Expired",
+              "Your account has been logged out unexpectedly. Please login again or contact support.",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
+            Get.offAll(() => SignInPage());
             return {"status": "loggedout"};
           }
 
@@ -97,10 +108,7 @@ class RecommendedAds {
             "advisor_data": advisorData
           };
         }
-      } else {
-        log('Failed to fetch recommended data: ${response.statusCode}');
-        return null;
-      }
+
     } on SocketException catch (e) {
       log('SocketException: ${e.message}');
       return null;

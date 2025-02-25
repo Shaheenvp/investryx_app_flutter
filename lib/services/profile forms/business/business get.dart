@@ -121,7 +121,7 @@ class BusinessGet {
       if (response.statusCode == 200) {
         print('Business deleted successfully');
 
-        Get.snackbar("Success!", "Deleted successfully");
+        // Get.snackbar("Success!", "Deleted successfully");
 
       } else {
         log('Failed to delete Business: ${response.statusCode}');
@@ -221,7 +221,7 @@ class BusinessGet {
         'PATCH',
         Uri.parse('${ApiList.businessAddPage!}$id'),
       );
-
+      // print(ebitda);
       // Add all the text fields
       request.fields['name'] = name;
       request.fields['single_desc'] = singleLineDescription ?? '';
@@ -237,7 +237,8 @@ class BusinessGet {
       request.fields['entity'] = entity ?? '';
       request.fields['avg_monthly'] = avg_monthly ?? '';
       request.fields['latest_yearly'] = latest_yearly ?? '';
-      request.fields['ebitda'] = ebitda ?? '';
+      request.fields['ebitda'] = ebitda ?? "";
+      print(request.fields['ebida']);
       request.fields['rate'] = rate ?? '';
       request.fields['type_sale'] = type_sale ?? '';
       request.fields['url'] = url ?? '';

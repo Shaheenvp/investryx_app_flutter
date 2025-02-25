@@ -3,13 +3,13 @@ class Assets {
   Assets._();
 
   static const String assetsAdvimg = 'assets/advimg.png';
-  static const String assetsAdvisor option = 'assets/advisor option.jpg';
+  static const String assetsAdvisoroption = 'assets/advisor option.jpg';
   static const String assetsAdvisorVector = 'assets/advisor_vector.png';
   static const String assetsBVC = 'assets/BVC.png';
   static const String assetsBottomleft = 'assets/bottomleft.png';
   static const String assetsBottomright = 'assets/bottomright.png';
   static const String assetsBusimg = 'assets/busimg.png';
-  static const String assetsBusiness option = 'assets/business option.jpg';
+  static const String assetsBusinessoption = 'assets/business option.jpg';
   static const String assetsBusinessValuation = 'assets/business_valuation.png';
   static const String assetsBusinessVector = 'assets/business_vector.png';
   static const String assetsBusinessimg = 'assets/businessimg.png';

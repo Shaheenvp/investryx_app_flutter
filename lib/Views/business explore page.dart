@@ -1028,7 +1028,7 @@ class _BusinessExplorePageState extends State<BusinessExplorePage>
 
   void _navigateToDetail(SearchResult result, String id) async {
     await SearchServices.postToPopularSearch(id);
-    await SearchServices.postToRecentSearch(id);
+    // await SearchServices.postToRecentSearch(id);
 
     final businessData = BusinessInvestorExplr(
         id: result.id,

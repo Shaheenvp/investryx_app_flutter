@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:project_emergio/services/api_list.dart'; // Add this import
 
 class RecentEnquiries {
@@ -128,6 +129,7 @@ class RecentEnquiries {
 
 class enquiry {
   final int id;
+  final int chatUserId;
   final UserDetails user;
   final String created;
   final int post;
@@ -135,6 +137,7 @@ class enquiry {
 
   enquiry({
     required this.id,
+    required this.chatUserId,
     required this.user,
     required this.created,
     required this.post,
@@ -144,6 +147,7 @@ class enquiry {
   factory enquiry.fromJson(Map<String, dynamic> json) {
     return enquiry(
       id: json['id'],
+      chatUserId: json['user_id'],
       user: UserDetails.fromJson(json['user']),
       created: json['created'],
       post: json['post'],
@@ -157,24 +161,73 @@ class UserDetails {
   final String firstName;
   final String? image;
   final String username;
+  final String? activeFrom;
+  final String? inactiveFrom;
+  final bool? deactivate;
+  final bool isActive;
 
   UserDetails({
     required this.id,
     required this.firstName,
     this.image,
     required this.username,
-  });
+    this.activeFrom,
+    this.inactiveFrom,
+    this.deactivate,
+    bool? isActive,  // Make the parameter nullable
+  }) : isActive = _determineActiveStatus(activeFrom, inactiveFrom, deactivate);  // Use a private method to determine status
+
+  // Static method to determine active status
+  static bool _determineActiveStatus(String? activeFrom, String? inactiveFrom, bool? deactivate) {
+    if (deactivate == true) return false;
+    if (activeFrom == null) return false;
+    if (inactiveFrom == null) return true;
+
+    try {
+      final activeDateTime = DateTime.parse(activeFrom);
+      final inactiveDateTime = DateTime.parse(inactiveFrom);
+      return activeDateTime.isAfter(inactiveDateTime);
+    } catch (e) {
+      return false;  // Return false if date parsing fails
+    }
+  }
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
     return UserDetails(
-      id: json['id'],
-      firstName: json['first_name'],
+      id: json['id'] ?? 0,
+      firstName: json['first_name'] ?? '',
       image: json['image'],
-      username: json['username'],
+      username: json['username'] ?? '',
+      activeFrom: json['active_from'],
+      inactiveFrom: json['inactive_from'],
+      deactivate: json['deactivate'],
+      // isActive will be computed by the constructor
     );
   }
-}
 
+  String getLastSeen() {
+    if (isActive) {
+      return 'Online';
+    } else if (inactiveFrom != null) {
+      try {
+        final lastSeenDate = DateTime.parse(inactiveFrom!);
+        final now = DateTime.now();
+        final difference = now.difference(lastSeenDate);
+
+        if (difference.inMinutes < 60) {
+          return '${difference.inMinutes} minutes ago';
+        } else if (difference.inHours < 24) {
+          return '${difference.inHours} hours ago';
+        } else {
+          return DateFormat('dd MMM yyyy, hh:mm a').format(lastSeenDate.toLocal());
+        }
+      } catch (e) {
+        return 'Offline';
+      }
+    }
+    return 'Offline';
+  }
+}
 
 class EnquiryCounts {
   final int todayCount;

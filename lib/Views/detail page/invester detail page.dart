@@ -971,7 +971,7 @@ class _InvestorDetailPageState extends State<InvestorDetailPage> {
           _buildSectionTitle('Description'),
           SizedBox(height: 8.h),
           Text(
-            widget.investor!.profileSummary ?? "N/A",
+            widget.investor!.singleLineDescription ?? "N/A",
             style: AppTheme.bodyMediumTitleText(lightTextColor),
           ),
         ],

@@ -413,60 +413,60 @@ class SearchServices {
     }
   }
 
-  static Future<void> postToRecentSearch(String id) async {
-    try {
-      final prefs = await FlutterSecureStorage();
-      final token = await prefs.read(key: 'token');
+  // static Future<void> postToRecentSearch(String id) async {
+  //   try {
+  //     final prefs = await FlutterSecureStorage();
+  //     final token = await prefs.read(key: 'token');
+  //
+  //     final url = Uri.parse(ApiList.recentSearch.toString());
+  //
+  //     final response = await http.post(url, body: {
+  //       "post_id": id
+  //     }, headers: {
+  //       "token": token.toString(),
+  //     });
+  //
+  //     print(
+  //         "response of posting recent search ${response.statusCode},   ${response.body}");
+  //     if (response.statusCode == 201) {
+  //       print("Added to recent search successfully");
+  //     } else {
+  //       print("error adding to recent search");
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-      final url = Uri.parse(ApiList.recentSearch.toString());
-
-      final response = await http.post(url, body: {
-        "post_id": id
-      }, headers: {
-        "token": token.toString(),
-      });
-
-      print(
-          "response of posting recent search ${response.statusCode},   ${response.body}");
-      if (response.statusCode == 201) {
-        print("Added to recent search successfully");
-      } else {
-        print("error adding to recent search");
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  static Future<List<Recent>?> fetchRecentSearches() async {
-    try {
-      final prefs = await FlutterSecureStorage();
-      final token = await prefs.read(key: 'token');
-
-      final url = Uri.parse(ApiList.recentSearch.toString());
-
-      final response =
-      await http.get(url, headers: {"token": token.toString()});
-
-      print("fetch recent ${response.statusCode},   ${response.body}");
-
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = await jsonDecode(response.body);
-
-        List<Recent> recents = [];
-
-        for (var item in responseData) {
-          if (item != null) {
-            recents.add(Recent.fromJson(item["post"]));
-          }
-        }
-
-        print("Total recent searched items:${recents.length}");
-        return recents;
-      }
-    } catch (e) {
-      print(e);
-      return null;
-    }
-    }
+  // static Future<List<Recent>?> fetchRecentSearches() async {
+  //   try {
+  //     final prefs = await FlutterSecureStorage();
+  //     final token = await prefs.read(key: 'token');
+  //
+  //     final url = Uri.parse(ApiList.recentSearch.toString());
+  //
+  //     final response =
+  //     await http.get(url, headers: {"token": token.toString()});
+  //
+  //     print("fetch recent ${response.statusCode},   ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       List<dynamic> responseData = await jsonDecode(response.body);
+  //
+  //       List<Recent> recents = [];
+  //
+  //       for (var item in responseData) {
+  //         if (item != null) {
+  //           recents.add(Recent.fromJson(item["post"]));
+  //         }
+  //       }
+  //
+  //       print("Total recent searched items:${recents.length}");
+  //       return recents;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     return null;
+  //   }
+  //   }
 }

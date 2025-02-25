@@ -11,6 +11,7 @@ import 'package:project_emergio/controller/dashboard_controller.dart';
 import 'package:project_emergio/generated/constants.dart';
 import 'package:project_emergio/models/all%20profile%20model.dart';
 import 'package:project_emergio/services/profile%20forms/investor/investor%20add.dart';
+import '../../../Widgets/state_and_cities_widget.dart';
 import '../../../models/places.dart';
 import 'investment listing.dart';
 
@@ -29,8 +30,8 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
 
   final _investorNameController = TextEditingController();
   String _selectedIndustry = '';
-  String _selectedState = 'Kerala';
-  String _selectedCity = 'kakkanad';
+  String? _selectedCity = 'Kakkanad';
+  String? _selectedState = 'Kerala';
 
   final _locationsIntrestedController = TextEditingController();
   final _investmentRangefromController = TextEditingController();
@@ -178,6 +179,74 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
       child: Text(text, style: AppTheme.bodyMediumTitleText(greyTextColor!)),
     );
   }
+
+  Widget _buildDropdownField({
+    required String? value,
+    required IconData icon,
+    required List<String> items,
+    required void Function(String?)? onChanged,
+    required String hint,
+  }) {
+    // Only include the value in the DropdownButtonFormField if it exists in the items list
+    final effectiveValue = items.contains(value) ? value : null;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: effectiveValue,
+        icon: const Icon(Icons.arrow_drop_down),
+        isExpanded: true,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.amber, width: 1),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          hintText: hint,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        ),
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(
+              item,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14),
+            ),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please select an option';
+          }
+          return null;
+        },
+        dropdownColor: Colors.white,
+      ),
+    );
+  }
+
 
   @override
   void initState() {
@@ -407,103 +476,33 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
                     const SizedBox(height: 16.0),
 
                     _buildHintText('State'),
-                    DropdownSearch<String>(
-                      validator: validateRequiredState,
-                      autoValidateMode: AutovalidateMode.onUserInteraction,
-                      decoratorProps: DropDownDecoratorProps(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 224, 228, 230)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 224, 228, 230)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 224, 228, 230)),
-                          ),
-                        ),
-                      ),
-                      items: (filter, infiniteScrollProps) => states,
-                      selectedItem: _selectedState.isEmpty ? null : _selectedState,
-                      onChanged: (String? newValue) {
+                    _buildDropdownField(
+                      value: _selectedState,
+                      icon: Icons.location_on_outlined,
+                      items: IndianLocations.getStates(),
+                      onChanged: (value) {
                         setState(() {
-                          _selectedState = newValue!;
+                          _selectedState = value;
+                          _selectedCity = null;
                         });
                       },
-                      popupProps: PopupProps.menu(
-                        showSearchBox: true,
-                        searchFieldProps: TextFieldProps(
-                          decoration: InputDecoration(
-                            hintText: 'Search states...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 224, 228, 230)),
-                            ),
-                          ),
-                        ),
-                      ),
+                      hint: 'Select State',
                     ),
                     const SizedBox(height: 16.0),
 
                     _buildHintText('City'),
-                    DropdownSearch<String>(
-                      validator: validateRequiredCity,
-                      autoValidateMode: AutovalidateMode.onUserInteraction,
-                      decoratorProps: DropDownDecoratorProps(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 224, 228, 230)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 224, 228, 230)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 224, 228, 230)),
-                          ),
-                        ),
-                      ),
-                      items: (filter, infiniteScrollProps) => AllPlaces().places,
-                      selectedItem: _selectedCity.isEmpty ? null : _selectedCity,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedCity = newValue ?? '';
-                        });
-                      },
-                      popupProps: PopupProps.menu(
-                        showSearchBox: true,
-                        searchFieldProps: TextFieldProps(
-                          decoration: InputDecoration(
-                            hintText: 'Search locations...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 224, 228, 230)),
-                            ),
-                          ),
-                        ),
-                      ),
+                    _buildDropdownField(
+                      value: _selectedCity,
+                      icon: Icons.location_city_outlined,
+                      items: _selectedState != null
+                          ? IndianLocations.getCitiesForState(_selectedState!)
+                          : [],
+                      onChanged: _selectedState != null
+                          ? (value) => setState(() => _selectedCity = value)
+                          : null,
+                      hint: 'Select City',
                     ),
+
 
                     const SizedBox(height: 16.0),
                     _buildHintText('Describe yourself'),
@@ -775,8 +774,8 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
           companyName: _companyNameController.text.trim(),
           industry: _selectedIndustry,
           description: _aboutCompanyController.text.trim(),
-          state: _selectedState,
-          city: _selectedCity,
+          state: _selectedState!,
+          city: _selectedCity!,
           url: _businessWebsiteController.text.trim(),
           rangeStarting: _investmentRangefromController.text.trim(),
           rangeEnding: _investmentRangeToController.text.trim(),

@@ -57,37 +57,48 @@ class InvestorAddPage {
       request.fields['profile_summary'] = summary;
       request.fields['preference'] = jsonEncode(preferences);
 
-      if(image1 != null && image2 != null && image3 != null && image4 != null && doc1 != null && proof1 != null){
-
-        // Add files to the request
+      // Add each file to the request individually if it exists
+      if (image1 != null && image1.existsSync()) {
         request.files.add(await http.MultipartFile.fromPath('image1', image1.path,
             filename: basename(image1.path)));
+      }
+
+      if (image2 != null && image2.existsSync()) {
         request.files.add(await http.MultipartFile.fromPath('image2', image2.path,
             filename: basename(image2.path)));
+      }
+
+      if (image3 != null && image3.existsSync()) {
         request.files.add(await http.MultipartFile.fromPath('image3', image3.path,
             filename: basename(image3.path)));
+      }
+
+      if (image4 != null && image4.existsSync()) {
         request.files.add(await http.MultipartFile.fromPath('image4', image4.path,
             filename: basename(image4.path)));
+      }
+
+      if (doc1 != null && doc1.existsSync()) {
         request.files.add(await http.MultipartFile.fromPath('doc1', doc1.path,
             filename: basename(doc1.path)));
+      }
+
+      if (proof1 != null && proof1.existsSync()) {
         request.files.add(await http.MultipartFile.fromPath('proof1', proof1.path,
             filename: basename(proof1.path)));
       }
+
       // Send the request
       var response = await request.send();
-      print("add investor form");
-      print(await response.stream.bytesToString());
+      var responseBody = await response.stream.bytesToString();
+      print("add investor form response: $responseBody");
 
       // Handle the response
-      if (response.statusCode == 201) {
-        log('File uploaded successfully!');
-
-        return true;
-      } else if (response.statusCode == 200) {
-        log('Failed to upload file: ${response.statusCode}');
-
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        log('Investor form submitted successfully!');
         return true;
       } else {
+        log('Failed to submit investor form: ${response.statusCode}');
         return false;
       }
     } on SocketException catch (e) {
@@ -135,7 +146,7 @@ class InvestorAddPage {
       // Create multipart request
       var request = http.MultipartRequest(
           'PATCH', Uri.parse('${ApiList.investorAddPage}$investorId'));
-      request.headers['token'] = token; // Add token to request headers
+      request.headers['token'] = token;
       request.fields['name'] = name ?? "";
       request.fields['company'] = companyName ?? "";
       request.fields['industry'] = industry ?? "";
