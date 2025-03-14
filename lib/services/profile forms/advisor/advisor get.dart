@@ -148,7 +148,7 @@ class AdvisorFetchPage {
 
       var request = http.MultipartRequest(
         'PATCH',
-        Uri.parse('${ApiList.advisorAddPage!}$advisorId'),
+        Uri.parse('${ApiList.businessAddPage!}$advisorId'),
       );
 
       request.headers['token'] = token;

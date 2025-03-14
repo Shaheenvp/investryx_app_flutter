@@ -1065,6 +1065,8 @@
 //     }
 // }
 
+
+
 import 'dart:io';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -1116,7 +1118,7 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
     "maximumRange": TextEditingController(),
   };
 
-  String _selectedIndustry = 'Fashion';
+  String _selectedIndustry = 'Retail';
   String? _selectedCity = 'Kakkanad';
   String? _selectedState = 'Kerala';
   String _selectedBusinessEntityType = '';
@@ -1127,14 +1129,33 @@ class _BusinessInfoPageState extends State<BusinessInfoPage> {
   final DashboardController _controller = Get.put(DashboardController());
 
   final List<Map<String, String>> _industries = [
-    {'value': 'Education', 'display': 'Education'},
-    {'value': 'Information Technology', 'display': 'IT'},
-    {'value': 'Healthcare', 'display': 'Healthcare'},
-    {'value': 'Fashion', 'display': 'Fashion'},
-    {'value': 'Food', 'display': 'Food'},
-    {'value': 'Automobile', 'display': 'Automobile'},
-    {'value': 'Banking', 'display': 'Banking'},
+    {'value': 'Retail', 'display': 'Retail'},
+    {'value': 'Food & Beverage', 'display': 'Food & Beverage'},
+    {'value': 'Education & Training', 'display': 'Education & Training'},
+    {'value': 'Healthcare & Wellness', 'display': 'Healthcare & Wellness'},
+    {'value': 'Fashion & Apparel', 'display': 'Fashion & Apparel'},
+    {'value': 'Technology & Software', 'display': 'Technology & Software'},
+    {'value': 'Automotive', 'display': 'Automotive'},
+    {'value': 'Real Estate', 'display': 'Real Estate'},
+    {'value': 'Beauty & Personal Care', 'display': 'Beauty & Personal Care'},
+    {'value': 'Home Services', 'display': 'Home Services'},
+    {'value': 'Entertainment & Recreation', 'display': 'Entertainment & Recreation'},
+    {'value': 'Travel & Tourism', 'display': 'Travel & Tourism'},
+    {'value': 'Financial Services', 'display': 'Financial Services'},
+    {'value': 'Logistics & Transportation', 'display': 'Logistics & Transportation'},
+    {'value': 'Manufacturing', 'display': 'Manufacturing'},
+    {'value': 'Agriculture', 'display': 'Agriculture'},
+    {'value': 'Construction', 'display': 'Construction'},
+    {'value': 'Media & Communications', 'display': 'Media & Communications'},
+    {'value': 'Professional Services', 'display': 'Professional Services'},
+    {'value': 'Sports & Fitness', 'display': 'Sports & Fitness'},
+    {'value': 'Pet Care & Services', 'display': 'Pet Care & Services'},
+    {'value': 'Arts & Crafts', 'display': 'Arts & Crafts'},
+    {'value': 'Child Care & Services', 'display': 'Child Care & Services'},
+    {'value': 'Environmental Services', 'display': 'Environmental Services'},
+    {'value': 'Other', 'display': 'Other'}
   ];
+
 
   @override
   void initState() {

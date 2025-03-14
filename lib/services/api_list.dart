@@ -88,9 +88,9 @@
 
 class ApiList {
 
-  static const String baseUrl = 'https://test.investryx.com/api';
-  static const String imageBaseUrl = "https://test.investryx.com/";
-  static const String chatBaseUrl = "https://test.investryx.com/chat";
+  static const String baseUrl = 'https://investryx.com/api';
+  static const String imageBaseUrl = "https://investryx.com/";
+  static const String chatBaseUrl = "https://investryx.com/chat";
 
   static String? login = '$baseUrl/login';
   static String? register = '$baseUrl/register';
@@ -133,5 +133,6 @@ class ApiList {
   static String aadhaar = "$baseUrl/aadhaar";
   static String getPost = "$baseUrl/get_post";
   static String report = "$baseUrl/report";
+  static String razorpay = "$baseUrl/order_fetch";
 
 }

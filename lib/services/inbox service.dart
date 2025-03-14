@@ -175,7 +175,7 @@ class InboxItems {
   }
 
   static String? validateUrl(String? url) {
-    const String baseUrl = 'https://test.investryx.com/';
+    const String baseUrl = 'https://investryx.com/';
 
     if (url == null || url.isEmpty) {
       return null;

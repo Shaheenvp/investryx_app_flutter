@@ -88,8 +88,8 @@ class _PricingScreenNewState extends State<PricingScreenNew> with SingleTickerPr
   }
 
   void _handleSubscription(Map<String, dynamic> plan) {
-    final String userEmail = "user@example.com";  // Replace with actual user email
-    final String userId = "user123";  // Replace with actual user ID
+    final String userEmail = "user@example.com";
+    final String userId = "user123";
 
     int amount;
     try {
@@ -112,6 +112,7 @@ class _PricingScreenNewState extends State<PricingScreenNew> with SingleTickerPr
           description: '${_selectedPlan} - ${plan['name']} Plan',
           email: userEmail,
           id: planId,
+          apiKey: plan['key'],
         ),
       ),
     ).then((result) async {
@@ -119,7 +120,7 @@ class _PricingScreenNewState extends State<PricingScreenNew> with SingleTickerPr
         if (result['success'] == true) {
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Subscription updated successfully!'),
               backgroundColor: Colors.green,
             ),

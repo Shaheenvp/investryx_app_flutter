@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -141,7 +143,7 @@ class _ChatMessageComposerState extends State<ChatMessageComposer> {
           }
         }
       }
-
+  log('attaachment  $attachment');
       if (attachment != null && widget.onAttachmentSelected != null) {
         widget.onAttachmentSelected!(attachment);
       }

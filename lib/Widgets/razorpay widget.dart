@@ -1,205 +1,3 @@
-//
-// import 'dart:async';
-//
-// import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:project_emergio/Views/pricing%20screen.dart';
-// import 'package:razorpay_flutter/razorpay_flutter.dart';
-// import '../generated/constants.dart';
-// import '../services/check subscribe.dart';
-//
-// class PayMoney extends StatefulWidget {
-//   final int amount;
-//   final String name;
-//   final String description;
-//   final String email;
-//   final String id;
-//
-//   const PayMoney({
-//     Key? key,
-//     required this.amount,
-//     required this.name,
-//     required this.description,
-//     required this.email,
-//     required this.id,
-//   }) : super(key: key);
-//
-//   @override
-//   State<PayMoney> createState() => _PayMoneyState();
-// }
-//
-// class _PayMoneyState extends State<PayMoney> {
-//   late Razorpay _razorpay;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _razorpay = Razorpay();
-//     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-//     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-//     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-//
-//
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       openCheckout(); // Call openCheckout after the widget is built
-//     });
-//   }
-//
-//   @override
-//   void dispose() {
-//     _razorpay.clear();
-//     super.dispose();
-//   }
-//
-//   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-//     print('Success Response: ${response.paymentId}');
-//
-//     // Post the transaction details after successful payment
-//     bool success = await CheckSubscription.postTransactionDetails(
-//       transactionId: response.paymentId!,
-//       id:widget.id,
-//     );
-//
-//     if (success) {
-//       print('Transaction details posted successfully');
-//       // Navigate to the appropriate screen or update UI
-//     } else {
-//       print('Failed to post transaction details');
-//       // Handle failure (e.g., show an error message)
-//     }
-//   }
-//
-//   void _handlePaymentError(PaymentFailureResponse response) {
-//     print('Error Response: $response');
-//     // Handle payment error here
-//   }
-//
-//   void _handleExternalWallet(ExternalWalletResponse response) {
-//     print('External SDK Response: $response');
-//     // Handle external wallet response here
-//   }
-//
-//   void openCheckout() async {
-//     var options = {
-//       'key': 'rzp_test_l5y7T0LlpGjuTh',
-//       'amount': widget.amount * 100,
-//       'name': widget.name,
-//       'description': widget.description,
-//       'retry': {'enabled': true, 'max_count': 1},
-//       'send_sms_hash': true,
-//       'prefill': {
-//         'contact': '9544453993',
-//         'email': widget.email,
-//       },
-//       'external': {
-//         'wallets': ['paytm'],
-//       }
-//     };
-//     try {
-//       _razorpay.open(options);
-//     } catch (e) {
-//       debugPrint('Error: $e');
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//
-//     Timer(Duration(seconds: 2), () {
-//       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> PricingScreenNew()));
-//
-//     });
-//     return Scaffold(
-//       body: Container(
-//         decoration: BoxDecoration(
-//           gradient: LinearGradient(
-//             begin: Alignment.topLeft,
-//             end: Alignment.bottomRight,
-//             colors: [Colors.blue.shade300, Colors.blue.shade700],
-//           ),
-//         ),
-//         child: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               // Image.asset(
-//               //   'assets/logo1.png',
-//               //   width: 150,
-//               //   height: 150,
-//               // ),
-//               Container(
-//                 decoration: BoxDecoration(
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: Colors.black.withOpacity(0.05),
-//                       blurRadius: 20,
-//                       offset: Offset(0, 4),
-//                     ),
-//                   ],
-//                 ),
-//                 child: Text.rich(
-//                   TextSpan(
-//                     children: [
-//                       TextSpan(
-//                         text: 'Inve',
-//                         style: TextStyle(
-//                           fontSize: 36.sp,
-//                           fontWeight: FontWeight.w600,
-//                           color: Colors.grey[800],
-//                           letterSpacing: 0.5,
-//                         ),
-//                       ),
-//                       TextSpan(
-//                         text: 'Stry',
-//                         style: TextStyle(
-//                           fontSize: 36.sp,
-//                           fontWeight: FontWeight.w600,
-//                           color: buttonColor,
-//                           letterSpacing: 0.5,
-//                         ),
-//                       ),
-//                       TextSpan(
-//                         text: 'x',
-//                         style: TextStyle(
-//                           fontSize: 36.sp,
-//                           fontWeight: FontWeight.w600,
-//                           color: Colors.grey[800],
-//                           letterSpacing: 0.5,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//
-//               SizedBox(height: 30),
-//               CircularProgressIndicator(
-//                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-//               ),
-//               SizedBox(height: 20),
-//               Text(
-//                 'Processing Payment...',
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                   fontSize: 24,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//               SizedBox(height: 10),
-//               Text(
-//                 'Amount: ₹${widget.amount}',
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                   fontSize: 18,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 
 import 'dart:async';
@@ -209,10 +7,12 @@ import 'package:project_emergio/Views/pricing%20screen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../generated/constants.dart';
 import '../services/check subscribe.dart';
+import '../services/razorpay_service.dart';
 
 class PayMoney extends StatefulWidget {
   final int amount;
   final String name;
+  final String apiKey;
   final String description;
   final String email;
   final String id;
@@ -221,6 +21,7 @@ class PayMoney extends StatefulWidget {
     Key? key,
     required this.amount,
     required this.name,
+    required this.apiKey,
     required this.description,
     required this.email,
     required this.id,
@@ -236,6 +37,7 @@ class _PayMoneyState extends State<PayMoney> {
   String _statusMessage = '';
   bool _isSuccess = false;
   bool _isError = false;
+  String? _orderId;
 
   @override
   void initState() {
@@ -243,8 +45,11 @@ class _PayMoneyState extends State<PayMoney> {
     _initializeRazorpay();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       openCheckout();
+
     });
   }
+
+
 
   void _initializeRazorpay() {
     _razorpay = Razorpay();
@@ -344,7 +149,8 @@ class _PayMoneyState extends State<PayMoney> {
   void openCheckout() async {
     var options = {
       // 'key': 'rzp_live_5MsiGMuSQ2YP3m',
-      'key': 'rzp_test_l5y7T0LlpGjuTh',
+      'key': widget.apiKey,
+      'order_id' : _orderId,
       'amount': widget.amount * 100,
       'name': widget.name,
       'description': widget.description,

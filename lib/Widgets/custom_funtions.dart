@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_emergio/Views/Auth%20Screens/reg_otp%20verification.dart';
@@ -19,8 +18,8 @@ import 'package:project_emergio/services/check%20subscribe.dart';
 import 'package:project_emergio/services/profile%20forms/business/BusinessAddPage.dart';
 import 'package:project_emergio/services/sales_profile.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
 import '../services/search.dart';
+
 
 class CustomFunctions {
   static String toStringValue(dynamic value) {
@@ -205,12 +204,34 @@ class CustomFunctions {
           ),
         );
         break;
+        case 'advisor':
+        final advisorData = {
+          ...result.rawData,
+        };
 
-      case 'advisor':
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AdvisorDetailPage(),
+            builder: (context) => AdvisorDetailPage(
+              advisor: AdvisorExplr(
+                id: result.id,
+                imageUrl: result.imageUrl,
+                name: result.name,
+                title: toStringValue(result.rawData['title']),
+                designation: toStringValue(result.rawData['designation']),
+                location: result.location,
+                state: toStringValue(result.rawData['state']),
+                contactNumber: toStringValue(result.rawData['number']),
+                url: toStringValue(result.rawData['email']),
+                interest: toStringValue(result.rawData['interest']),
+                expertise: toStringValue(result.rawData['industry']),
+                experience: toStringValue(result.rawData['experience']),
+                description: result.description,
+                user: toStringValue(result.rawData['user']),
+                postedTime: toStringValue(result.rawData['listed_on']),
+                singleLineDescription: result.singleLineDescription,
+              ),
+            ),
           ),
         );
         break;

@@ -836,7 +836,7 @@ class VoiceMessageHandler {
 
 class AudioPathHandler {
   static String getFullAudioUrl(String path) {
-    const baseUrl = 'https://test.investryx.com';
+    const baseUrl = 'https://investryx.com';
     if (path.startsWith('http')) {
       return path;
     }

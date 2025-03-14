@@ -154,8 +154,8 @@ class WebSocketManager {
 
   // Configuration constants
   static const int maxReconnectAttempts = 5;
-  static const int initialReconnectDelay = 1; // seconds
-  static const int maxReconnectDelay = 30; // maximum delay in seconds
+  static const int initialReconnectDelay = 1;
+  static const int maxReconnectDelay = 30;
 
   final _messageController = StreamController<dynamic>.broadcast();
   final _connectionController = StreamController<bool>.broadcast();
@@ -177,13 +177,13 @@ class WebSocketManager {
       }
 
       channel = WebSocketChannel.connect(
-        Uri.parse('wss://test.investryx.com/rooms?token=$token'),
+        Uri.parse('wss://investryx.com/rooms?token=$token'),
       );
 
       channel!.stream.listen(
             (message) {
           _messageController.add(message);
-          _reconnectAttempts = 0; // Reset reconnect attempts on successful message
+          _reconnectAttempts = 0;
         },
         onError: (error) {
           print('WebSocket error: $error');

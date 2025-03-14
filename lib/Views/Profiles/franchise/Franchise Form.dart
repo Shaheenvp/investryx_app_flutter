@@ -1051,7 +1051,7 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
   final _businessWebsiteController = TextEditingController();
   final _initialInvestmentController = TextEditingController();
   final _projectedRoiController = TextEditingController();
-  String _iamOffering = 'offer 1';
+  String _iamOffering = 'Franchise Opportunity';
   final _currentNumberOfOutletsController = TextEditingController();
   final _franchiseTermsController = TextEditingController();
   final _aboutYourBrandController = TextEditingController();
@@ -1516,7 +1516,7 @@ class _FranchiseFormScreenState extends State<FranchiseFormScreen> {
                       _iamOffering = value!;
                     });
                   },
-                  items: ['offer 1', 'offer 2', 'offer 3']
+                  items: ['Franchise Opportunity', 'Dealership Opportunity', 'Reseller Opportunity', 'Distributor Opportunity','Sales Partner Opportunity']
                       .map((offer) => DropdownMenuItem(
                             value: offer,
                             child: Text(offer),

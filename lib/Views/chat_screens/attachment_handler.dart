@@ -847,42 +847,42 @@ class AttachmentHandler {
     }
   }
 
-  static String? encodeAttachmentData(Map<String, dynamic> attachment) {
-    try {
-      final cleanAttachment = {
-        'fileName': attachment['fileName'],
-        'type': attachment['type'],
-        'fileExtension': attachment['fileExtension'],
-        'size': attachment['size'],
-        'data': attachment['data'],
-      };
-      return jsonEncode(cleanAttachment);
-    } catch (e) {
-      print('Error encoding attachment: $e');
-      return null;
-    }
-  }
-
-  static Map<String, dynamic>? decodeAttachmentData(String attachmentString) {
-    try {
-      if (attachmentString.startsWith('http')) {
-        return {
-          'type': 'file',
-          'url': attachmentString,
-          'fileName': path.basename(attachmentString),
-          'fileExtension': path.extension(attachmentString),
-        };
-      }
-      final decoded = jsonDecode(attachmentString);
-      if (decoded is Map<String, dynamic>) {
-        return decoded;
-      }
-      return null;
-    } catch (e) {
-      print('Error decoding attachment: $e');
-      return null;
-    }
-  }
+  // static String? encodeAttachmentData(Map<String, dynamic> attachment) {
+  //   try {
+  //     final cleanAttachment = {
+  //       'fileName': attachment['fileName'],
+  //       'type': attachment['type'],
+  //       'fileExtension': attachment['fileExtension'],
+  //       'size': attachment['size'],
+  //       'data': attachment['data'],
+  //     };
+  //     return jsonEncode(cleanAttachment);
+  //   } catch (e) {
+  //     print('Error encoding attachment: $e');
+  //     return null;
+  //   }
+  // }
+  //
+  // static Map<String, dynamic>? decodeAttachmentData(String attachmentString) {
+  //   try {
+  //     if (attachmentString.startsWith('http')) {
+  //       return {
+  //         'type': 'file',
+  //         'url': attachmentString,
+  //         'fileName': path.basename(attachmentString),
+  //         'fileExtension': path.extension(attachmentString),
+  //       };
+  //     }
+  //     final decoded = jsonDecode(attachmentString);
+  //     if (decoded is Map<String, dynamic>) {
+  //       return decoded;
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     print('Error decoding attachment: $e');
+  //     return null;
+  //   }
+  // }
 }
 
 class AttachmentBottomSheet extends StatelessWidget {

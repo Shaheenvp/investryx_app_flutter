@@ -169,7 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
       token = await _storage.read(key: 'token');
       if (token != null) {
         channel = WebSocketChannel.connect(
-          Uri.parse('wss://test.investryx.com/${widget.roomId}?token=$token'),
+          Uri.parse('wss://investryx.com/${widget.roomId}?token=$token'),
         );
 
         channel.stream.listen((message) {
@@ -542,6 +542,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       'time': DateTime.now().toIso8601String(),
                     });
                     channel.sink.add(data);
+                    print('shalbs hdsbcsj $data');
                   },
                 ),
               ],

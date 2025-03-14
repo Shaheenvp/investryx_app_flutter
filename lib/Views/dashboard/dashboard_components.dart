@@ -143,7 +143,7 @@ class _ProfileHeaderWithSliderState extends State<ProfileHeaderWithSlider> {
     if (widget.type.toLowerCase() == "advisor") {
       return (widget.profile as AdvisorExplr).location;
     } else if (widget.type.toLowerCase() == "franchise") {
-      return (widget.profile as FranchiseExplr).city;
+      return (widget.profile as FranchiseExplr).locationsAvailable ?? 'N/A';
     } else {
       return (widget.profile as BusinessInvestorExplr).city;
     }

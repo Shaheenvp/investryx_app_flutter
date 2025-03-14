@@ -919,14 +919,62 @@ class _SearchScreenState extends State<SearchScreen> {
   //   }
   // }
 
-  void _recentSearchNavigation(Recent product) {
-    switch (product.entityType) {
-      case "business":
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => BusinessDetailPage(
-                    buisines: BusinessInvestorExplr(
+    void _recentSearchNavigation(Recent product) {
+      switch (product.entityType) {
+        case "business":
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BusinessDetailPage(
+                      buisines: BusinessInvestorExplr(
+                          id: product.id,
+                          imageUrl: product.imageUrl,
+                          image2: product.image2,
+                          image3: product.image3,
+                          name: product.name,
+                          city: city,
+                          postedTime: product.postedTime,
+                          topSelling: product.topSelling,
+                          address_1: product.address_1,
+                          address_2: product.address_2,
+                          avg_monthly: product.avg_monthly,
+                          brandName: product.brandName,
+                          companyName: product.companyName,
+                          description: product.description,
+                          ebitda: product.ebitda,
+                          employees: product.employees,
+                          entity: product.entity,
+                          entityType: product.entityType,
+                          establish_yr: product.establish_yr,
+                          evaluatingAspects: product.evaluatingAspects,
+                          facility: product.facility,
+                          features: product.features,
+                          image4: product.image4,
+                          income_source: product.income_source,
+                          industry: product.industry,
+                          latest_yearly: product.latest_yearly,
+                          locationIntrested: product.locationIntrested,
+                          locationsAvailable: product.locationsAvailable,
+                          pin: product.pin,
+                          rangeEnding: product.rangeEnding,
+                          rangeStarting: product.rangeStarting,
+                          rate: product.rate,
+                          reason: product.reason,
+                          state: product.state,
+                          type_sale: product.type_sale,
+                          singleLineDescription: '',
+                          title: '',
+                          url: product.url),
+                      showEditOption: false)));
+
+          break;
+        case "investor":
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => InvestorDetailPage(
+                    showEditOption: false,
+                    investor: BusinessInvestorExplr(
                         id: product.id,
                         imageUrl: product.imageUrl,
                         image2: product.image2,
@@ -965,131 +1013,94 @@ class _SearchScreenState extends State<SearchScreen> {
                         singleLineDescription: '',
                         title: '',
                         url: product.url),
-                    showEditOption: false)));
+                  )));
 
-        break;
-      case "investor":
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => InvestorDetailPage(
-                  showEditOption: false,
-                  investor: BusinessInvestorExplr(
-                      id: product.id,
-                      imageUrl: product.imageUrl,
-                      image2: product.image2,
-                      image3: product.image3,
-                      name: product.name,
-                      city: city,
-                      postedTime: product.postedTime,
-                      topSelling: product.topSelling,
-                      address_1: product.address_1,
-                      address_2: product.address_2,
-                      avg_monthly: product.avg_monthly,
-                      brandName: product.brandName,
-                      companyName: product.companyName,
-                      description: product.description,
-                      ebitda: product.ebitda,
-                      employees: product.employees,
-                      entity: product.entity,
-                      entityType: product.entityType,
-                      establish_yr: product.establish_yr,
-                      evaluatingAspects: product.evaluatingAspects,
-                      facility: product.facility,
-                      features: product.features,
-                      image4: product.image4,
-                      income_source: product.income_source,
-                      industry: product.industry,
-                      latest_yearly: product.latest_yearly,
-                      locationIntrested: product.locationIntrested,
-                      locationsAvailable: product.locationsAvailable,
-                      pin: product.pin,
-                      rangeEnding: product.rangeEnding,
-                      rangeStarting: product.rangeStarting,
-                      rate: product.rate,
-                      reason: product.reason,
-                      state: product.state,
-                      type_sale: product.type_sale,
-                      singleLineDescription: '',
-                      title: '',
-                      url: product.url),
-                )));
+          break;
 
-        break;
-
-      case "franchise":
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => FranchiseDetailPage(
-                  showEditOption: false,
-                  franchise: FranchiseExplr(
-                      title: '',
-                      singleLineDescription: 'N/A',
-                      imageUrl: product.imageUrl,
-                      image2: product.image2,
-                      image3: product.image3,
-                      image4: product.image4.toString(),
-                      brandName: product.brandName.toString(),
-                      city: city,
-                      postedTime: product.postedTime,
-                      id: product.id,
-                      allProducts: product.allProducts,
-                      avgEBITDA: product.ebitda,
-                      avgMonthlySales: product.avgMonthlySales,
-                      avgNoOfStaff: product.avgNoOfStaff,
-                      brandFee: product.brandFee,
-                      brandStartOperation: product.brandStartOperation,
-                      companyName: product.companyName,
-                      currentNumberOfOutlets:
-                      product.currentNumberOfOutlets,
-                      description: product.description,
-                      entityType: product.entityType,
-                      established_year: product.establish_yr,
-                      franchiseTerms: product.franchiseTerms,
-                      iamOffering: product.iamOffering,
-                      industry: product.industry,
-                      initialInvestment: product.initialInvestment,
-                      kindOfSupport: product.kindOfSupport,
-                      locationsAvailable: product.locationsAvailable,
-                      projectedRoi: product.projectedRoi,
-                      spaceRequiredMax: product.spaceRequiredMax,
-                      spaceRequiredMin: product.spaceRequiredMin,
-                      state: product.state,
-                      totalInvestmentFrom: product.totalInvestmentFrom,
-                      totalInvestmentTo: product.totalInvestmentTo,
-                      url: product.url),
-                )));
-        break;
-      case "advisor":
-        Navigator.push(
-            context,
-            MaterialPageRoute(
+        case "franchise":
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FranchiseDetailPage(
+                    showEditOption: false,
+                    franchise: FranchiseExplr(
+                        title: '',
+                        singleLineDescription: 'N/A',
+                        imageUrl: product.imageUrl,
+                        image2: product.image2,
+                        image3: product.image3,
+                        image4: product.image4.toString(),
+                        brandName: product.brandName.toString(),
+                        city: city,
+                        postedTime: product.postedTime,
+                        id: product.id,
+                        allProducts: product.allProducts,
+                        avgEBITDA: product.ebitda,
+                        avgMonthlySales: product.avgMonthlySales,
+                        avgNoOfStaff: product.avgNoOfStaff,
+                        brandFee: product.brandFee,
+                        brandStartOperation: product.brandStartOperation,
+                        companyName: product.companyName,
+                        currentNumberOfOutlets:
+                        product.currentNumberOfOutlets,
+                        description: product.description,
+                        entityType: product.entityType,
+                        established_year: product.establish_yr,
+                        franchiseTerms: product.franchiseTerms,
+                        iamOffering: product.iamOffering,
+                        industry: product.industry,
+                        initialInvestment: product.initialInvestment,
+                        kindOfSupport: product.kindOfSupport,
+                        locationsAvailable: product.locationsAvailable,
+                        projectedRoi: product.projectedRoi,
+                        spaceRequiredMax: product.spaceRequiredMax,
+                        spaceRequiredMin: product.spaceRequiredMin,
+                        state: product.state,
+                        totalInvestmentFrom: product.totalInvestmentFrom,
+                        totalInvestmentTo: product.totalInvestmentTo,
+                        url: product.url),
+                  )));
+          break;
+        case "advisor":
+          if (product.title != null && product.imageUrl != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
                 builder: (context) => AdvisorDetailPage(
                   advisor: AdvisorExplr(
-                      title: product.title!,
-                      singleLineDescription: product.singleLineDescription!,
-                      imageUrl: product.imageUrl,
-                      id: product.id,
-                      user: product.user.toString(),
-                      name: product.name,
-                      location: product.location.toString(),
-                      postedTime: product.postedTime,
-                      brandLogo: product.brandLogo,
-                      businessDocuments: product.businessDocuments,
-                      businessPhotos: product.businessPhotos,
-                      businessProof: product.businessProof,
-                      contactNumber: product.contactNumber,
-                      description: product.description,
-                      designation: product.designation,
-                      expertise: product.expertise,
-                      interest: product.interest,
-                      state: product.state,
-                      type: product.type_sale,
-                      url: product.url),
-                )));
+                    title: product.title!,
+                    singleLineDescription: product.singleLineDescription!,
+                    imageUrl: product.imageUrl,
+                    id: product.id,
+                    user: product.user.toString(),
+                    name: product.name,
+                    location: product.location.toString(),
+                    postedTime: product.postedTime,
+                    brandLogo: product.brandLogo,
+                    businessDocuments: product.businessDocuments,
+                    businessPhotos: product.businessPhotos,
+                    businessProof: product.businessProof,
+                    contactNumber: product.contactNumber,
+                    description: product.description,
+                    designation: product.designation,
+                    expertise: product.expertise,
+                    interest: product.interest,
+                    state: product.state,
+                    type: product.type_sale,
+                    url: product.url,
+                  ),
+                ),
+              ),
+            );
+          } else {
+            // Handle the case where the product data is incomplete
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Incomplete advisor data.')),
+            );
+          }
+          break;
+      }
     }
-  }
 
   Widget _buildRecentResults() {
     if (_recentSearchLists.isEmpty || hasSearched) {

@@ -251,7 +251,7 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedIndustry = 'Fashion';
+    _selectedIndustry = 'Fashion & Apparel';
     _selectedState = '';
     _selectedCity = '';
     _fetchStates();
@@ -281,7 +281,7 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
         _selectedState = widget.investor!.state ?? "Kerala";
         _locationsIntrestedController.text =
             widget.investor!.locationIntrested ?? "";
-        _selectedIndustry = widget.investor!.industry ?? "Fashion";
+        _selectedIndustry = widget.investor!.industry ?? "Fashion & Apparel";
         _selectedPreferences = _selectedPreferences;
       });
     }
@@ -443,13 +443,31 @@ class _InvestorFormScreenState extends State<InvestorFormScreen> {
                                   });
                                 },
                                 items: [
-                                  'Education',
-                                  'Information Technology',
-                                  'Healthcare',
-                                  'Fashion',
-                                  'Food',
-                                  'Automobile',
-                                  'Banking'
+                                  'Retail',
+                                  'Food & Beverage',
+                                  'Education & Training',
+                                  'Healthcare & Wellness',
+                                  'Fashion & Apparel',
+                                  'Technology & Software',
+                                  'Automotive',
+                                  'Real Estate',
+                                  'Beauty & Personal Care',
+                                  'Home Services',
+                                  'Entertainment & Recreation',
+                                  'Travel & Tourism',
+                                  'Financial Services',
+                                  'Logistics & Transportation',
+                                  'Manufacturing',
+                                  'Agriculture',
+                                  'Construction',
+                                  'Media & Communications',
+                                  'Professional Services',
+                                  'Sports & Fitness',
+                                  'Pet Care & Services',
+                                  'Arts & Crafts',
+                                  'Child Care & Services',
+                                  'Environmental Services',
+                                  'Other'
                                 ]
                                     .map((industry) => DropdownMenuItem(
                                   value: industry,

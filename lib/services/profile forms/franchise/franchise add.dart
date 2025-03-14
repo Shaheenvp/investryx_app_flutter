@@ -341,7 +341,7 @@ class FranchiseAddPage {
         'total_outlets': currentNumberOfOutlets,
         'yr_period': franchiseTerms,
         'description': aboutYourBrand,
-        'locations_available': locationsAvailable,
+        'location_interested': locationsAvailable,
         'supports': kindOfSupport,
         'services': allProducts,
         'establish_yr': brandStartOperation,
@@ -493,7 +493,7 @@ class FranchiseAddPage {
 
       // Create multipart request
       var request = http.MultipartRequest(
-          'PATCH', Uri.parse('${ApiList.franchiseAddPage!}$franchiseId'))
+          'PATCH', Uri.parse('${ApiList.businessAddPage!}$franchiseId'))
         ..headers['token'] = token;
 
       // Add form fields
