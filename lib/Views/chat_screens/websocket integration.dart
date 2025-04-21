@@ -177,7 +177,7 @@ class WebSocketManager {
       }
 
       channel = WebSocketChannel.connect(
-        Uri.parse('wss://investryx.com/rooms?token=$token'),
+        Uri.parse('wss://test.investryx.com/rooms?token=$token'),
       );
 
       channel!.stream.listen(

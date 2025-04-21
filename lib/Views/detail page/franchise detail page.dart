@@ -1238,8 +1238,9 @@ class _FranchiseDetailPageState extends State<FranchiseDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                CustomFunctions.toSentenceCase(
-                    widget.franchise!.title.toString()),
+                CustomFunctions.toSentenceCase(widget.franchise!.title.toString()),
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
                 style: AppTheme.titleText(lightTextColor),
               ),
               SizedBox(height: 10.h),

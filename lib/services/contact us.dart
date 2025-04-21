@@ -47,7 +47,7 @@ class ContactUs {
       if (status) {
         return status;
       } else {
-        log('Failed to register: ${response.statusCode}');
+        log('Failed to send: ${response.statusCode}');
         return false;
       }
     } on SocketException catch (e) {
